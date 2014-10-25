@@ -216,11 +216,14 @@ bool TroenGameBuilder::composeSceneGraph()
  	t->m_deformationRendering = new SplineDeformationRendering(t->m_sceneNode);
  	t->m_deformationRendering->setDeformationStartEnd(nearD, radius);
  	t->m_deformationRendering->setPreset(4);
+	t->enableBendedViews();
 
 	for (auto player : t->m_playersWithView)
 	{
 		player->hudController()->attachSceneToRadarCamera(radarScene);
 	}
+
+	//simulator shall always have bended views
 
 	// disbled optimizer for now, takes a lot of time to execute
 	std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;

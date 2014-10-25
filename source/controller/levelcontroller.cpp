@@ -99,7 +99,8 @@ void LevelController::update()
 	// this method is called in each frame, so the amount of items will be refreshed relatively quickly
 	// creating all at once would cause a lag
 
-	addItemBox();
+	//! No items for Simulator 
+	//addItemBox();
 }
 
 void LevelController::setBendingFactor(float bendingFactor)

@@ -122,6 +122,11 @@ void TroenGame::startGameLoop()
 
 		QCoreApplication::processEvents();
 
+		for (auto player : m_playersWithView)
+		{
+			player->viewer()->frame();
+		}
+
 		// are we significantly behind? if yes, "resync", force rendering
 		if ((g_gameLoopTime - nextTime) > maxMillisecondsBetweenFrames)
 			nextTime = g_gameLoopTime;
@@ -175,10 +180,7 @@ void TroenGame::startGameLoop()
 						m_players);
 				}
 
-				for (auto player : m_playersWithView)
-				{
-					player->viewer()->frame();
-				}
+
 				// TODO: find a way to eleminate this workaround
 				// doesn't work if it's executed earlier
 				if (!nearPlaneAdapted)
