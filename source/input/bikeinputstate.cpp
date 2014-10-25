@@ -49,7 +49,9 @@ bool BikeInputState::getTurboPressed()
 
 void BikeInputState::setTurboPressed(bool pressed)
 {
-	m_turboPressed = pressed;
+	//! no turbo for simulator
+	//m_turboPressed = pressed;
+	m_turboPressed = false;
 }
 
 float BikeInputState::getViewingAngle()
