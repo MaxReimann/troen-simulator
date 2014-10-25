@@ -111,9 +111,12 @@ void Keyboard::run()
 		
 		float leftAngle = m_leftPressed ? m_angle + m_handbrakePressed * BIKE_HANDBRAKE_FACTOR : 0.0;
 		float rightAngle = m_rightPressed ? m_angle - m_handbrakePressed * BIKE_HANDBRAKE_FACTOR : 0.0;
-		m_bikeInputState->setAngle(leftAngle + rightAngle);
+		//! simulator: no drifting
+		//m_bikeInputState->setAngle(leftAngle + rightAngle);
+		m_bikeInputState->setAngle(m_angle);
 
-		m_bikeInputState->setTurboPressed(m_turboPressed);
+		//!simulator change
+		//m_bikeInputState->setTurboPressed(m_turboPressed);
 
 		float acceleration = m_upPressed ? 1.0 : 0.0 - m_downPressed ? -1.0 : 0.0;
 		m_bikeInputState->setAcceleration(acceleration);

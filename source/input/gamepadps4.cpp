@@ -218,8 +218,10 @@ void GamepadPS4::run()
 		// get acceleration from RIGHT_2 and LEFT_2
 		float rightTrigger = getValueFromKey(GamepadPS4::PS4KEY::RIGHT_2, buffer) / 255.f;
 		float leftTrigger = getValueFromKey(GamepadPS4::PS4KEY::LEFT_2, buffer) / 255.f;
-
-		m_bikeInputState->setAngle(-leftStickX - leftStickX * handbrakePressed * BIKE_HANDBRAKE_FACTOR);
+		
+		//! simulator change
+		//m_bikeInputState->setAngle(-leftStickX - leftStickX * handbrakePressed * BIKE_HANDBRAKE_FACTOR);
+		m_bikeInputState->setAngle(-leftStickX);
 		m_bikeInputState->setTurboPressed(turboPressed);
 		m_bikeInputState->setAcceleration(rightTrigger - leftTrigger);
 		m_bikeInputState->setViewingAngle(viewingAngle);

@@ -130,7 +130,9 @@ void Gamepad::run()
 			}
 
 			m_bikeInputState->setAcceleration(m_rightTrigger - m_leftTrigger);
-			m_bikeInputState->setAngle(-m_leftStickX - m_leftStickX * handbrakePressed * BIKE_HANDBRAKE_FACTOR);
+			//simulator change
+			//m_bikeInputState->setAngle(-m_leftStickX - m_leftStickX * handbrakePressed * BIKE_HANDBRAKE_FACTOR);
+			m_bikeInputState->setAngle(-m_leftStickX);
 			m_bikeInputState->setTurboPressed(turboPressed);
 			m_bikeInputState->setViewingAngle(-viewingAngle);
 
