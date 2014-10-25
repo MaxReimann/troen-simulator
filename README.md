@@ -4,7 +4,15 @@ Trön
 Trön is an action packed 3D-remake of the classic Armagetron
 featuring polished graphics, customizable maps, powerups, scriptable AI, multiplayer and many more!
 
+ **Download** the game, see more previews and view the documentation at http://gameprogramming.hpi3d.de/201314/troen/
 
+Trailer
+=======
+
+[![Clicke here to watch the Trön trailer](https://img.youtube.com/vi/qpZIFbqhsVM/0.jpg)](https://www.youtube.com/embed/qpZIFbqhsVM?vq=hd1080&autoplay=1 "Trön Pre-Alpha Trailer")
+
+
+#In Game
 ![Trön](data/screenshots/ramp.png)
 ![Bended Views](data/screenshots/bended.png)
 
@@ -44,25 +52,3 @@ Set up Oculus Rift
 
 Set up correct Working Directory:
 - in MSVC goto DEBUG->properties->ConfigurationProperties->Debugging and set WorkingDirectory to ".." (without the quotes)
-
-
-
-##Styleguide
-
-- use forward declarations & (reference) pointers to reduce compile time
-
-- member variables start with m_
-
-- includes in specified order:
-	(classname.h), qt, osg, bullet, fmod, ownHeaders
-- do not "inherit" includes, always include all necessary headers
-
-- use reference counting whereever possible (osg::ref_pr<>, std::shared_ptr<>)
-
-- use "#pragma once" include guard
-
-- use namespaces for modules
-
-- file names are all lowercase
-
-- classes start with capital letter
