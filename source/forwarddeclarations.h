@@ -131,4 +131,11 @@ namespace troen
 		class ClientManager;
 		class ServerManager;
 	}
+
+	namespace tracking
+	{
+		struct CurrentBikeState;
+		class TrackBike;
+		class Tracker;
+	}
 }

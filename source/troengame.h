@@ -87,8 +87,8 @@ namespace troen
 		void reloadLevel();
 
 
-		std::shared_ptr<networking::ClientManager> getClientManager() { return m_ClientManager; }
-		std::shared_ptr<networking::ServerManager> getServerManager() { return m_ServerManager; }
+		std::shared_ptr<networking::ClientManager> getClientManager() { return m_clientManager; }
+		std::shared_ptr<networking::ServerManager> getServerManager() { return m_serverManager; }
 		std::shared_ptr<networking::NetworkManager> getNetworkManager();
 
 		SplineDeformationRendering* getBendedViews() {
@@ -150,8 +150,9 @@ namespace troen
 		std::shared_ptr<PhysicsWorld>				m_physicsWorld;
 		std::shared_ptr<GameLogic>					m_gameLogic;
 		std::shared_ptr<sound::AudioManager>		m_audioManager;
-		std::shared_ptr<networking::ServerManager>  m_ServerManager;
-		std::shared_ptr<networking::ClientManager>  m_ClientManager;
+		std::shared_ptr<networking::ServerManager>  m_serverManager;
+		std::shared_ptr<networking::ClientManager>  m_clientManager;
+		std::shared_ptr<tracking::TrackBike>		m_bikeTracker;
 
 		ResourcePool m_resourcePool;
 

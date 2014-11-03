@@ -264,6 +264,12 @@ set(sources
 	source/input/remoteplayer.cpp
 	source/input/remoteplayer.h
 
+	source/tracking/tracker.cpp
+	source/tracking/tracker.h
+	source/tracking/trackbike.cpp
+	source/tracking/trackbike.h
+
+
 
 	BendedViews/src/DeformationRendering.cpp
 	BendedViews/src/DeformationRendering.h

@@ -25,6 +25,8 @@
 #include "view/reflection.h"
 #include "BendedViews/src/SplineDeformationRendering.h"
 
+#include "tracking/trackbike.h"
+
 #include "util/chronotimer.h"
 #include "util/gldebugdrawer.h"
 #include "sound/audiomanager.h"
@@ -121,6 +123,15 @@ bool TroenGameBuilder::build()
 	std::cout << "[TroenGameBuilder::build] gameLogic ..." << std::endl;
 	t->m_gameLogic = std::make_shared<GameLogic>(t,t->m_gameConfig->timeLimit);
 	t->m_gameEventHandler->attachGameLogic(t->m_gameLogic);
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	// Tracking
+	//
+	////////////////////////////////////////////////////////////////////////////////
+	t->m_bikeTracker = std::make_shared<tracking::TrackBike>(
+		t->m_playersWithView.at(0)->bikeController(), 10);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//

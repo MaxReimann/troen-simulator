@@ -31,6 +31,7 @@
 #include "util/gldebugdrawer.h"
 #include "sound/audiomanager.h"
 
+#include "tracking/trackbike.h"
 
 #include "network/clientmanager.h"
 #include "network/servermanager.h"
@@ -52,8 +53,8 @@ m_gameThread(thread)
 
 	moveToThread(m_gameThread);
 	m_gameThread->start(QThread::HighestPriority);
-	m_ServerManager = NULL;
-	m_ClientManager = NULL;
+	m_serverManager = NULL;
+	m_clientManager = NULL;
 }
 
 
@@ -152,6 +153,8 @@ void TroenGame::startGameLoop()
 
 			if (isNetworking())
 				getNetworkManager()->update(g_gameTime);
+
+			m_bikeTracker->update(g_gameTime);
 
 
 			m_audioManager->Update(g_gameLoopTime / 1000);
@@ -344,16 +347,16 @@ std::string TroenGame::setupServer(std::vector<QString> playerNames)
 {
 
 		std::cout << "[TroenGame::initialize] networking Server..." << std::endl;
-		m_ServerManager = std::make_shared<networking::ServerManager>(this, playerNames);
-		m_ServerManager->openServer();
+		m_serverManager = std::make_shared<networking::ServerManager>(this, playerNames);
+		m_serverManager->openServer();
 		return std::string("ok");
 }
 
 std::string TroenGame::setupClient(QString playerName, std::string connectAddr)
 {
 		std::cout << "[TroenGame::initialize] networking Client..." << std::endl;
-		m_ClientManager = std::make_shared<networking::ClientManager>(this, playerName);
-		m_ClientManager->openClient(connectAddr);
+		m_clientManager = std::make_shared<networking::ClientManager>(this, playerName);
+		m_clientManager->openClient(connectAddr);
 		return std::string("ok");
 }
 
@@ -378,10 +381,10 @@ bool TroenGame::isNetworking()
 
 std::shared_ptr<networking::NetworkManager> TroenGame::getNetworkManager()
 {
-	if (m_ClientManager != NULL)
-		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_ClientManager);
-	else if (m_ServerManager != NULL)
-		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_ServerManager);
+	if (m_clientManager != NULL)
+		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_clientManager);
+	else if (m_serverManager != NULL)
+		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_serverManager);
 	else
 		return NULL;
 }
