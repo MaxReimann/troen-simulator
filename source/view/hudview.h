@@ -48,16 +48,17 @@ namespace troen
 		void setTimeText(const double gameTime, const int timeLimit);
 		void setKillCountText(const int i, const std::string& playerName, const int killCount);
 		void toggleVisibility();
+		void toggleRadar();
 	private:
 		osg::ref_ptr<osg::Camera> createHUD(const std::vector<std::shared_ptr<Player>>& players);
 		osg::ref_ptr<osg::Camera> createRadar(const int index);
 
 		void resizeHudComponents(const int width, const int height);
-
 		osg::ref_ptr<osg::Camera>	m_camera;
 		osg::ref_ptr<osg::Camera>	m_radarCamera;
 		osg::ref_ptr<osg::Geode>	m_savedGeode;
 		osg::ref_ptr<osg::Node>		m_trackNode;
+		osg::ref_ptr<osg::Group> m_hudGroup;
 		osg::ref_ptr<osgGA::NodeTrackerManipulator> m_radarManipulator;
 
 		osg::ref_ptr<osgText::Font> m_font;

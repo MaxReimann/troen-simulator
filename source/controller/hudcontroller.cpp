@@ -100,11 +100,11 @@ void HUDController::update(
 	//
 	// ingame messages
 	//
-	while (!m_ingameMessages.empty() && m_ingameMessages.front()->endTime < currentGameTime)
-	{
-		m_ingameMessages.pop_front();
-	}
-	hudview->updateIngameMessageTexts(m_ingameMessages);
+// 	while (!m_ingameMessages.empty() && m_ingameMessages.front()->endTime < currentGameTime)
+// 	{
+// 		m_ingameMessages.pop_front();
+// 	}
+// 	hudview->updateIngameMessageTexts(m_ingameMessages);
 }
 
 void HUDController::setTrackNode(osg::Node* trackNode)

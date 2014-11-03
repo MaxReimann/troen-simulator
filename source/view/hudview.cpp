@@ -239,16 +239,17 @@ osg::ref_ptr<osg::Camera> HUDView::createRadar(const int i)
 
 void HUDView::attachSceneToRadarCamera(osg::Group* scene)
 {
-	osg::ref_ptr<osg::Group> hudGroup = new osg::Group;
+	m_hudGroup = new osg::Group;
 
-	osg::StateSet* stateset = hudGroup->getOrCreateStateSet();
+	osg::StateSet* stateset = m_hudGroup->getOrCreateStateSet();
 	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 	stateset->setMode(GL_BLEND, osg::StateAttribute::ON);
 	stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-	hudGroup->addChild(scene);
-	m_radarCamera->addChild(hudGroup);
+	m_hudGroup->addChild(scene);
+	m_radarCamera->addChild(m_hudGroup);
 }
+
 
 // helper class to retrieve the position of a node in world coordinates
 // could potentially be in it's own header file

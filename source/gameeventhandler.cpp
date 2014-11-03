@@ -32,7 +32,7 @@ void GameEventHandler::attachGameLogic(std::shared_ptr<GameLogic>& gamelogic)
 	 }
     
 	 switch (ea.getKey()) {
-	 case osgGA::GUIEventAdapter::KEY_M:
+	 case osgGA::GUIEventAdapter::KEY_V:
 		 m_troenGame->switchSoundVolumeEvent();
 		 break;
 	 case osgGA::GUIEventAdapter::KEY_C:
