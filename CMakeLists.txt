@@ -247,6 +247,10 @@ set(sources
 	source/view/reflection.h
 	source/view/reflection.cpp
 
+
+	source/navigation/navigationwindow.cpp
+	source/navigation/navigationwindow.h
+
 	source/util/chronotimer.h
 	source/util/chronotimer.cpp
 	source/util/gldebugdrawer.h

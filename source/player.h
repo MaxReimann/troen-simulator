@@ -12,6 +12,7 @@
 #include "controller/bikecontroller.h"
 #include "controller/fencecontroller.h"
 #include "controller/hudcontroller.h"
+#include "navigation/navigationwindow.h"
 
 namespace troen
 {
@@ -52,11 +53,13 @@ namespace troen
 		//
 		// osg related
 		//
-		bool hasGameView()							{ return m_hasGameView; }
-		osg::ref_ptr<SampleOSGViewer> viewer()		{ return m_viewer; };
-		osg::ref_ptr<osgViewer::View> gameView()	{ return m_gameView; };
-		osg::ref_ptr<osg::Group> playerNode()		{ return m_playerNode; };
-		std::shared_ptr<Reflection> reflection()	{ return m_reflection; };
+		bool hasGameView()									{ return m_hasGameView; }
+		osg::ref_ptr<SampleOSGViewer> viewer()				{ return m_viewer; };
+		osg::ref_ptr<SampleOSGViewer> navigationViewer()	{ return m_navigationWindow->navViewer(); };
+		osg::ref_ptr<osgViewer::View> gameView()			{ return m_gameView; };
+		osg::ref_ptr<osg::Group> playerNode()				{ return m_playerNode; };
+		std::shared_ptr<Reflection> reflection()			{ return m_reflection; };
+		std::shared_ptr<NavigationWindow> navigationWindow(){ return m_navigationWindow; };
 
 		//
 		// setters
@@ -108,6 +111,7 @@ namespace troen
 		osg::ref_ptr<osgViewer::View>	m_gameView;
 		osg::ref_ptr<osg::Group>		m_playerNode;
 		std::shared_ptr<Reflection>		m_reflection;
+		std::shared_ptr<NavigationWindow> m_navigationWindow;
 
 	};
 }

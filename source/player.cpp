@@ -13,6 +13,7 @@
 #include "gameeventhandler.h"
 #include "sampleosgviewer.h"
 
+
 #include "controller/levelcontroller.h"
 
 #include "input/bikeinputstate.h"
@@ -107,6 +108,9 @@ m_hasGameView(config->ownView[id])
 		m_gameView->addEventHandler(game->gameEventHandler());
 		m_gameView->addEventHandler(game->statsHandler());
 
+		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController);
+		
+
 #ifdef WIN32
 		if (config->fullscreen)
 			m_gameView->apply(new osgViewer::SingleScreen(0));
@@ -137,6 +141,7 @@ m_hasGameView(config->ownView[id])
 		osg::ref_ptr<RealizeOperation> operation = new RealizeOperation;
 		m_viewer->setRealizeOperation(operation);
 		m_viewer->realize();
+
 #endif
 	}
 

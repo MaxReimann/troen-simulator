@@ -174,14 +174,13 @@ bool TroenGameBuilder::composeSceneGraph()
 	for (auto player : t->m_playersWithView)
 	{
 			player->playerNode()->addChild(t->m_rootNode);
+			player->navigationWindow()->addElements(t->m_rootNode);
 	}
 
-	//t->m_skyDome->getOrCreateStateSet()->setRenderBinDetails(-1, "RenderBin");
 	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
 	t->m_sceneWithSkyboxNode->addChild(t->m_sceneNode);
 
 	t->m_sceneNode->addChild(t->m_levelController->getViewNode());
-	//t->m_sceneNode->addChild(t->m_sunLightSource.get());
 
 	for (auto player : t->m_players)
 	{
@@ -200,8 +199,7 @@ bool TroenGameBuilder::composeSceneGraph()
 	for (auto player : t->m_playersWithView)
 	{
 		osg::Group * node = player->hudController()->getViewNode();
-		osg::Group * playerNode = player->playerNode();
-		playerNode->addChild(node);
+		player->playerNode()->addChild(node);
 	}
 
 
@@ -237,11 +235,11 @@ bool TroenGameBuilder::composeSceneGraph()
 	//simulator shall always have bended views
 
 	// disbled optimizer for now, takes a lot of time to execute
-	std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
-	osgUtil::Optimizer optimizer;
-	optimizer.optimize(t->m_rootNode, 		optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
-		optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
-	std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
+	//std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
+	//osgUtil::Optimizer optimizer;
+	//optimizer.optimize(t->m_rootNode, 		optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
+	//	optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
+	//std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
 
 
 	return true;

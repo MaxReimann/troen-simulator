@@ -126,6 +126,7 @@ void TroenGame::startGameLoop()
 		for (auto player : m_playersWithView)
 		{
 			player->viewer()->frame();
+			player->navigationViewer()->frame();
 		}
 
 		// are we significantly behind? if yes, "resync", force rendering
@@ -191,6 +192,7 @@ void TroenGame::startGameLoop()
 					for (auto player : m_playersWithView)
 					{
 						fixCulling(player->gameView());
+						fixCulling(player->navigationViewer()->getView(0));
 					}
 				}
 				skippedFrames = 0;
