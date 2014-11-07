@@ -34,10 +34,15 @@ public:
 			osg::Vec3f gameEye, c, gameUp;
 			osg::Vec3f eye, center, up;
 
-			eye = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0.0, 30.0);
-			center = eye + btToOSGVec3(bikeController->getModel()->getDirection());
+			eye = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0.0, 20.0);
+			center = eye + btToOSGVec3(bikeController->getModel()->getDirection()) * 10 + osg::Vec3d(0.0, 0.0, 1.0);
 			up = osg::Vec3d(0.0, 0.0, 1.0);
 			m_navView->getCamera()->setViewMatrixAsLookAt(eye, center, up);
+
+
+			double fovy, aspect, znear, zfar;
+			m_navView->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
+			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + FOVY_ADDITION_MAX, aspect, znear, zfar);
 
 		}
 		//dont traverse ?

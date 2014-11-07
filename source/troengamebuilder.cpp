@@ -171,20 +171,25 @@ bool TroenGameBuilder::composeSceneGraph()
 		t->m_sceneWithSkyboxNode = t->m_rootNode;
 	}
 
+	//node on which bending operation is applied
+	osg::ref_ptr<osg::Group> bendedScene = new osg::Group();
+	bendedScene->addChild(t->m_sceneNode);
+	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
+	t->m_sceneWithSkyboxNode->addChild(bendedScene);
+
 	for (auto player : t->m_playersWithView)
 	{
-			player->playerNode()->addChild(t->m_rootNode);
-			player->navigationWindow()->addElements(t->m_rootNode);
+		player->playerNode()->addChild(bendedScene);
+		player->navigationWindow()->addElements(t->m_rootNode);
 	}
 
-	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
-	t->m_sceneWithSkyboxNode->addChild(t->m_sceneNode);
+
 
 	t->m_sceneNode->addChild(t->m_levelController->getViewNode());
 
 	for (auto player : t->m_players)
 	{
-		t->m_sceneNode->addChild(player->bikeController()->getViewNode());
+		//t->m_sceneNode->addChild(player->bikeController()->getViewNode());
 		t->m_sceneNode->addChild(player->fenceController()->getViewNode());
 	}
 
@@ -217,13 +222,15 @@ bool TroenGameBuilder::composeSceneGraph()
 	radarScene->addChild(t->m_levelController->getViewNode());
 
 
+
+
+
  	const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
  	// todo: the magic number (0.25) can be used to control the length of the deformation and must be possibly adjusted after the scene graph tweaks
  	float radius = LEVEL_SIZE / 5;
 	radius = 1071;
  	double nearD = 0.1;
-	std::cout << "radius  " << radius << std::endl;
- 	t->m_deformationRendering = new SplineDeformationRendering(t->m_sceneNode);
+	t->m_deformationRendering = new SplineDeformationRendering(bendedScene);
  	t->m_deformationRendering->setDeformationStartEnd(nearD, radius);
  	t->m_deformationRendering->setPreset(4);
 	t->enableBendedViews();
