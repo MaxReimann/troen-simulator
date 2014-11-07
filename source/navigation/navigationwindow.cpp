@@ -32,23 +32,12 @@ public:
 		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
 		{
 			osg::Vec3f gameEye, c, gameUp;
-			//m_gameView->getCamera()->getViewMatrixAsLookAt(gameEye, c, gameUp);
-
 			osg::Vec3f eye, center, up;
-			m_navView->getCamera()->getViewMatrixAsLookAt(eye, center, up);
 
-			//osg::Vec3d manipCenter;
-			//osg::Quat rot;
-			//m_manipulator->computeNodeCenterAndRotation(manipCenter,rot);
-			
-			//m_navView->getCamera()->setViewMatrix(m_manipulator->getInverseMatrix().);
-			eye = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0.0, 10.0);
+			eye = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0.0, 30.0);
 			center = eye + btToOSGVec3(bikeController->getModel()->getDirection());
 			up = osg::Vec3d(0.0, 0.0, 1.0);
 			m_navView->getCamera()->setViewMatrixAsLookAt(eye, center, up);
-			//m_navView->getCamera()->setViewMatrix(m_gameView->getCamera()->getViewMatrix());
-			//m_navView->getCamera()->setProjectionMatrix(m_gameView->getCamera()->getProjectionMatrix());
-
 
 		}
 		//dont traverse ?
@@ -78,8 +67,6 @@ NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeControlle
 	osg::ref_ptr<RealizeOperation> navOperation = new RealizeOperation;
 	m_viewer->setRealizeOperation(navOperation);
 	m_viewer->realize();
-
-	//m_view->getCamera()->setViewMatrix()
 
 	m_rootNode->setCullCallback(new CameraCopyCallback(bikeController, m_view));
 }

@@ -199,7 +199,8 @@ bool TroenGameBuilder::composeSceneGraph()
 	for (auto player : t->m_playersWithView)
 	{
 		osg::Group * node = player->hudController()->getViewNode();
-		player->playerNode()->addChild(node);
+		//put uhd no navigation window, not on main window
+		player->navigationWindow()->addElements(node);
 	}
 
 

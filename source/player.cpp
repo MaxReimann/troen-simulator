@@ -108,6 +108,7 @@ m_hasGameView(config->ownView[id])
 		m_gameView->addEventHandler(game->gameEventHandler());
 		m_gameView->addEventHandler(game->statsHandler());
 
+		//second window with navigation infos (map/bended views)
 		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController);
 		
 
