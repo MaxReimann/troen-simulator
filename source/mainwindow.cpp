@@ -277,6 +277,9 @@ MainWindow::MainWindow(QWidget * parent)
 	m_difficultyComboBox->addItem(QString("Hard"));
 	vBoxLayoutUserStudy->addWidget(m_difficultyComboBox);
 
+	m_exportCSV = new QCheckBox("Export trajectories to csv");
+	vBoxLayoutUserStudy->addWidget(m_exportCSV);
+
 	vBoxLayoutUserStudy->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -376,10 +379,10 @@ GameConfig MainWindow::getGameConfig()
 	config.useDebugView = m_debugViewCheckBox->isChecked();
 	config.testPerformance = m_testPerformanceCheckBox->isChecked();
 	config.useReflection = m_reflectionCheckBox->isChecked();
-
 	config.difficulty = m_difficultyComboBox->currentIndex();
 	config.studySetup = m_studySetupComboBox->currentIndex();
 	config.participantNumber = m_participantNumberSpinBox->value();
+	config.exportCSV = m_exportCSV->isChecked();
 	return config;
 
 }
@@ -522,6 +525,7 @@ void MainWindow::loadSettings()
 	m_participantNumberSpinBox->setValue(settings.value("participants").toInt());
 	m_difficultyComboBox->setCurrentIndex(settings.value("difficulty").toInt());
 	m_studySetupComboBox->setCurrentIndex(settings.value("studySetup").toInt());
+	m_exportCSV->setChecked(settings.value("exportCSV").toBool());
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{
@@ -561,6 +565,7 @@ void MainWindow::saveSettings()
 	settings.setValue("participants", QString::number(m_participantNumberSpinBox->value()));
 	settings.setValue("studySetup", QString::number(m_studySetupComboBox->currentIndex()));
 	settings.setValue("difficulty", QString::number(m_difficultyComboBox->currentIndex()));
+	settings.setValue("exportCSV", QString::number(m_exportCSV->isChecked()));
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{

@@ -69,6 +69,7 @@ namespace troen
 		QCheckBox*		m_reflectionCheckBox;
 		QCheckBox*		m_serverCheckBox;
 		QLabel*			m_statusLabel;
+		QCheckBox*  m_exportCSV;
 		
 		std::vector<QCheckBox*> m_ownViewCheckboxes;
 		QSpinBox*		m_timeLimitSpinBox;

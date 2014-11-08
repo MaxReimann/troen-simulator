@@ -131,7 +131,9 @@ bool TroenGameBuilder::build()
 	//
 	////////////////////////////////////////////////////////////////////////////////
 	t->m_bikeTracker = std::make_shared<tracking::TrackBike>(
-		t->m_playersWithView.at(0)->bikeController(), 10);
+		t->m_playersWithView.at(0)->bikeController(), 10,
+		t->m_gameConfig->participantNumber,
+		t->m_gameConfig->exportCSV);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -312,6 +314,11 @@ bool TroenGameBuilder::destroy()
 		player->bikeController()->killThread();
 	}
 
+	// write tracked states
+	std::cout << "[TroenGameBuilder::destroy] exporting trajectories" << std::endl;
+	t->m_bikeTracker.reset();
+
+
 	t->m_gameloopTimer.reset();
 	t->m_gameTimer.reset();
 
@@ -341,6 +348,8 @@ bool TroenGameBuilder::destroy()
 	t->m_audioManager->StopSFXs();
 	t->m_audioManager->StopSongs();
 	t->m_audioManager.reset();
+
+
 
 	shaders::m_allShaderPrograms.clear();
 

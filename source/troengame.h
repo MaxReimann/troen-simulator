@@ -43,7 +43,8 @@ namespace troen
 		int difficulty;
 		int participantNumber;
 		int studySetup;
-        // TODO: add Destructor to avoid memory leak
+		bool exportCSV;
+		// TODO: add Destructor to avoid memory leak
 	};
 }
 Q_DECLARE_METATYPE(troen::GameConfig)

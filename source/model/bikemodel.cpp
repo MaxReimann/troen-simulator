@@ -249,7 +249,7 @@ float BikeModel::calculateBikeFriction(const btScalar currentAngle, float timeFa
 	// if the handbrake is pulled, reduce friction to allow drifting
 	float bikeFriction = abs(m_steering) > BIKE_ROTATION_VALUE
 		? 0.03 * timeFactor
-		: fmin((1.f + timeFactor * 0.13f) * bikeFriction, 1.0);
+		: fmin((1.f + timeFactor * 0.13f) * 1.0, 1.0);
 
 	// restrict the drifting angle and increase friction if it gets too big
 	if (abs(currentAngle) > PI_4) {

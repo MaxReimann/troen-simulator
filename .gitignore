@@ -24,6 +24,8 @@ build
 
 CMakeLists.txt.user
 CMakeCache.txt
+/export
+
 
 /bullet
 /3rdParty
