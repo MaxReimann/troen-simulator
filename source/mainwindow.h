@@ -12,6 +12,7 @@
 #include "forwarddeclarations.h"
 #include "troengame.h"
 #include "qlabel.h"
+#include "constants.h"
 
 
 namespace troen

@@ -98,6 +98,21 @@ namespace troen
 	extern const int BENDED_VIEWS_ACTIVATED;
 	extern const int BENDED_VIEWS_DEACTIVATED;
 	extern const int TIME_TO_ACTIVATE_BENDED_VIEWS;
+
+	enum trackDifficulty
+	{
+		DIFFICULTY_EASY,
+		DIFFICULTY_HARD
+	};
+
+	enum studySetup
+	{
+		MAIN_BENDED_NAVI_MAP,
+		MAIN_BENDED_NAVI_NONE,
+		MAIN_NORMAL_NAVI_MAP,
+		MAIN_NORMAL_NAVI_BENDED
+	};
+
 }
 
 #endif

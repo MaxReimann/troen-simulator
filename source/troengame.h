@@ -39,6 +39,10 @@ namespace troen
 		bool useReflection;
 		bool ownView[MAX_BIKES];
 		std::string levelName;
+		//user study
+		int difficulty;
+		int participantNumber;
+		int studySetup;
         // TODO: add Destructor to avoid memory leak
 	};
 }

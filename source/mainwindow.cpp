@@ -246,6 +246,7 @@ MainWindow::MainWindow(QWidget * parent)
 	////////////////////////////////////////////////////////////////////////////////
 
 	m_studySetupComboBox = new QComboBox;
+	// order must be same as in constants.h studySetup
 	m_studySetupComboBox->addItem(QString("Main:Bended Nav:Map"));
 	m_studySetupComboBox->addItem(QString("Main:Bended Nav:None"));
 	m_studySetupComboBox->addItem(QString("Main:Normal Nav:Map"));
@@ -375,6 +376,10 @@ GameConfig MainWindow::getGameConfig()
 	config.useDebugView = m_debugViewCheckBox->isChecked();
 	config.testPerformance = m_testPerformanceCheckBox->isChecked();
 	config.useReflection = m_reflectionCheckBox->isChecked();
+
+	config.difficulty = m_difficultyComboBox->currentIndex();
+	config.studySetup = m_studySetupComboBox->currentIndex();
+	config.participantNumber = m_participantNumberSpinBox->value();
 	return config;
 
 }
