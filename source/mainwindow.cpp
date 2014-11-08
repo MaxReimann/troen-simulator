@@ -25,17 +25,21 @@ MainWindow::MainWindow(QWidget * parent)
 {
 	QMainWindow();
     // configure window
-    this->setWindowTitle("Troen");
+    this->setWindowTitle("Troen Simulator");
 
 	// create & order widgets
 	QTabWidget* tabsContainerWidget = new QTabWidget;
 	QWidget* vMainTab = new QWidget;
 	QWidget* vNetworkTab = new QWidget;
+	QWidget* vUserStudyTab = new QWidget;
 	QVBoxLayout* vBoxLayout = new QVBoxLayout;
 	QVBoxLayout* vBoxLayoutNetwork = new QVBoxLayout;
+	QVBoxLayout* vBoxLayoutUserStudy = new QVBoxLayout;
 	vMainTab->setLayout(vBoxLayout);
 	vNetworkTab->setLayout(vBoxLayoutNetwork);
-	tabsContainerWidget->addTab(vMainTab, "Main");
+	vUserStudyTab->setLayout(vBoxLayoutUserStudy);
+	tabsContainerWidget->addTab(vUserStudyTab, "User Study");
+	tabsContainerWidget->addTab(vMainTab, "Game");
 	tabsContainerWidget->addTab(vNetworkTab, "Network");
 	setCentralWidget(tabsContainerWidget);
 
@@ -234,6 +238,45 @@ MainWindow::MainWindow(QWidget * parent)
 
 	m_networkingReady = false;
 	m_networkPlayers = 0;
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	// User Study Tab
+	//
+	////////////////////////////////////////////////////////////////////////////////
+
+	m_studySetupComboBox = new QComboBox;
+	m_studySetupComboBox->addItem(QString("Main:Bended Nav:Map"));
+	m_studySetupComboBox->addItem(QString("Main:Bended Nav:None"));
+	m_studySetupComboBox->addItem(QString("Main:Normal Nav:Map"));
+	m_studySetupComboBox->addItem(QString("Main:Normal Nav:Bended"));
+
+	vBoxLayoutUserStudy->addWidget(m_studySetupComboBox);
+
+	// participantNumber
+	{
+		QWidget* participantNumberWidget = new QWidget;
+		QHBoxLayout* participantNumberLayout = new QHBoxLayout;
+		participantNumberWidget->setLayout(participantNumberLayout);
+
+		QLabel* participantNumberLabel = new QLabel("Participant number:");
+		participantNumberLayout->addWidget(participantNumberLabel);
+
+		m_participantNumberSpinBox = new QSpinBox;
+		m_participantNumberSpinBox->setMinimum(1);
+		m_participantNumberSpinBox->setMaximum(100);
+		m_participantNumberSpinBox->setValue(1);
+		participantNumberLayout->addWidget(m_participantNumberSpinBox);
+
+		vBoxLayoutUserStudy->addWidget(participantNumberWidget);
+	}
+
+	m_difficultyComboBox = new QComboBox;
+	m_difficultyComboBox->addItem(QString("Easy"));
+	m_difficultyComboBox->addItem(QString("Hard"));
+	vBoxLayoutUserStudy->addWidget(m_difficultyComboBox);
+
+	vBoxLayoutUserStudy->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -471,6 +514,9 @@ void MainWindow::loadSettings()
 	m_reflectionCheckBox->setChecked(settings.value("reflection").toBool());
 	m_serverCheckBox->setChecked(settings.value("server").toBool());
 	m_levelComboBox->setCurrentIndex(settings.value("level").toInt());
+	m_participantNumberSpinBox->setValue(settings.value("participants").toInt());
+	m_difficultyComboBox->setCurrentIndex(settings.value("difficulty").toInt());
+	m_studySetupComboBox->setCurrentIndex(settings.value("studySetup").toInt());
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{
@@ -507,6 +553,9 @@ void MainWindow::saveSettings()
 	settings.setValue("debugView", QString::number(m_debugViewCheckBox->isChecked()));
 	settings.setValue("reflection", QString::number(m_reflectionCheckBox->isChecked()));
 	settings.setValue("level", QString::number(m_levelComboBox->currentIndex()));
+	settings.setValue("participants", QString::number(m_participantNumberSpinBox->value()));
+	settings.setValue("studySetup", QString::number(m_studySetupComboBox->currentIndex()));
+	settings.setValue("difficulty", QString::number(m_difficultyComboBox->currentIndex()));
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{
