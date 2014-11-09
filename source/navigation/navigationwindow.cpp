@@ -3,12 +3,14 @@
 
 #include <osgViewer/View>
 #include <osgViewer/config/SingleWindow>
+#include <osg/ValueObject>
 
 // troen
 #include "../constants.h"
 #include "../view/nodefollowcameramanipulator.h"
 #include "../controller/bikecontroller.h"
 #include "../model/bikemodel.h"
+#include "../gameeventhandler.h"
 
 using namespace troen;
 
@@ -44,6 +46,7 @@ public:
 			m_navView->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
 			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + FOVY_ADDITION_MAX, aspect, znear, zfar);
 
+
 		}
 		//dont traverse ?
 		this->traverse(node, nv);
@@ -52,13 +55,15 @@ public:
 
 
 
-NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeController)
+NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeController, osg::ref_ptr<GameEventHandler> eventHandler)
 {
 	m_rootNode = new osg::Group();
 	m_view = new osgViewer::View();
 	m_view->getCamera()->setCullMask(CAMERA_MASK_MAIN);
 	m_view->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
 	m_view->setSceneData(m_rootNode);
+	m_view->addEventHandler(eventHandler.get());
+	m_view->setUserValue("window_type", (int) NAVIGATION_WINDOW);
 
 #ifdef WIN32
 	m_view->apply(new osgViewer::SingleWindow(800, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));

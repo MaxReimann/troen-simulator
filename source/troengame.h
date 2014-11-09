@@ -88,7 +88,7 @@ namespace troen
 		void pauseEvent();
 		void pauseSimulation();
 		void unpauseSimulation();
-		void resize(const int width, const int height);
+		void resize(int width, int height, int windowType=BOTH_WINDOWS);
 		void reloadLevel();
 
 

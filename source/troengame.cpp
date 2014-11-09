@@ -326,14 +326,17 @@ void TroenGame::unpauseSimulation()
 	if (m_gameTimer->paused()) m_gameTimer->start();
 }
 
-void TroenGame::resize(int width, int height){
+void TroenGame::resize(int width, int height, int windowType){
 	if (m_postProcessing){
 		m_postProcessing->setupTextures(width, height);
 	}
 
-	for (auto player : m_playersWithView)
+	if (windowType == NAVIGATION_WINDOW || windowType == BOTH_WINDOWS)
 	{
-		player->hudController()->resize(width, height);
+		for (auto player : m_playersWithView)
+		{
+			player->hudController()->resize(width, height);
+		}
 	}
 }
 

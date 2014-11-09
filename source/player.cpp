@@ -4,6 +4,7 @@
 // OSG
 #include <osgViewer/View>
 #include <osgViewer/ViewerEventHandlers>
+#include <osg/ValueObject>
 #ifdef WIN32
 #include <osgViewer/config/SingleScreen>
 #include <osgViewer/config/SingleWindow>
@@ -107,9 +108,10 @@ m_hasGameView(config->ownView[id])
 		m_gameView->setCameraManipulator(manipulator.get());
 		m_gameView->addEventHandler(game->gameEventHandler());
 		m_gameView->addEventHandler(game->statsHandler());
+		m_gameView->setUserValue("window_type", (int) MAIN_WINDOW);
 
 		//second window with navigation infos (map/bended views)
-		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController);
+		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler());
 		
 
 #ifdef WIN32

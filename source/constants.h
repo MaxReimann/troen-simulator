@@ -113,6 +113,13 @@ namespace troen
 		MAIN_NORMAL_NAVI_BENDED
 	};
 
+	enum windowType
+	{
+		MAIN_WINDOW,
+		NAVIGATION_WINDOW,
+		BOTH_WINDOWS
+	};
+
 }
 
 #endif

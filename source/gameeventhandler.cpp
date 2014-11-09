@@ -1,4 +1,6 @@
 #include "gameeventhandler.h"
+
+#include <osg/ValueObject>
 // troen
 #include "troengame.h"
 #include "gamelogic.h"
@@ -22,7 +24,10 @@ void GameEventHandler::attachGameLogic(std::shared_ptr<GameLogic>& gamelogic)
 	 if (ea.getEventType() == osgGA::GUIEventAdapter::RESIZE)
 	 {
 		 // re setup textures to new size
-		 m_troenGame->resize(ea.getWindowWidth(), ea.getWindowHeight());
+		 int window_type;
+		 aa.asView()->getUserValue("window_type", window_type);
+		 
+		 m_troenGame->resize(ea.getWindowWidth(), ea.getWindowHeight(), window_type);
 		 return false;
 	 }
 

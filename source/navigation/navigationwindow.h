@@ -15,7 +15,7 @@ namespace troen
 	class NavigationWindow
 	{
 	public:
-		NavigationWindow(std::shared_ptr<BikeController> controller);
+		NavigationWindow(std::shared_ptr<BikeController> bikeController, osg::ref_ptr<GameEventHandler> eventHandler);
 		void addElements(osg::ref_ptr<osg::Group> group);
 
 		osg::ref_ptr<osgViewer::View> mapView()		{ return m_view; };
