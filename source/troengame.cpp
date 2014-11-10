@@ -112,7 +112,7 @@ void TroenGame::startGameLoop()
 	// - checkForUserInput and updateModels
 	// - physics + updateViews
 	// - render;
-	m_deformationRendering->setDeformationStartEnd(0.1, 100000);
+	
 
 
 	// terminates when first viewer is closed
@@ -192,7 +192,7 @@ void TroenGame::startGameLoop()
 					for (auto player : m_playersWithView)
 					{
 						fixCulling(player->gameView());
-						fixCulling(player->navigationViewer()->getView(0));
+						//fixCulling(player->navigationViewer()->getView(0));
 					}
 				}
 				skippedFrames = 0;

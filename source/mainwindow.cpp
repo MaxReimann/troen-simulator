@@ -246,11 +246,12 @@ MainWindow::MainWindow(QWidget * parent)
 	////////////////////////////////////////////////////////////////////////////////
 
 	m_studySetupComboBox = new QComboBox;
-	// order must be same as in constants.h studySetup
-	m_studySetupComboBox->addItem(QString("Main:Bended Nav:Map"));
-	m_studySetupComboBox->addItem(QString("Main:Bended Nav:None"));
-	m_studySetupComboBox->addItem(QString("Main:Normal Nav:Map"));
-	m_studySetupComboBox->addItem(QString("Main:Normal Nav:Bended"));
+
+
+	m_studySetupComboBox->addItem(MAIN_BENDED_NAVI_MAP);
+	m_studySetupComboBox->addItem(MAIN_BENDED_NAVI_NONE);
+	m_studySetupComboBox->addItem(MAIN_NORMAL_NAVI_MAP);
+	m_studySetupComboBox->addItem(MAIN_NORMAL_NAVI_BENDED);
 
 	vBoxLayoutUserStudy->addWidget(m_studySetupComboBox);
 
@@ -281,6 +282,7 @@ MainWindow::MainWindow(QWidget * parent)
 	vBoxLayoutUserStudy->addWidget(m_exportCSV);
 
 	vBoxLayoutUserStudy->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+	vBoxLayoutUserStudy->addWidget(m_gameStartButton);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -380,7 +382,7 @@ GameConfig MainWindow::getGameConfig()
 	config.testPerformance = m_testPerformanceCheckBox->isChecked();
 	config.useReflection = m_reflectionCheckBox->isChecked();
 	config.difficulty = m_difficultyComboBox->currentIndex();
-	config.studySetup = m_studySetupComboBox->currentIndex();
+	config.studySetup = windowSetupChoices[m_studySetupComboBox->currentIndex()];
 	config.participantNumber = m_participantNumberSpinBox->value();
 	config.exportCSV = m_exportCSV->isChecked();
 	return config;

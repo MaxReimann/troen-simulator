@@ -84,7 +84,7 @@ AbstractView()
 	stateSet->addUniform(m_bendedUniform);
 
 	m_bendingActiveUniform = new osg::Uniform("bendingActivated",false);
-	stateSet->addUniform(m_bendingActiveUniform);
+
 
 	m_itemGroup = new osg::Group();
 	m_itemGroup->setName("itemGroup");

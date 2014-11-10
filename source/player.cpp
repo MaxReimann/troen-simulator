@@ -92,11 +92,12 @@ m_hasGameView(config->ownView[id])
 	if (config->ownView[m_id])
 	{
 		m_playerNode = new osg::Group();
-		m_bikeController->addUniformsToPlayerNode();
+		m_bikeController->addUniformsToNode(m_playerNode);
 
 		m_gameView = new osgViewer::View();
 		m_gameView->getCamera()->setCullMask(CAMERA_MASK_MAIN);
 		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
+		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("bendingActivated", true));
 		m_gameView->setSceneData(m_playerNode);
 
 		osg::ref_ptr<NodeFollowCameraManipulator> manipulator
@@ -112,6 +113,7 @@ m_hasGameView(config->ownView[id])
 
 		//second window with navigation infos (map/bended views)
 		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler());
+		//m_bikeController->addUniformsToNode(m_navigationWindow->mapNode());
 		
 
 #ifdef WIN32

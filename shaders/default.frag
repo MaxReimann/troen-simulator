@@ -4,16 +4,23 @@ uniform int modelID;
 uniform float glowIntensity;
 uniform float trueColor;
 uniform float alpha;
+uniform bool bendingActivated;
 
 in vec2 uv;
 in float scaled_height;
 
 void main() {
+
+	vec4 test;
+	if (bendingActivated)
+		test = vec4(0.0,1.0,0.0,1.0);
+	else
+		test = vec4(1.0,0.0,0.0,1.0);
 	vec4 diffuseColor =  vec4(texture(diffuseTexture, uv).xyz, alpha);
 	vec4 adjustedColor = vec4(diffuseColor.x, diffuseColor.x / 2.0, diffuseColor.x, 1.0);
 
 	// decide whether to use the original or adjusted color, based on the trueColor uniform
-	gl_FragData[0] = mix(adjustedColor, diffuseColor, trueColor);
+	gl_FragData[0] = test;//mix(adjustedColor, diffuseColor, trueColor);
 
 	/*MR: for some very akward reason, the last parameter has to be set to 1 here (although the texture is only GL_RGB..), to render the ramps
 	and blocks into the idlayer, while it does not affect other objects like the itemboxes which also use default.frag..*/

@@ -36,6 +36,7 @@
 #endif
 
 #include <thread>
+#include "osgDB/WriteFile"
 
 using namespace troen;
 
@@ -68,14 +69,14 @@ bool TroenGameBuilder::build()
 	////////////////////////////////////////////////////////////////////////////////
 	std::cout << "[TroenGame::build] sound ..." << std::endl;
 	t->m_audioManager = std::shared_ptr<sound::AudioManager>(new sound::AudioManager);
-	t->m_audioManager->LoadSFX("data/sound/explosion.wav");
-	t->m_audioManager->LoadSong("data/sound/theGameHasChanged.mp3");
-	t->m_audioManager->LoadEngineSound();
-	t->m_audioManager->SetSongsVolume(0.5);
+	//t->m_audioManager->LoadSFX("data/sound/explosion.wav");
+	//t->m_audioManager->LoadSong("data/sound/theGameHasChanged.mp3");
+	//t->m_audioManager->LoadEngineSound();
+	//t->m_audioManager->SetSongsVolume(0.5);
 
-	t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
-	t->m_audioManager->PlayEngineSound();
-	t->m_audioManager->SetMasterVolume(0.f);
+	//t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
+	//t->m_audioManager->PlayEngineSound();
+	//t->m_audioManager->SetMasterVolume(0.f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -164,6 +165,7 @@ bool TroenGameBuilder::composeSceneGraph()
 		t->m_postProcessing = std::make_shared<PostProcessing>(t->m_rootNode, viewport->width(), viewport->height());
 
 		t->m_sceneWithSkyboxNode = t->m_postProcessing->getSceneNode();
+		t->m_rootNode->addChild(t->m_sceneWithSkyboxNode);
 
 		//explicit call, to enable glow from start
 		t->resize(viewport->width(), viewport->height());
@@ -179,10 +181,16 @@ bool TroenGameBuilder::composeSceneGraph()
 	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
 	t->m_sceneWithSkyboxNode->addChild(bendedScene);
 
+	osg::ref_ptr<osg::Group> unBendedScene = new osg::Group();
+	unBendedScene->addChild(t->m_sceneNode);
+	unBendedScene->addChild(t->m_skyDome.get());
+
 	for (auto player : t->m_playersWithView)
 	{
-		player->playerNode()->addChild(bendedScene);
-		player->navigationWindow()->addElements(t->m_rootNode);
+		player->playerNode()->addChild(t->m_rootNode);
+
+		//if (t->m_gameConfig->studySetup == MAIN_BENDED_NAVI_MAP)
+		player->navigationWindow()->addElements(unBendedScene);
 	}
 
 
@@ -211,9 +219,6 @@ bool TroenGameBuilder::composeSceneGraph()
 	}
 
 
-	if (t->m_gameConfig->usePostProcessing)
-		t->m_rootNode->addChild(t->m_sceneWithSkyboxNode);
-
 	osg::ref_ptr<osg::Group> radarScene = new osg::Group;
 
 	for (auto player : t->m_players)
@@ -234,6 +239,7 @@ bool TroenGameBuilder::composeSceneGraph()
  	double nearD = 0.1;
 	t->m_deformationRendering = new SplineDeformationRendering(bendedScene);
  	t->m_deformationRendering->setDeformationStartEnd(nearD, radius);
+	t->m_deformationRendering->setDeformationStartEnd(0.1, 100000);
  	t->m_deformationRendering->setPreset(4);
 	t->enableBendedViews();
 
@@ -247,10 +253,9 @@ bool TroenGameBuilder::composeSceneGraph()
 	// disbled optimizer for now, takes a lot of time to execute
 	//std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
 	//osgUtil::Optimizer optimizer;
-	//optimizer.optimize(t->m_rootNode, 		optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
+	//optimizer.optimize(t->m_rootNode, optimizer.CHECK_GEOMETRY | optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
 	//	optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
 	//std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
-
 
 	return true;
 }
@@ -264,6 +269,7 @@ bool TroenGameBuilder::setupReflections()
 
 	return true;
 }
+
 
 bool TroenGameBuilder::buildInput()
 {

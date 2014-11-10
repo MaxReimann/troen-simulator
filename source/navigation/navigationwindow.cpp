@@ -23,16 +23,19 @@ public:
 	osg::ref_ptr<osgViewer::View> m_navView;
 	std::shared_ptr<BikeController> bikeController;
 
+
 	CameraCopyCallback(std::shared_ptr<BikeController> controller, osg::ref_ptr<osgViewer::View> navigationView) : NodeCallback()
 	{
 		m_navView = navigationView;
 		bikeController = controller;
+
 	}
 
 	void operator()(osg::Node *node, osg::NodeVisitor *nv)
 	{
 		if (nv->getVisitorType() == osg::NodeVisitor::CULL_VISITOR)
 		{
+ 
 			osg::Vec3f gameEye, c, gameUp;
 			osg::Vec3f eye, center, up;
 
@@ -53,6 +56,21 @@ public:
 	}
 };
 
+class UpdateShaderVariables : public osg::NodeCallback
+{
+public:
+	osg::ref_ptr<osg::Uniform> m_bendingActiveUniform;
+	UpdateShaderVariables(osg::ref_ptr<osg::Uniform> bendingUniform)
+	{
+		m_bendingActiveUniform = bendingUniform;
+	}
+
+	void operator()(osg::Node *node, osg::NodeVisitor *nv)
+	{
+		m_bendingActiveUniform->set(false);
+		this->traverse(node, nv);
+	}
+};
 
 
 NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeController, osg::ref_ptr<GameEventHandler> eventHandler)
@@ -61,6 +79,8 @@ NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeControlle
 	m_view = new osgViewer::View();
 	m_view->getCamera()->setCullMask(CAMERA_MASK_MAIN);
 	m_view->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
+	osg::ref_ptr<osg::Uniform> bendingActiveUniform = new osg::Uniform("bendingActivated", false);
+	m_view->getCamera()->getOrCreateStateSet()->addUniform(bendingActiveUniform);
 	m_view->setSceneData(m_rootNode);
 	m_view->addEventHandler(eventHandler.get());
 	m_view->setUserValue("window_type", (int) NAVIGATION_WINDOW);
@@ -78,7 +98,7 @@ NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeControlle
 	m_viewer->setRealizeOperation(navOperation);
 	m_viewer->realize();
 
-	m_rootNode->setCullCallback(new CameraCopyCallback(bikeController, m_view));
+	m_view->getCamera()->setCullCallback(new CameraCopyCallback(bikeController, m_view));
 }
 
 void NavigationWindow::addElements(osg::ref_ptr<osg::Group> group)

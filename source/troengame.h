@@ -42,7 +42,7 @@ namespace troen
 		//user study
 		int difficulty;
 		int participantNumber;
-		int studySetup;
+		QString studySetup;
 		bool exportCSV;
 		// TODO: add Destructor to avoid memory leak
 	};

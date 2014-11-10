@@ -43,7 +43,7 @@ namespace troen
 		void attachWorld(std::shared_ptr<PhysicsWorld> world);
 		void attachGameView(osg::ref_ptr<osgViewer::View> gameView);
 
-		void addUniformsToPlayerNode();
+		void addUniformsToNode(osg::ref_ptr<osg::Group> group);
 
 		//
 		// logic events

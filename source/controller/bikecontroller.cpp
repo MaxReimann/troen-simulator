@@ -412,7 +412,7 @@ void BikeController::updateNetworkFence(btTransform transform)
 	}
 }
 
-void BikeController::addUniformsToPlayerNode()
+void BikeController::addUniformsToNode(osg::ref_ptr<osg::Group> group)
 {
 	// playerNode is the node which holds the rootNode of the entire scene
 	// it is used to expose player specific information to the shaders
@@ -423,7 +423,9 @@ void BikeController::addUniformsToPlayerNode()
 	m_timeFactorUniform = new osg::Uniform("timeFactor", 1.f);
 	m_healthUniform = new osg::Uniform("healthNormalized", m_player->health() / BIKE_DEFAULT_HEALTH);
 
-	osg::ref_ptr<osg::StateSet> stateset = m_player->playerNode()->getOrCreateStateSet();
+
+
+	osg::ref_ptr<osg::StateSet> stateset = group->getOrCreateStateSet();
 	stateset->addUniform(m_timeOfCollisionUniform);
 	stateset->addUniform(m_velocityUniform);
 	stateset->addUniform(m_timeFactorUniform);

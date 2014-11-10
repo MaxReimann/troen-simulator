@@ -98,38 +98,6 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 
 
 #endif
-#ifdef false
-	osg::MatrixTransform* matrixTransform = new osg::MatrixTransform(initialTransform);
-	matrixTransform->setNodeMask(CAMERA_MASK_MAIN);
-
-	osg::Vec4 whiteColor = osg::Vec4(1, 1, 1, 1.0);
-	osg::ref_ptr<osg::Material> material = new osg::Material;
-	material->setColorMode(osg::Material::AMBIENT);
-	material->setAmbient(osg::Material::FRONT_AND_BACK,
-		osg::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
-	material->setDiffuse(osg::Material::FRONT_AND_BACK,
-		whiteColor*0.8f);
-	material->setSpecular(osg::Material::FRONT_AND_BACK, whiteColor);
-	material->setShininess(osg::Material::FRONT_AND_BACK, 1.0f);
-	material->setEmission(osg::Material::Face::FRONT, osg::Vec4f(.5, .5, .5, 1));
-
-	osg::ref_ptr<osg::ShapeDrawable> debugShape = new osg::ShapeDrawable;
-	debugShape->setShape(new osg::Box(osg::Vec3(), 2 ,4, 2));
-
-	debugShape->setColor(osg::Vec4f(1,1,1,1));
-
-	//debugShape->setColor(osg::Vec4f(1,1,1,1));
-	osg::ref_ptr<osg::Geode> debugNode = new osg::Geode;
-	debugNode->addDrawable(debugShape.get());
-
-	debugNode->getOrCreateStateSet()->setAttributeAndModes(material.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::MATERIAL);
-
-	matrixTransform->setName("bikeGroup");
-	matrixTransform->addChild(debugNode);
-
-	pat->addChild(matrixTransform);
-#endif
-
 	// create box for radar
 	osg::Vec4 color4 = osg::Vec4(m_playerColor, 1.0);
 	osg::ref_ptr<osg::ShapeDrawable> mark_shape = new osg::ShapeDrawable;

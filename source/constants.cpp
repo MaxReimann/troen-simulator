@@ -105,4 +105,12 @@ namespace troen
 	const int BENDED_VIEWS_ACTIVATED(3000);
 	const int BENDED_VIEWS_DEACTIVATED(12000);
 	const int TIME_TO_ACTIVATE_BENDED_VIEWS(10000);
+
+
+	// study setup
+	const QString MAIN_BENDED_NAVI_MAP("Main:Bended Nav:Map");
+	const QString MAIN_BENDED_NAVI_NONE("Main:Bended Nav:None");
+	const QString MAIN_NORMAL_NAVI_MAP("Main:Normal Nav:Map");
+	const QString MAIN_NORMAL_NAVI_BENDED("Main:Normal Nav:Bended");
+	const QString windowSetupChoices[] { MAIN_BENDED_NAVI_MAP, MAIN_BENDED_NAVI_NONE, MAIN_BENDED_NAVI_NONE, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
 }
