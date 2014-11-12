@@ -13,7 +13,7 @@
 
 #include "controller/levelcontroller.h"
 #include "controller/bikecontroller.h"
-#include "controller/fencecontroller.h"
+#include "controller/routecontroller.h"
 #include "controller/levelcontroller.h"
 #include "controller/hudcontroller.h"
 

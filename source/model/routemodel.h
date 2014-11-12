@@ -5,10 +5,10 @@
 
 namespace troen
 {
-	class FenceModel : public AbstractModel
+	class RouteModel : public AbstractModel
 	{
 	public:
-		FenceModel(FenceController* fenceController);
+		RouteModel(RouteController* routeController);
 		void attachWorld(std::shared_ptr<PhysicsWorld>& world);
 
 		void addFencePart(const btVector3 a, const btVector3 b);
@@ -17,7 +17,7 @@ namespace troen
 		void enforceFencePartsLimit();
 
 	private:
-		FenceController* m_fenceController;
+		RouteController* m_routeController;
 		std::weak_ptr<PhysicsWorld> m_world;
 
 		std::deque<std::shared_ptr<btRigidBody>>		m_rigidBodyDeque;

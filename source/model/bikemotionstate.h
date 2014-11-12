@@ -6,7 +6,7 @@
 #include <btBulletDynamicsCommon.h>
 // troen
 #include "../player.h"
-#include "../controller/fencecontroller.h"
+#include "../controller/routecontroller.h"
 #include "../model/bikemodel.h"
 
 namespace troen

@@ -10,10 +10,10 @@
 
 namespace troen
 {
-	class FenceController : public AbstractController
+	class RouteController : public AbstractController
 	{
 	public:
-		FenceController(Player * player, const btTransform initialTransform = btTransform::getIdentity());
+		RouteController(Player * player, const btTransform initialTransform = btTransform::getIdentity());
 		void update(btVector3 position, btQuaternion rotation);
 		void attachWorld(std::shared_ptr<PhysicsWorld>& world);
 
@@ -37,8 +37,8 @@ namespace troen
 		void setBendingActive(bool active);
 
 	private:
-		std::shared_ptr<FenceView> m_fenceView;
-		std::shared_ptr<FenceModel> m_fenceModel;
+		std::shared_ptr<RouteView> m_routeView;
+		std::shared_ptr<RouteModel> m_routeModel;
 
 		void adjustPositionUsingFenceOffset(const btQuaternion& rotation, btVector3& position);
 		btVector3 m_lastPosition;

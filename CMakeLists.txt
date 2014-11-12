@@ -194,8 +194,8 @@ set(sources
 	source/model/bikemodel.cpp
 	source/model/levelmodel.h
 	source/model/levelmodel.cpp
-	source/model/fencemodel.h
-	source/model/fencemodel.cpp
+	source/model/routemodel.h
+	source/model/routemodel.cpp
 	source/model/abstractmodel.h
 	source/model/abstractmodel.cpp
 	source/model/itemmodel.h
@@ -209,8 +209,8 @@ set(sources
 	source/controller/bikecontroller.cpp
 	source/controller/levelcontroller.h
 	source/controller/levelcontroller.cpp
-	source/controller/fencecontroller.h
-	source/controller/fencecontroller.cpp
+	source/controller/routecontroller.h
+	source/controller/routecontroller.cpp
 	source/controller/abstractcontroller.h
 	source/controller/abstractcontroller.cpp
 	source/controller/hudcontroller.h
@@ -223,8 +223,8 @@ set(sources
 	source/view/bikeview.cpp
 	source/view/levelview.h
 	source/view/levelview.cpp
-	source/view/fenceview.h
-	source/view/fenceview.cpp
+	source/view/routeview.h
+	source/view/routeview.cpp
 	source/view/abstractview.h
 	source/view/abstractview.cpp
 	source/view/shaders.h

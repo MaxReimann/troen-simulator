@@ -16,7 +16,7 @@
 #include "controller/bikecontroller.h"
 #include "controller/levelcontroller.h"
 #include "controller/bikecontroller.h"
-#include "controller/fencecontroller.h"
+#include "controller/routecontroller.h"
 #include "controller/itemcontroller.h"
 #include "sound/audiomanager.h"
 #include "model/objectinfo.h"
@@ -160,7 +160,7 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 		case FENCETYPE:
 			handleCollisionOfBikeAndFence(
 				dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
-				dynamic_cast<FenceController*>(collisionBodyControllers[otherIndex]),
+				dynamic_cast<RouteController*>(collisionBodyControllers[otherIndex]),
 				contactManifold);
 			break;
 
@@ -225,7 +225,7 @@ void GameLogic::separationEvent(btRigidBody * pBody0, btRigidBody * pBody1)
 		case FENCETYPE:
 		{
 						  // workaround to deal with bike bouncing between own and other fence
-						  FenceController * fence = dynamic_cast<FenceController*>(collisionBodyControllers[otherIndex]);
+						  RouteController * fence = dynamic_cast<RouteController*>(collisionBodyControllers[otherIndex]);
 						  BikeController * bike = dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]);
 						  bike->rememberFenceCollision(fence);
 						  // end workaround
@@ -300,7 +300,7 @@ void GameLogic::handleCollisionOfBikeAndNonmovingObject(
 
 void GameLogic::handleCollisionOfBikeAndFence(
 	BikeController* bike,
-	FenceController* fence,
+	RouteController* fence,
 	btPersistentManifold* contactManifold)
 {
 
@@ -355,7 +355,7 @@ void GameLogic::handlePlayerDeathOnFence(
 	if (fenceBike == deadBike) // hit own fence
 	{
 		// workaround to deal with bike bouncing between own and other fence
-		std::pair<float, FenceController*> lastFenceCollision =	deadBike->lastFenceCollision();
+		std::pair<float, RouteController*> lastFenceCollision =	deadBike->lastFenceCollision();
 		if (false && lastFenceCollision.first > g_gameTime-400)
 		{
 			handlePlayerDeathOnFence(lastFenceCollision.second->player()->bikeController().get(), deadBike);

@@ -11,10 +11,10 @@
 
 namespace troen
 {
-	class FenceView : public AbstractView
+	class RouteView : public AbstractView
 	{
 	public:
-		FenceView(FenceController* fenceController, const osg::Vec3 color, std::shared_ptr<AbstractModel>& model);
+		RouteView(RouteController* fenceController, const osg::Vec3 color, std::shared_ptr<AbstractModel>& model);
 
 		void addFencePart(const osg::Vec3 lastPosition, const osg::Vec3 currentPosition);
 		void removeAllFences();
@@ -39,7 +39,7 @@ namespace troen
 		osg::ref_ptr<osg::Group>		m_radarElementsGroup;
 		std::deque<osg::ref_ptr<osg::MatrixTransform>>	m_radarFenceBoxes;
 
-		std::weak_ptr<FenceModel>		m_model;
+		std::weak_ptr<RouteModel>		m_model;
 
 		osg::Uniform*	m_fadeOutFactorUniform;
 		osg::Uniform*   m_bendingActiveUniform;
@@ -47,6 +47,6 @@ namespace troen
 		osg::Vec3 m_playerColor;
 		float m_fenceHeight;
 
-		FenceController* m_fenceController;
+		RouteController* m_fenceController;
 	};
 }

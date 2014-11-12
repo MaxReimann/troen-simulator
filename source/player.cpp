@@ -78,7 +78,7 @@ m_hasGameView(config->ownView[id])
 		initialTransform,
 		game->resourcePool());
 
-	m_fenceController = std::make_shared<FenceController>(this, initialTransform);
+	m_routeController = std::make_shared<RouteController>(this, initialTransform);
 
 	// HUDController must be initialized later, because it
 	// can only be created, once all Players are created
@@ -219,7 +219,7 @@ Player::~Player()
 	// controllers
 	//
 	m_bikeController.reset();
-	m_fenceController.reset();
+	m_routeController.reset();
 	m_HUDController.reset();
 
 	//

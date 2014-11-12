@@ -7,7 +7,7 @@
 #include "../globals.h"
 #include "../player.h"
 
-#include "../controller/fencecontroller.h"
+#include "../controller/routecontroller.h"
 #include "../controller/hudcontroller.h"
 
 #include "../model/physicsworld.h"
@@ -47,7 +47,7 @@ BikeController::BikeController(
 	m_turboInitiated(false),
 	m_timeOfLastCollision(-1),
 	m_respawnTime(-1),
-	m_lastFenceCollision(std::make_pair<float, FenceController*>(0, nullptr))
+	m_lastFenceCollision(std::make_pair<float, RouteController*>(0, nullptr))
 {
 	m_view = m_bikeView = std::make_shared<BikeView>(player->color(), resourcePool);
 
@@ -75,7 +75,7 @@ void BikeController::registerCollision(const btScalar impulse)
 	m_player->increaseHealth(-1 * impulse);
 }
 
-void BikeController::rememberFenceCollision(FenceController* fence)
+void BikeController::rememberFenceCollision(RouteController* fence)
 {
 	m_lastFenceCollision.first = g_gameTime;
 	m_lastFenceCollision.second = fence;

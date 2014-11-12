@@ -10,7 +10,7 @@
 
 #include "controller/bikecontroller.h"
 #include "controller/bikecontroller.h"
-#include "controller/fencecontroller.h"
+#include "controller/routecontroller.h"
 #include "controller/hudcontroller.h"
 #include "navigation/navigationwindow.h"
 
@@ -46,8 +46,8 @@ namespace troen
 		//
 		std::shared_ptr<BikeController>	bikeController()
 			{ return m_bikeController; };
-		std::shared_ptr<FenceController> fenceController()
-			{ return m_fenceController; };
+		std::shared_ptr<RouteController> fenceController()
+			{ return m_routeController; };
 		std::shared_ptr<HUDController>	hudController()
 			{ return m_HUDController; };
 		//
@@ -99,7 +99,7 @@ namespace troen
 		// controllers
 		//
 		std::shared_ptr<BikeController>	m_bikeController;
-		std::shared_ptr<FenceController> m_fenceController;
+		std::shared_ptr<RouteController> m_routeController;
 		std::shared_ptr<HUDController>	m_HUDController;
 
 		//

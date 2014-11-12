@@ -76,14 +76,14 @@ namespace troen
 
 	class BikeModel;
 	class LevelModel;
-	class FenceModel;
+	class RouteModel;
 	class AbstractModel;
 	class PhysicsWorld;
 	class ItemModel;
 
 	class BikeController;
 	class LevelController;
-	class FenceController;
+	class RouteController;
 	class AbstractController;
 	class HUDController;
 	class ItemController;
@@ -91,7 +91,7 @@ namespace troen
 
 	class BikeView;
 	class LevelView;
-	class FenceView;
+	class RouteView;
 	class AbstractView;
 	class HUDView;
 	class ItemView;

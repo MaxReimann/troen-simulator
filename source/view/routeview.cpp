@@ -1,4 +1,4 @@
-#include "fenceview.h"
+#include "routeview.h"
 // OSG
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
@@ -9,22 +9,22 @@
 // troen
 #include "../constants.h"
 #include "shaders.h"
-#include "../model/fencemodel.h"
-#include "../controller/fencecontroller.h"
+#include "../model/routemodel.h"
+#include "../controller/routecontroller.h"
 
 using namespace troen;
 
-FenceView::FenceView(FenceController* fenceController, osg::Vec3 color, std::shared_ptr<AbstractModel>& model) :
+RouteView::RouteView(RouteController* routeController, osg::Vec3 color, std::shared_ptr<AbstractModel>& model) :
 AbstractView(),
-m_model(std::static_pointer_cast<FenceModel>(model)),
+m_model(std::static_pointer_cast<RouteModel>(model)),
 m_playerColor(color),
-m_fenceController(fenceController)
+m_fenceController(routeController)
 {
 	initializeFence();
 	initializeShader();
 }
 
-void FenceView::initializeFence()
+void RouteView::initializeFence()
 {
 	m_fenceHeight = FENCE_HEIGHT_VIEW;
 
@@ -69,12 +69,12 @@ void FenceView::initializeFence()
 	m_node->getOrCreateStateSet()->addUniform(m_bendingActiveUniform);
 }
 
-void FenceView::updateFadeOutFactor(float fadeOutFactor)
+void RouteView::updateFadeOutFactor(float fadeOutFactor)
 {
 	m_fadeOutFactorUniform->set(fadeOutFactor);
 }
 
-void FenceView::updateFenceGap(osg::Vec3 lastPosition, osg::Vec3 position)
+void RouteView::updateFenceGap(osg::Vec3 lastPosition, osg::Vec3 position)
 {
 	if (m_coordinates->size() > 1) {
 		m_coordinates->at(m_coordinates->size() - 2) = osg::Vec3(position.x(), position.y(), position.z());
@@ -84,7 +84,7 @@ void FenceView::updateFenceGap(osg::Vec3 lastPosition, osg::Vec3 position)
 	}
 }
 
-void FenceView::initializeShader()
+void RouteView::initializeShader()
 {
 	osg::ref_ptr<osg::StateSet> NodeState = m_node->getOrCreateStateSet();
 	
@@ -104,7 +104,7 @@ void FenceView::initializeShader()
 	shaders::m_allShaderPrograms[shaders::FENCE]->addBindAttribLocation("a_relHeight", 5);
 }
 
-void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
+void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 {
 
 	if (m_coordinates->size() == 0)
@@ -155,7 +155,7 @@ void FenceView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 	m_drawArrays->setCount(m_coordinates->size());
 }
 
-void FenceView::removeAllFences()
+void RouteView::removeAllFences()
 {
 	m_node->removeChild(m_geode);
 	for (auto radarFenceBox : m_radarFenceBoxes)
@@ -166,7 +166,7 @@ void FenceView::removeAllFences()
 	initializeFence();
 }
 
-void FenceView::enforceFencePartsLimit()
+void RouteView::enforceFencePartsLimit()
 {
 	int maxFenceParts = m_fenceController->getFenceLimit();
 
@@ -192,21 +192,21 @@ void FenceView::enforceFencePartsLimit()
 	}
 }
 
-void FenceView::showFencesInRadarForPlayer(const int id)
+void RouteView::showFencesInRadarForPlayer(const int id)
 {
 	osg::Node::NodeMask currentMask = m_radarElementsGroup->getNodeMask();
 	osg::Node::NodeMask newMask = currentMask | CAMERA_MASK_PLAYER[id];
 	m_radarElementsGroup->setNodeMask(newMask);
 }
 
-void FenceView::hideFencesInRadarForPlayer(const int id)
+void RouteView::hideFencesInRadarForPlayer(const int id)
 {
 	osg::Node::NodeMask currentMask = m_radarElementsGroup->getNodeMask();
 	osg::Node::NodeMask newMask = currentMask & ~ CAMERA_MASK_PLAYER[id];
 	m_radarElementsGroup->setNodeMask(newMask);
 }
 
-void FenceView::setBendingActive(bool val)
+void RouteView::setBendingActive(bool val)
 {
 	m_bendingActiveUniform->set(val);
 }

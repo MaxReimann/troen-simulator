@@ -69,7 +69,7 @@ namespace troen
 			btPersistentManifold* contactManifold);
 		void handleCollisionOfBikeAndFence(
 			BikeController* bike,
-			FenceController* fence,
+			RouteController* fence,
 			btPersistentManifold* contactManifold);
 		void handleCollisionOfTwoBikes(
 			BikeController* bike1,

@@ -1,25 +1,26 @@
-#include "fencemodel.h"
+#include "routemodel.h"
 // troen
 #include "../constants.h"
 #include "physicsworld.h"
 #include "objectinfo.h"
-#include "../controller/fencecontroller.h"
+#include "../controller/routecontroller.h"
+
 
 using namespace troen;
 
-FenceModel::FenceModel(FenceController* fenceController)
+RouteModel::RouteModel(RouteController* routeController)
 {
 	AbstractModel();
-	m_fenceController = fenceController;
+	m_routeController = routeController;
 	m_rigidBodyDeque = std::deque<std::shared_ptr<btRigidBody>>();
 }
 
-void FenceModel::attachWorld(std::shared_ptr<PhysicsWorld>& world)
+void RouteModel::attachWorld(std::shared_ptr<PhysicsWorld>& world)
 {
 	m_world = world;
 }
 
-void FenceModel::addFencePart(btVector3 a, btVector3 b)
+void RouteModel::addFencePart(btVector3 a, btVector3 b)
 {
 	btVector3 fenceVector = b - a;
 
@@ -53,7 +54,7 @@ void FenceModel::addFencePart(btVector3 a, btVector3 b)
 
 	std::shared_ptr<btRigidBody> fenceRigidBody = std::make_shared<btRigidBody>(m_fenceRigidBodyCI);
 
-	ObjectInfo* info = new ObjectInfo(m_fenceController, FENCETYPE);
+	ObjectInfo* info = new ObjectInfo(m_routeController, FENCETYPE);
 	fenceRigidBody->setUserPointer(info);
 
 	m_collisionShapeDeque.push_back(fenceShape);
@@ -65,7 +66,7 @@ void FenceModel::addFencePart(btVector3 a, btVector3 b)
 	enforceFencePartsLimit();
 }
 
-void FenceModel::removeAllFences()
+void RouteModel::removeAllFences()
 {
 	for (auto rigidBody : m_rigidBodyDeque)
 		m_world.lock()->removeRigidBody(rigidBody.get());
@@ -74,9 +75,9 @@ void FenceModel::removeAllFences()
 	m_collisionShapeDeque.clear();
 }
 
-void FenceModel::enforceFencePartsLimit()
+void RouteModel::enforceFencePartsLimit()
 {
-	int maxFenceParts = m_fenceController->getFenceLimit();
+	int maxFenceParts = m_routeController->getFenceLimit();
 
 	size_t rigidBodyDequeSize = m_rigidBodyDeque.size();
 	if (maxFenceParts != 0 && rigidBodyDequeSize > maxFenceParts)
@@ -86,7 +87,7 @@ void FenceModel::enforceFencePartsLimit()
 	}
 }
 
-void FenceModel::removeFirstFencePart()
+void RouteModel::removeFirstFencePart()
 {
 	m_world.lock()->removeRigidBody(m_rigidBodyDeque.front().get());
 	m_rigidBodyDeque.pop_front();
