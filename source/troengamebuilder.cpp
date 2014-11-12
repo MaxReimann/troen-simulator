@@ -50,6 +50,8 @@ bool TroenGameBuilder::build()
 	t->m_sceneNode = new osg::Group;
 
 	osg::DisplaySettings::instance()->setNumMultiSamples(NUM_MULTISAMPLES);
+	t->m_sceneNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+
 	std::cout << "[TroenGame::build] building game ..." << std::endl;
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -155,6 +157,93 @@ bool TroenGameBuilder::build()
 
 bool TroenGameBuilder::composeSceneGraph()
 {
+	osg::ref_ptr<osg::Group> bendedScene = new osg::Group();
+	osg::ref_ptr<osg::Group> unBendedScene = new osg::Group();
+	QString studySetup = t->m_gameConfig->studySetup;
+
+	t->m_rootNode = composePostprocessing();
+	t->m_rootNode->addChild(t->m_skyDome.get());
+
+	// viewer root nodes
+	{
+		//node on which bending operation is applied
+		bendedScene->addChild(t->m_sceneNode);
+		t->m_rootNode->addChild(bendedScene);
+
+		unBendedScene->addChild(t->m_sceneNode);
+		unBendedScene->addChild(t->m_skyDome.get());
+
+		for (auto player : t->m_playersWithView)
+		{
+			player->playerNode()->addChild(t->m_rootNode);
+
+			if (studySetup == MAIN_BENDED_NAVI_MAP)
+				player->navigationWindow()->addElements(unBendedScene);
+		}
+
+	}
+
+	// level elements
+	{ 
+		t->m_sceneNode->addChild(t->m_levelController->getViewNode());
+
+		for (auto player : t->m_players)
+			t->m_sceneNode->addChild(player->fenceController()->getViewNode());
+	}
+
+	// sceneNode has to be added to reflection after adding all (non hud) objects
+	composeReflections();
+
+	// hud & radar
+	{
+		for (auto player : t->m_playersWithView)
+		{
+			osg::Group * node = player->hudController()->getViewNode();
+			player->navigationWindow()->addElements(node); //put hud on navigation window, not on main window
+		}
+
+		if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_NORMAL_NAVI_MAP)
+			composeRadarScene();
+
+	}
+
+	// bended views
+	{
+		const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
+		t->m_deformationRendering = new SplineDeformationRendering(bendedScene);
+		t->m_deformationRendering->setDeformationStartEnd(0.1, 100000);
+		t->m_deformationRendering->setPreset(4);
+		t->enableBendedViews();
+	}
+
+	// optimizer
+	{
+		// disbled optimizer for now, takes a lot of time to execute
+		std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
+		osgUtil::Optimizer optimizer;
+		optimizer.optimize(t->m_rootNode, optimizer.CHECK_GEOMETRY | optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
+			optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
+		std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
+	}
+
+	return true;
+}
+
+bool TroenGameBuilder::composeReflections()
+{
+	if (t->m_gameConfig->useReflection)
+	{
+		for (auto player : t->m_playersWithView)
+		{
+			player->setupReflections(t, t->m_sceneNode);
+		}
+	}
+
+	return true;
+}
+
+osg::ref_ptr<osg::Group> TroenGameBuilder::composePostprocessing()
+{
 	if (t->m_gameConfig->usePostProcessing)
 	{
 		// viewport of all windows has to be equal since only
@@ -164,61 +253,17 @@ bool TroenGameBuilder::composeSceneGraph()
 
 		t->m_postProcessing = std::make_shared<PostProcessing>(t->m_rootNode, viewport->width(), viewport->height());
 
-		t->m_sceneWithSkyboxNode = t->m_postProcessing->getSceneNode();
-		t->m_rootNode->addChild(t->m_sceneWithSkyboxNode);
-
 		//explicit call, to enable glow from start
 		t->resize(viewport->width(), viewport->height());
+
+		return t->m_postProcessing->getSceneNode();
 	}
 	else
-	{
-		t->m_sceneWithSkyboxNode = t->m_rootNode;
-	}
+		return t->m_rootNode;
+}
 
-	//node on which bending operation is applied
-	osg::ref_ptr<osg::Group> bendedScene = new osg::Group();
-	bendedScene->addChild(t->m_sceneNode);
-	t->m_sceneWithSkyboxNode->addChild(t->m_skyDome.get());
-	t->m_sceneWithSkyboxNode->addChild(bendedScene);
-
-	osg::ref_ptr<osg::Group> unBendedScene = new osg::Group();
-	unBendedScene->addChild(t->m_sceneNode);
-	unBendedScene->addChild(t->m_skyDome.get());
-
-	for (auto player : t->m_playersWithView)
-	{
-		player->playerNode()->addChild(t->m_rootNode);
-
-		//if (t->m_gameConfig->studySetup == MAIN_BENDED_NAVI_MAP)
-		player->navigationWindow()->addElements(unBendedScene);
-	}
-
-
-
-	t->m_sceneNode->addChild(t->m_levelController->getViewNode());
-
-	for (auto player : t->m_players)
-	{
-		//t->m_sceneNode->addChild(player->bikeController()->getViewNode());
-		t->m_sceneNode->addChild(player->fenceController()->getViewNode());
-	}
-
-	t->m_sceneNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-
-	if (t->m_gameConfig->useReflection)
-	{
-		// sceneNode has to be added to reflection after adding all (non hud) objects
-		setupReflections();
-	}
-
-	for (auto player : t->m_playersWithView)
-	{
-		osg::Group * node = player->hudController()->getViewNode();
-		//put uhd no navigation window, not on main window
-		player->navigationWindow()->addElements(node);
-	}
-
-
+bool TroenGameBuilder::composeRadarScene()
+{
 	osg::ref_ptr<osg::Group> radarScene = new osg::Group;
 
 	for (auto player : t->m_players)
@@ -228,43 +273,9 @@ bool TroenGameBuilder::composeSceneGraph()
 	}
 	radarScene->addChild(t->m_levelController->getViewNode());
 
-
-
-
-
- 	const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
- 	// todo: the magic number (0.25) can be used to control the length of the deformation and must be possibly adjusted after the scene graph tweaks
- 	float radius = LEVEL_SIZE / 5;
-	radius = 1071;
- 	double nearD = 0.1;
-	t->m_deformationRendering = new SplineDeformationRendering(bendedScene);
- 	t->m_deformationRendering->setDeformationStartEnd(nearD, radius);
-	t->m_deformationRendering->setDeformationStartEnd(0.1, 100000);
- 	t->m_deformationRendering->setPreset(4);
-	t->enableBendedViews();
-
 	for (auto player : t->m_playersWithView)
 	{
 		player->hudController()->attachSceneToRadarCamera(radarScene);
-	}
-
-	//simulator shall always have bended views
-
-	// disbled optimizer for now, takes a lot of time to execute
-	//std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
-	//osgUtil::Optimizer optimizer;
-	//optimizer.optimize(t->m_rootNode, optimizer.CHECK_GEOMETRY | optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
-	//	optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
-	//std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
-
-	return true;
-}
-
-bool TroenGameBuilder::setupReflections()
-{
-	for (auto player : t->m_playersWithView)
-	{
-		player->setupReflections(t, t->m_sceneNode);
 	}
 
 	return true;

@@ -397,7 +397,7 @@ std::shared_ptr<networking::NetworkManager> TroenGame::getNetworkManager()
 void TroenGame::reloadLevel()
 {
 	m_levelController->reload();
-	m_builder->setupReflections();
+	m_builder->composeReflections();
 }
 
 

@@ -15,7 +15,7 @@ namespace troen
 
 		bool build();
 		bool destroy();
-		bool setupReflections();
+		bool composeReflections();
 
 	private:
 		bool buildInput();
@@ -23,6 +23,8 @@ namespace troen
 		bool buildGameLogic();
 		bool buildPhysicsWorld();
 		bool setupNetworking();
+		bool composeRadarScene();
+		osg::ref_ptr<osg::Group> composePostprocessing();
 		TroenGame * t;
 	};
 }
