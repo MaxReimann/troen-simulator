@@ -158,8 +158,8 @@ bool TroenGameBuilder::build()
 bool TroenGameBuilder::composeSceneGraph()
 {
 	osg::ref_ptr<osg::Group> bendedScene = new osg::Group();
-	osg::ref_ptr<osg::Group> unBendedScene = new osg::Group();
 	QString studySetup = t->m_gameConfig->studySetup;
+	auto localPlayer = t->m_playersWithView.at(0);
 
 	t->m_rootNode = composePostprocessing();
 	t->m_rootNode->addChild(t->m_skyDome.get());
@@ -168,17 +168,22 @@ bool TroenGameBuilder::composeSceneGraph()
 	{
 		//node on which bending operation is applied
 		bendedScene->addChild(t->m_sceneNode);
-		t->m_rootNode->addChild(bendedScene);
+		localPlayer->playerNode()->addChild(t->m_rootNode);
 
-		unBendedScene->addChild(t->m_sceneNode);
-		unBendedScene->addChild(t->m_skyDome.get());
-
-		for (auto player : t->m_playersWithView)
+		if (studySetup == MAIN_NORMAL_NAVI_BENDED || studySetup == MAIN_NORMAL_NAVI_MAP)
 		{
-			player->playerNode()->addChild(t->m_rootNode);
-
-			if (studySetup == MAIN_BENDED_NAVI_MAP)
-				player->navigationWindow()->addElements(unBendedScene);
+			t->m_rootNode->addChild(t->m_sceneNode); //skip bended node
+			localPlayer->setBendingUniform(MAIN_WINDOW, false); //disable bending shaders
+			
+			if (studySetup == MAIN_NORMAL_NAVI_BENDED)
+			{
+				localPlayer->navigationWindow()->addElements(bendedScene);
+				localPlayer->setBendingUniform(NAVIGATION_WINDOW, true);
+			}
+		}
+		else if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_BENDED_NAVI_NONE)
+		{
+			t->m_rootNode->addChild(bendedScene);
 		}
 
 	}
@@ -196,11 +201,9 @@ bool TroenGameBuilder::composeSceneGraph()
 
 	// hud & radar
 	{
-		for (auto player : t->m_playersWithView)
-		{
-			osg::Group * node = player->hudController()->getViewNode();
-			player->navigationWindow()->addElements(node); //put hud on navigation window, not on main window
-		}
+
+		osg::Group * node = localPlayer->hudController()->getViewNode();
+		localPlayer->navigationWindow()->addElements(node); //put hud on navigation window, not on main window
 
 		if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_NORMAL_NAVI_MAP)
 			composeRadarScene();

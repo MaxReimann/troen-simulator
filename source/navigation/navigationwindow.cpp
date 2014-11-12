@@ -46,8 +46,9 @@ public:
 
 
 			double fovy, aspect, znear, zfar;
+			double fovy_addition = FOVY_ADDITION_MAX / 1.5;
 			m_navView->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
-			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + FOVY_ADDITION_MAX, aspect, znear, zfar);
+			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + fovy_addition, aspect, znear, zfar);
 
 
 		}
@@ -56,37 +57,20 @@ public:
 	}
 };
 
-class UpdateShaderVariables : public osg::NodeCallback
-{
-public:
-	osg::ref_ptr<osg::Uniform> m_bendingActiveUniform;
-	UpdateShaderVariables(osg::ref_ptr<osg::Uniform> bendingUniform)
-	{
-		m_bendingActiveUniform = bendingUniform;
-	}
-
-	void operator()(osg::Node *node, osg::NodeVisitor *nv)
-	{
-		m_bendingActiveUniform->set(false);
-		this->traverse(node, nv);
-	}
-};
-
-
 NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeController, osg::ref_ptr<GameEventHandler> eventHandler)
 {
 	m_rootNode = new osg::Group();
 	m_view = new osgViewer::View();
 	m_view->getCamera()->setCullMask(CAMERA_MASK_MAIN);
 	m_view->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
-	osg::ref_ptr<osg::Uniform> bendingActiveUniform = new osg::Uniform("bendingActivated", false);
-	m_view->getCamera()->getOrCreateStateSet()->addUniform(bendingActiveUniform);
+	m_bendingActiveUniform = new osg::Uniform("bendingActivated", false);
+	m_view->getCamera()->getOrCreateStateSet()->addUniform(m_bendingActiveUniform);
 	m_view->setSceneData(m_rootNode);
 	m_view->addEventHandler(eventHandler.get());
 	m_view->setUserValue("window_type", (int) NAVIGATION_WINDOW);
 
 #ifdef WIN32
-	m_view->apply(new osgViewer::SingleWindow(800, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
+	m_view->apply(new osgViewer::SingleWindow(800, 200, DEFAULT_WINDOW_WIDTH / 2, DEFAULT_WINDOW_HEIGHT / 2));
 #else
 	m_view->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 #endif
@@ -105,4 +89,3 @@ void NavigationWindow::addElements(osg::ref_ptr<osg::Group> group)
 {
 	m_rootNode->addChild(group);
 }
-

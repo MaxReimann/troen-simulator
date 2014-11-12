@@ -78,8 +78,7 @@ namespace troen
 		float increaseHealth(const float diff);
 		float increasePoints(const float diff);
 		void update(int g_gameTime);
-
-
+		void setBendingUniform(troen::windowType window, bool value);
 		void setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNode);
 		bool isDead();
 	private:
@@ -112,6 +111,6 @@ namespace troen
 		osg::ref_ptr<osg::Group>		m_playerNode;
 		std::shared_ptr<Reflection>		m_reflection;
 		std::shared_ptr<NavigationWindow> m_navigationWindow;
-
+		osg::ref_ptr<osg::Uniform>		m_bendingActivatedU;
 	};
 }

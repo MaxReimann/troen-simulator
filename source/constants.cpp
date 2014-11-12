@@ -112,5 +112,5 @@ namespace troen
 	const QString MAIN_BENDED_NAVI_NONE("Main:Bended Nav:None");
 	const QString MAIN_NORMAL_NAVI_MAP("Main:Normal Nav:Map");
 	const QString MAIN_NORMAL_NAVI_BENDED("Main:Normal Nav:Bended");
-	const QString windowSetupChoices[] { MAIN_BENDED_NAVI_MAP, MAIN_BENDED_NAVI_NONE, MAIN_BENDED_NAVI_NONE, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
+	const QString windowSetupChoices[] { MAIN_BENDED_NAVI_MAP, MAIN_BENDED_NAVI_NONE, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
 }

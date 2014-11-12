@@ -97,7 +97,8 @@ m_hasGameView(config->ownView[id])
 		m_gameView = new osgViewer::View();
 		m_gameView->getCamera()->setCullMask(CAMERA_MASK_MAIN);
 		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
-		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("bendingActivated", true));
+		m_bendingActivatedU = new osg::Uniform("bendingActivated", true);
+		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(m_bendingActivatedU);
 		m_gameView->setSceneData(m_playerNode);
 
 		osg::ref_ptr<NodeFollowCameraManipulator> manipulator
@@ -245,4 +246,13 @@ float Player::increasePoints(float diff)
 bool Player::isDead()
 {
 	return m_health <= 0 && bikeController()->state() == BikeController::BIKESTATE::DRIVING;
+}
+
+
+void Player::setBendingUniform(troen::windowType window, bool value)
+{
+	if (window == MAIN_WINDOW)
+		m_bendingActivatedU->set(value);
+	else
+		m_navigationWindow->m_bendingActiveUniform->set(value);
 }
