@@ -110,10 +110,10 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(int levelSize)
 
 	floors->setName("floorsNode");
 
-	osg::StateSet *obstaclesStateSet = floors->getOrCreateStateSet();
-	osg::Uniform* textureMapU = new osg::Uniform("diffuseTexture", 0);
-	obstaclesStateSet->addUniform(textureMapU);
-	setTexture(obstaclesStateSet, "data/textures/floor.tga", 0);
+	osg::StateSet *floorStateSet = floors->getOrCreateStateSet();
+	//osg::Uniform* textureMapU = new osg::Uniform("diffuseTexture", 0);
+	//floorStateSet->addUniform(textureMapU);
+	setTexture(floorStateSet, "data/textures/floor.tga", 0);
 
 	//will be overwritten if reflection is used
 	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node>>(floors), shaders::GRID_NOREFLECTION, levelSize, GLOW, 1.0);
@@ -156,8 +156,8 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::strin
 	int children = readObstacles->getNumChildren();
 	readObstacles->removeChildren(0, children);
 
-	osg::Uniform* textureMapU = new osg::Uniform("diffuseTexture", 0);
-	boxesNode->getOrCreateStateSet()->addUniform(textureMapU);
+	//osg::Uniform* textureMapU = new osg::Uniform("diffuseTexture", 0);
+	//boxesNode->getOrCreateStateSet()->addUniform(textureMapU);
 
 	
 	setTexture(boxesNode->getOrCreateStateSet(), "data/textures/box.tga", 0);
@@ -185,9 +185,9 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::strin
 void LevelView::addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, int levelSize, int modelID, float alpha, float trueColor /*= 0.0*/)
 {
 	osg::StateSet *stateSet = node->getOrCreateStateSet();
-	stateSet->ref();
+	//stateSet->ref();
 
-	stateSet->setAttributeAndModes(shaders::m_allShaderPrograms[shaderIndex], osg::StateAttribute::ON);
+	stateSet->setAttributeAndModes(shaders::m_allShaderPrograms[shaderIndex], osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	stateSet->addUniform(new osg::Uniform("levelSize", levelSize));
 	stateSet->addUniform(new osg::Uniform("modelID", modelID));
 	stateSet->addUniform(new osg::Uniform("trueColor", trueColor));
