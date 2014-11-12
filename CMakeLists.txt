@@ -250,6 +250,8 @@ set(sources
 
 	source/navigation/navigationwindow.cpp
 	source/navigation/navigationwindow.h
+	source/navigation/routeparser.h
+	source/navigation/routeparser.cpp
 
 	source/util/chronotimer.h
 	source/util/chronotimer.cpp
