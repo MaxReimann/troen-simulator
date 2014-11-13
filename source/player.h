@@ -13,6 +13,7 @@
 #include "controller/routecontroller.h"
 #include "controller/hudcontroller.h"
 #include "navigation/navigationwindow.h"
+#include "navigation/routeparser.h"
 
 namespace troen
 {
@@ -112,5 +113,6 @@ namespace troen
 		std::shared_ptr<Reflection>		m_reflection;
 		std::shared_ptr<NavigationWindow> m_navigationWindow;
 		osg::ref_ptr<osg::Uniform>		m_bendingActivatedU;
+		std::vector<Route>				m_routes;
 	};
 }

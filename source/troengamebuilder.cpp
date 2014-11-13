@@ -37,6 +37,7 @@
 
 #include <thread>
 #include "osgDB/WriteFile"
+#include "navigation/routeparser.h"
 
 using namespace troen;
 
@@ -137,6 +138,8 @@ bool TroenGameBuilder::build()
 		t->m_playersWithView.at(0)->bikeController(), 10,
 		t->m_gameConfig->participantNumber,
 		t->m_gameConfig->exportCSV);
+
+
 
 	////////////////////////////////////////////////////////////////////////////////
 	//

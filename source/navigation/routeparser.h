@@ -7,6 +7,7 @@
 // troen
 #include "../sampleosgviewer.h"
 #include "../forwarddeclarations.h"
+#include "../constants.h"
 
 
 namespace troen
@@ -15,6 +16,21 @@ namespace troen
 	class Route
 	{
 	public:
+		troen::trackDifficulty difficulty;
+		std::vector<osg::Vec3> waypoints;
 
+	};
+
+	class RouteParser
+	{
+	public:
+		RouteParser::RouteParser();
+		bool parse(QByteArray& contents, Route& currentRoute);
+		osg::Vec3 inline lineToPoint(QByteArray line);
+
+		std::vector<Route> routes() { return m_routes; };
+
+	private:
+		std::vector<Route> m_routes;
 	};
 }

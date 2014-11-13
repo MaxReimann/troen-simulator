@@ -26,6 +26,7 @@
 
 #include "model/bikemodel.h"
 #include "troengame.h"
+#include "navigation/routeparser.h"
 
 
 using namespace troen;
@@ -77,6 +78,12 @@ m_hasGameView(config->ownView[id])
 		(input::BikeInputState::InputDevice) config->playerInputTypes[m_id],
 		initialTransform,
 		game->resourcePool());
+
+	std::shared_ptr<RouteParser> parseRoutes = std::make_shared<RouteParser>();
+	m_routes = parseRoutes->routes();
+
+	for (osg::Vec3 v : m_routes[0].waypoints)
+		std::cout << v.y() << "\t" << v.y() << std::endl;
 
 	m_routeController = std::make_shared<RouteController>(this, initialTransform);
 
