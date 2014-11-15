@@ -44,8 +44,8 @@ void RouteModel::addFencePart(btVector3 a, btVector3 b)
 		rotationQuatXY = btQuaternion(0, 0, 0, 1);
 	}
 
-	std::shared_ptr<btBoxShape> fenceShape = std::make_shared<btBoxShape>(btVector3(FENCE_PART_WIDTH / 2, fenceVector.length() / 2, FENCE_HEIGHT_MODEL / 2));
-	std::shared_ptr<btDefaultMotionState> fenceMotionState = std::make_shared<btDefaultMotionState>(btTransform(rotationQuatXY, (a + b) / 2 + btVector3(0, 0, FENCE_HEIGHT_MODEL / 2)));
+	std::shared_ptr<btBoxShape> fenceShape = std::make_shared<btBoxShape>(btVector3(FENCE_PART_WIDTH / 2, fenceVector.length() / 2, ROUTE_WIDTH_MODEL / 2));
+	std::shared_ptr<btDefaultMotionState> fenceMotionState = std::make_shared<btDefaultMotionState>(btTransform(rotationQuatXY, (a + b) / 2 + btVector3(0, 0, ROUTE_WIDTH_MODEL / 2)));
 
 	const btScalar mass = 0;
 	const btVector3 fenceInertia(0, 0, 0);

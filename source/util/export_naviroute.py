@@ -42,10 +42,10 @@ class ExportPath(bpy.types.Operator, ExportHelper):
     bl_options = {'REGISTER', 'UNDO'}
 
     # ExportHelper mixin class uses this
-    filename_ext = ".txt"
+    filename_ext = ".route"
 
     filter_glob = StringProperty(
-            default="*.txt",
+            default="*.route",
             options={'HIDDEN'},
             )
 

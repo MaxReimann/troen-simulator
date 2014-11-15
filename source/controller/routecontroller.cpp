@@ -34,9 +34,11 @@ RouteController::RouteController(
 {
 
 	m_Route = route;
-	for (int i = 1; i < m_Route.waypoints.size(); i++)
+	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 3);
+
+	for (int i = 1; i < m_subdividedPoints.size(); i++)
 	{
-		m_routeView->addFencePart(m_Route.waypoints[i - 1], m_Route.waypoints[i]);
+		m_routeView->addFencePart(m_subdividedPoints[i - 1], m_subdividedPoints[i]);
 	}
 }
 
@@ -50,7 +52,7 @@ void RouteController::update(btVector3 position, btQuaternion rotation)
 	// add new fence part
 	if ((position - m_lastPosition).length() > FENCE_PART_LENGTH)
 	{
-		m_routeModel->addFencePart(m_lastPosition, position);
+		//m_routeModel->addFencePart(m_lastPosition, position);
 		m_routeView->addFencePart(osgLastPosition,osgPosition);
 		m_lastPosition = position;
 	}
@@ -129,9 +131,4 @@ osg::ref_ptr<osg::Group> RouteController::getViewNode()
 void RouteController::updateFadeOutFactor(float fadeOutFactor)
 {
 	m_routeView->updateFadeOutFactor(fadeOutFactor);
-}
-
-void RouteController::setBendingActive(bool active)
-{
-	m_routeView->setBendingActive(active);
 }

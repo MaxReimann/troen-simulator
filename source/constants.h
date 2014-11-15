@@ -66,8 +66,9 @@ namespace troen
 
 	// FENCE
 	// determines how accurate the fence will be
-	extern const float FENCE_HEIGHT_MODEL;
-	extern const float FENCE_HEIGHT_VIEW;
+	extern const float ROUTE_WIDTH_MODEL;
+	extern const float ROUTE_HOVER_HEIGHT;
+	extern const float ROUTE_WIDTH_VIEW;
 	extern const float FENCE_PART_LENGTH;
 	extern const float FENCE_PART_WIDTH;
 	extern const int DEFAULT_MAX_FENCE_PARTS;
@@ -252,7 +253,7 @@ namespace troen
 #define cubed(t)        ((t) * (t) * (t))
 #define invcubed(t)     (1 - (1 - (t)) * (1 - (t)) * (1 - (t)))
 
-#define sin(t)          (sin(t * 1.57079632679489661923))
+//#define sin(t)          (sin(t * 1.57079632679489661923))
 #define invsin(t)       (1 - sin((1 - (t)) * 1.57079632679489661923))
 
 
@@ -264,6 +265,9 @@ namespace troen
 
 #define btToOSGQuat(q) \
 	osg::Quat(q.x(), q.y(), q.z(), q.w())
+
+#define toVec2(v) \
+	osg::Vec2(v.x(), v.y())
 
 
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/

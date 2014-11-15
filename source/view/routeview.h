@@ -26,14 +26,14 @@ namespace troen
 
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool val);
-
+		std::vector<osg::Vec3> subdivide(std::vector<osg::Vec3>& input, int level);
 	private:
-		void initializeFence();
+		void initializeRoute();
 		void initializeFenceGap();
 		void initializeShader();
 		osg::ref_ptr<osg::Geometry>		m_geometry;
 		osg::ref_ptr<osg::Vec3Array>	m_coordinates;
-		osg::ref_ptr<osg::FloatArray>	m_relativeHeights;
+		osg::ref_ptr<osg::FloatArray>	m_relativeWidth;
 		osg::ref_ptr<osg::DrawArrays>	m_drawArrays;
 		osg::ref_ptr<osg::Geode>		m_geode;
 		osg::ref_ptr<osg::Group>		m_radarElementsGroup;
@@ -42,10 +42,9 @@ namespace troen
 		std::weak_ptr<RouteModel>		m_model;
 
 		osg::Uniform*	m_fadeOutFactorUniform;
-		osg::Uniform*   m_bendingActiveUniform;
 
 		osg::Vec3 m_playerColor;
-		float m_fenceHeight;
+		float m_routeWidth;
 
 		RouteController* m_fenceController;
 	};

@@ -49,5 +49,6 @@ namespace troen
 		Player * m_player;
 		std::weak_ptr<PhysicsWorld> m_world;
 		Route m_Route;
+		std::vector<osg::Vec3> m_subdividedPoints;
 	};
 }
