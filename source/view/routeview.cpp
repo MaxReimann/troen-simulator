@@ -15,27 +15,8 @@
 
 using namespace troen;
 
-osg::Vec3 rotate_point_xy(osg::Vec3& pivot, float angle, osg::Vec3 p)
-{
-	//if (angle * 57.295779513 > 90.0)
-	//	angle -= 1.5707963268;
 
-	float s = std::sin(angle);
-	float c = std::cos(angle);
-	std::cout << angle << " " << s << " " << c <<  std::endl;
 
-	// translate point back to origin:
-	p -= pivot;
-
-	//	x' = x \cos \theta - y \sin \theta\,,
-	//	y' = x \sin \theta + y \cos \theta\,.
-	// rotate point
-	float xnew = p.x() * c - p.y() * s;
-	float ynew = p.x() * s + p.y() * c;
-
-	// translate point back:
-	return osg::Vec3(osg::Vec2(xnew + pivot.x(), ynew + pivot.y()), p.z());
-}
 
 RouteView::RouteView(RouteController* routeController, osg::Vec3 color, std::shared_ptr<AbstractModel>& model) :
 AbstractView(),
@@ -58,8 +39,8 @@ void RouteView::initializeRoute()
 	m_relativeWidth->setDataVariance(osg::Object::DYNAMIC);
 
 	// this value could need adaption; will avoid time-intensive array resizing
-	m_coordinates->reserveArray(10000);
-	m_relativeWidth->reserveArray(10000);
+	m_coordinates->reserveArray(40000);
+	m_relativeWidth->reserveArray(40000);
 
 	m_geometry = new osg::Geometry();
 	m_geometry->setVertexArray(m_coordinates);
@@ -94,6 +75,44 @@ void RouteView::updateFadeOutFactor(float fadeOutFactor)
 {
 	m_fadeOutFactorUniform->set(fadeOutFactor);
 }
+
+void RouteView::setupStrips(int partCount)
+{
+	partCount++; //first element of array
+
+	
+	osg::ref_ptr<osg::DrawArrays> floor = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, 0, partCount*2);
+	osg::ref_ptr<osg::DrawArrays> roof = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, partCount*2, partCount*2);
+	osg::ref_ptr<osg::DrawArrays> left = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, partCount*4, partCount*2);
+	osg::ref_ptr<osg::DrawArrays> right = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, partCount*6, partCount*2);
+	
+	m_geometry->addPrimitiveSet(floor);
+	m_geometry->addPrimitiveSet(roof);
+	m_geometry->addPrimitiveSet(left);
+	m_geometry->addPrimitiveSet(right);
+
+	//fill with null data, so we can index every part
+	for (int i = 0; i < partCount * 8; i++)
+	{
+		m_coordinates->push_back(osg::Vec3(0.0, 0.0, 0.0));
+		m_relativeWidth->push_back(0);
+	}
+
+	m_stripPointers[FLOOR] = 0;
+	m_stripPointers[ROOF] = partCount*2;
+	m_stripPointers[LEFT] = partCount * 4;
+	m_stripPointers[RIGHT] = partCount * 6;
+
+	m_emptyCoords = true;
+}
+
+void inline RouteView::pushVertex(osg::Vec3 v, sides side, float attrib)
+{
+	m_coordinates->at(m_stripPointers[side]) = v;
+	m_relativeWidth->at(m_stripPointers[side]) = attrib;
+	m_stripPointers[side]++;
+}
+
 
 void RouteView::updateFenceGap(osg::Vec3 lastPosition, osg::Vec3 position)
 {
@@ -153,6 +172,7 @@ std::vector<osg::Vec3> RouteView::subdivide(std::vector<osg::Vec3>& input, int l
 	return points;
 }
 
+
 void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 {
 
@@ -164,24 +184,43 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 	sideDirection.normalize();
 	osg::Vec3 sideVec = sideDirection * (m_routeWidth / 2.f);
 
-	osg::Vec3 leftPoint = currentPosition + sideVec  + osg::Vec3(0.0,0.0,ROUTE_HOVER_HEIGHT);
-	osg::Vec3 rightPoint = currentPosition - sideVec + osg::Vec3(0.0, 0.0, ROUTE_HOVER_HEIGHT);
+	osg::Vec3 leftPoint = currentPosition + sideVec  + osg::Vec3(0.0,0.0,0.1f);
+	osg::Vec3 rightPoint = currentPosition - sideVec + osg::Vec3(0.0, 0.0, 0.1f);
 
-	if (m_coordinates->size() == 0)
+	osg::Vec3 up = osg::Vec3(0.0, 0.0, ROUTE_HOVER_HEIGHT);
+
+	if (m_emptyCoords)
 	{
 		osg::Vec2 currentDirection = toVec2((currentPosition - lastPosition));
+		osg::Vec3 firstLeft = leftPoint - osg::Vec3(currentDirection, 0.0);
+		osg::Vec3 firstRight = rightPoint - osg::Vec3(currentDirection, 0.0);
 
-		m_coordinates->push_back(leftPoint - osg::Vec3(currentDirection,0.0));
-		m_coordinates->push_back(rightPoint - osg::Vec3(currentDirection, 0.0));
-		m_relativeWidth->push_back(0.f);
-		m_relativeWidth->push_back(1.f);
+		pushVertex(firstLeft, FLOOR, 0.f);
+		pushVertex(firstRight, FLOOR, 1.f);
+
+		pushVertex(firstLeft + up, ROOF, 0.f);
+		pushVertex(firstRight + up, ROOF, 1.f);
+
+		pushVertex(firstLeft, LEFT, 0.f);
+		pushVertex(firstLeft + up, LEFT, 1.f);
+
+		pushVertex(firstRight, RIGHT, 0.f);
+		pushVertex(firstRight + up, RIGHT, 1.f);
+		m_emptyCoords = false;
 	}
 
 	// game fence part
-	m_coordinates->push_back(leftPoint);
-	m_coordinates->push_back(rightPoint);
-	m_relativeWidth->push_back(0.f);
-	m_relativeWidth->push_back(1.f);
+	pushVertex(leftPoint, FLOOR, 0.f);
+	pushVertex(rightPoint, FLOOR, 1.f);
+
+	pushVertex(leftPoint + up, ROOF, 0.f);
+	pushVertex(rightPoint + up, ROOF, 1.f);
+
+	pushVertex(leftPoint, LEFT, 0.f);
+	pushVertex(leftPoint + up, LEFT, 1.f);
+
+	pushVertex(rightPoint, RIGHT, 0.f);
+	pushVertex(rightPoint + up, RIGHT, 1.f);
 
 
 	int currentFenceParts = (m_coordinates->size() - 2) / 2;
@@ -210,7 +249,7 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 	}
 
 	// limit
-	enforceFencePartsLimit();
+	//enforceFencePartsLimit();
 
 	//necessary for network fences, because of unpredictable timings
 	m_geometry->dirtyBound();

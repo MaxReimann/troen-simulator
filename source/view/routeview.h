@@ -11,6 +11,14 @@
 
 namespace troen
 {
+	enum sides
+	{
+		FLOOR,
+		ROOF,
+		LEFT,
+		RIGHT
+	};
+
 	class RouteView : public AbstractView
 	{
 	public:
@@ -27,10 +35,12 @@ namespace troen
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool val);
 		std::vector<osg::Vec3> subdivide(std::vector<osg::Vec3>& input, int level);
+		void setupStrips(int partCount);
 	private:
 		void initializeRoute();
 		void initializeFenceGap();
 		void initializeShader();
+		void inline pushVertex(osg::Vec3 v, sides side, float attrib);
 		osg::ref_ptr<osg::Geometry>		m_geometry;
 		osg::ref_ptr<osg::Vec3Array>	m_coordinates;
 		osg::ref_ptr<osg::FloatArray>	m_relativeWidth;
@@ -47,5 +57,7 @@ namespace troen
 		float m_routeWidth;
 
 		RouteController* m_fenceController;
+		int m_stripPointers[4];
+		bool m_emptyCoords;
 	};
 }
