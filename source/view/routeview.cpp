@@ -52,11 +52,8 @@ void RouteView::initializeRoute()
 	// seems to be important so that we won't crash after 683 fence parts
 	m_geometry->setUseDisplayList(false);
 
-	// use the shared normal array.
-	// polyGeom->setNormalArray(shared_normals.get(), osg::Array::BIND_OVERALL);
-
-	m_drawArrays = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, 0, 0);
-	m_geometry->addPrimitiveSet(m_drawArrays);
+	//m_drawArrays = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, 0, 0);
+	//m_geometry->addPrimitiveSet(m_drawArrays);
 
 	m_geode = new osg::Geode();
 	m_geode->addDrawable(m_geometry);
@@ -78,7 +75,7 @@ void RouteView::updateFadeOutFactor(float fadeOutFactor)
 
 void RouteView::setupStrips(int partCount)
 {
-	partCount++; //first element of array
+	//partCount++; //last element of array
 
 	
 	osg::ref_ptr<osg::DrawArrays> floor = new osg::DrawArrays(osg::PrimitiveSet::QUAD_STRIP, 0, partCount*2);
@@ -173,7 +170,7 @@ std::vector<osg::Vec3> RouteView::subdivide(std::vector<osg::Vec3>& input, int l
 }
 
 
-void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
+void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition, bool last)
 {
 
 
@@ -253,7 +250,7 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition)
 
 	//necessary for network fences, because of unpredictable timings
 	m_geometry->dirtyBound();
-	m_drawArrays->setCount(m_coordinates->size());
+	//m_drawArrays->setCount(m_coordinates->size());
 }
 
 void RouteView::removeAllFences()

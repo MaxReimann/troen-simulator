@@ -34,12 +34,12 @@ RouteController::RouteController(
 {
 
 	m_Route = route;
-	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 3);
+	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 8);
 	m_routeView->setupStrips(m_subdividedPoints.size());
 
 	for (int i = 1; i < m_subdividedPoints.size(); i++)
 	{
-		m_routeView->addFencePart(m_subdividedPoints[i - 1], m_subdividedPoints[i]);
+		m_routeView->addFencePart(m_subdividedPoints[i - 1], m_subdividedPoints[i], false);
 	}
 }
 

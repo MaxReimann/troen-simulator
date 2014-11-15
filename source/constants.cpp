@@ -69,7 +69,7 @@ namespace troen
 	// determines how accurate the fence will be
 	const float ROUTE_WIDTH_MODEL(BIKE_DIMENSIONS.x() * 10.f);
 	const float ROUTE_WIDTH_VIEW(ROUTE_WIDTH_MODEL);
-	const float ROUTE_HOVER_HEIGHT = 1.0f;
+	const float ROUTE_HOVER_HEIGHT = 4.0f;
 	const float FENCE_PART_LENGTH(BIKE_DIMENSIONS.y() / 2);
 	const float FENCE_PART_WIDTH(BIKE_DIMENSIONS.x() * .3f);
 	const int DEFAULT_MAX_FENCE_PARTS(400);

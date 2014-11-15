@@ -21,10 +21,11 @@ namespace troen
 
 	class RouteView : public AbstractView
 	{
+		friend RouteController;
 	public:
 		RouteView(RouteController* fenceController, const osg::Vec3 color, std::shared_ptr<AbstractModel>& model);
 
-		void addFencePart(const osg::Vec3 lastPosition, const osg::Vec3 currentPosition);
+		void addFencePart(const osg::Vec3 lastPosition, const osg::Vec3 currentPosition, bool last = false);
 		void removeAllFences();
 		void enforceFencePartsLimit();
 		void updateFenceGap(const osg::Vec3 lastPosition, const osg::Vec3 position);
@@ -36,7 +37,7 @@ namespace troen
 		void setBendingActive(bool val);
 		std::vector<osg::Vec3> subdivide(std::vector<osg::Vec3>& input, int level);
 		void setupStrips(int partCount);
-	private:
+	protected:
 		void initializeRoute();
 		void initializeFenceGap();
 		void initializeShader();

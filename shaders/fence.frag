@@ -5,11 +5,11 @@ uniform int modelID;
 uniform float glowIntensity;
 uniform float fadeOutFactor;
 
-in float v_relHeight;
+in float v_relWidth;
 
 void main()
 {
-	float mixFactor = (0.5 - abs(v_relHeight - 0.5)) / 0.5;
+	float mixFactor = (0.5 - abs(v_relWidth - 0.5)) / 0.5;
 
 	vec4 color = mix(
 		vec4(fenceColor, 1.0),
