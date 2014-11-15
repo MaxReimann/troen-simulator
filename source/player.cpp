@@ -82,10 +82,7 @@ m_hasGameView(config->ownView[id])
 	std::shared_ptr<RouteParser> parseRoutes = std::make_shared<RouteParser>();
 	m_routes = parseRoutes->routes();
 
-	for (osg::Vec3 v : m_routes[0].waypoints)
-		std::cout << v.y() << "\t" << v.y() << std::endl;
-
-	m_routeController = std::make_shared<RouteController>(this, initialTransform);
+	m_routeController = std::make_shared<RouteController>(this, initialTransform, m_routes[0]);
 
 	// HUDController must be initialized later, because it
 	// can only be created, once all Players are created

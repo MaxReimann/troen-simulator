@@ -61,7 +61,7 @@ void BikeController::reset()
 	if (m_pollingThread != nullptr)
 		m_pollingThread->setVibration(false);
 
-	m_player->fenceController()->removeAllFences();
+	m_player->routeController()->removeAllFences();
 	m_player->setHealth(BIKE_DEFAULT_HEALTH);
 	m_player->setPoints(0);
 	m_timeOfLastCollision = -1;
@@ -319,18 +319,18 @@ void BikeController::updateModel(const long double gameTime)
 	case RESPAWN:
 	{
 		m_bikeModel->freeze();
-		m_player->fenceController()->removeAllFencesFromModel();
+		m_player->routeController()->removeAllFencesFromModel();
 		updateFov(0);
 
 		// fades fence out when player died
-		m_player->fenceController()->updateFadeOutFactor(1 - (gameTime - m_respawnTime) / (RESPAWN_DURATION * 2.f / 3.f));
+		m_player->routeController()->updateFadeOutFactor(1 - (gameTime - m_respawnTime) / (RESPAWN_DURATION * 2.f / 3.f));
 
 		if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
 		{
 			moveBikeToPosition(m_initialTransform);
 			reset();
 			updateFov(0);
-			m_player->fenceController()->updateFadeOutFactor(1);
+			m_player->routeController()->updateFadeOutFactor(1);
 			m_state = RESPAWN_PART_2;
 		}
 		break;
@@ -381,7 +381,7 @@ void BikeController::updateView(const btTransform &worldTrans)
 	if (m_player->getTroenGame()->isNetworking())
 		updateNetworkFence(worldTrans);
 	else
-		m_player->fenceController()->update(position, rot);
+		m_player->routeController()->update(position, rot);
 
 }
 
@@ -397,7 +397,7 @@ void BikeController::updateNetworkFence(btTransform transform)
 {
 	if (!m_player->isRemote())
 	{
-		m_player->fenceController()->update(transform.getOrigin(),transform.getRotation());
+		m_player->routeController()->update(transform.getOrigin(),transform.getRotation());
 		m_player->getTroenGame()->getNetworkManager()->updateFencePart(transform, m_player->getNetworkID());
 	}
 
@@ -407,7 +407,7 @@ void BikeController::updateNetworkFence(btTransform transform)
 		// read in every new fence part
 		while (m_remote->tryGetFencePiece(trans))
 		{
-			m_player->fenceController()->update(trans.getOrigin(), trans.getRotation());
+			m_player->routeController()->update(trans.getOrigin(), trans.getRotation());
 		}
 	}
 }
@@ -447,7 +447,7 @@ long double BikeController::getTimeFactor()
 void BikeController::moveBikeToPosition(btTransform transform)
 {
 	m_bikeModel->moveBikeToPosition(transform);
-	m_player->fenceController()->setLastPosition(transform.getRotation(), transform.getOrigin());
+	m_player->routeController()->setLastPosition(transform.getRotation(), transform.getOrigin());
 }
 
 void BikeController::updateUniforms()

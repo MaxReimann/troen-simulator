@@ -7,6 +7,7 @@
 #include "../player.h"
 
 #include <osg/Vec3>
+#include "../navigation/routeparser.h"
 
 namespace troen
 {
@@ -14,6 +15,7 @@ namespace troen
 	{
 	public:
 		RouteController(Player * player, const btTransform initialTransform = btTransform::getIdentity());
+		RouteController(Player * player, btTransform initialTransform, Route route);
 		void update(btVector3 position, btQuaternion rotation);
 		void attachWorld(std::shared_ptr<PhysicsWorld>& world);
 
@@ -46,5 +48,6 @@ namespace troen
 
 		Player * m_player;
 		std::weak_ptr<PhysicsWorld> m_world;
+		Route m_Route;
 	};
 }

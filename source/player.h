@@ -47,7 +47,7 @@ namespace troen
 		//
 		std::shared_ptr<BikeController>	bikeController()
 			{ return m_bikeController; };
-		std::shared_ptr<RouteController> fenceController()
+		std::shared_ptr<RouteController> routeController()
 			{ return m_routeController; };
 		std::shared_ptr<HUDController>	hudController()
 			{ return m_HUDController; };

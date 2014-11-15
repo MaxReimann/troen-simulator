@@ -462,7 +462,7 @@ void GameLogic::removeAllFences()
 {
 	for (auto player : m_troenGame->m_players)
 	{
-		player->fenceController()->removeAllFences();
+		player->routeController()->removeAllFences();
 	}
 }
 
@@ -480,7 +480,7 @@ void GameLogic::toggleFencePartsLimit()
 
 	for (auto player : m_troenGame->m_players)
 	{
-		player->fenceController()->setLimitFence(m_limitedFenceMode);
+		player->routeController()->setLimitFence(m_limitedFenceMode);
 	}
 }
 
@@ -523,7 +523,7 @@ void GameLogic::hideFencesInRadarForPlayer(int id)
 {
 	for (auto player : m_troenGame->m_players)
 	{
-		player->fenceController()->hideFencesInRadarForPlayer(id);
+		player->routeController()->hideFencesInRadarForPlayer(id);
 	}
 }
 
@@ -531,7 +531,7 @@ void GameLogic::showFencesInRadarForPlayer(int id)
 {
 	for (auto player : m_troenGame->m_players)
 	{
-		player->fenceController()->showFencesInRadarForPlayer(id);
+		player->routeController()->showFencesInRadarForPlayer(id);
 	}
 }
 

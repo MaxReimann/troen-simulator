@@ -27,8 +27,23 @@ m_fenceLimitActivated(true)
 	m_lastPosition = position;
 }
 
+RouteController::RouteController(
+	Player * player,
+	btTransform initialTransform,
+	Route route) : RouteController(player, initialTransform) //c++11 delegation
+{
+
+	m_Route = route;
+	for (int i = 1; i < m_Route.waypoints.size(); i++)
+	{
+		m_routeView->addFencePart(m_Route.waypoints[i - 1], m_Route.waypoints[i]);
+	}
+}
+
+
 void RouteController::update(btVector3 position, btQuaternion rotation)
 {
+	return;
 	adjustPositionUsingFenceOffset(rotation, position);
 	osg::Vec3 osgPosition = osg::Vec3(position.x(), position.y(), position.z());
 	osg::Vec3 osgLastPosition = osg::Vec3(m_lastPosition.x(), m_lastPosition.y(), m_lastPosition.z());

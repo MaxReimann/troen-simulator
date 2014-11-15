@@ -65,8 +65,8 @@ void RouteView::initializeFence()
 	m_radarElementsGroup->setNodeMask(CAMERA_MASK_NONE);
 	m_node->addChild(m_radarElementsGroup);
 
-	m_bendingActiveUniform = new osg::Uniform("bendingActivated", false);
-	m_node->getOrCreateStateSet()->addUniform(m_bendingActiveUniform);
+	//m_bendingActiveUniform = new osg::Uniform("bendingActivated", false);
+	//m_node->getOrCreateStateSet()->addUniform(m_bendingActiveUniform);
 }
 
 void RouteView::updateFadeOutFactor(float fadeOutFactor)
@@ -208,5 +208,5 @@ void RouteView::hideFencesInRadarForPlayer(const int id)
 
 void RouteView::setBendingActive(bool val)
 {
-	m_bendingActiveUniform->set(val);
+	//m_bendingActiveUniform->set(val);
 }

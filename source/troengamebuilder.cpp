@@ -196,7 +196,7 @@ bool TroenGameBuilder::composeSceneGraph()
 		t->m_sceneNode->addChild(t->m_levelController->getViewNode());
 
 		for (auto player : t->m_players)
-			t->m_sceneNode->addChild(player->fenceController()->getViewNode());
+			t->m_sceneNode->addChild(player->routeController()->getViewNode());
 	}
 
 	// sceneNode has to be added to reflection after adding all (non hud) objects
@@ -275,7 +275,7 @@ bool TroenGameBuilder::composeRadarScene()
 	for (auto player : t->m_players)
 	{
 		radarScene->addChild(player->bikeController()->getViewNode());
-		radarScene->addChild(player->fenceController()->getViewNode());
+		radarScene->addChild(player->routeController()->getViewNode());
 	}
 	radarScene->addChild(t->m_levelController->getViewNode());
 
@@ -314,7 +314,7 @@ bool TroenGameBuilder::buildPhysicsWorld()
 	for (auto player : t->m_players)
 	{
 		player->bikeController()->attachWorld(t->m_physicsWorld);
-		player->fenceController()->attachWorld(t->m_physicsWorld);
+		player->routeController()->attachWorld(t->m_physicsWorld);
 	}
 
 	return true;
