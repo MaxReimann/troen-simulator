@@ -46,20 +46,20 @@ RouteController::RouteController(
 
 void RouteController::update(btVector3 position, btQuaternion rotation)
 {
-	return;
-	adjustPositionUsingFenceOffset(rotation, position);
-	osg::Vec3 osgPosition = osg::Vec3(position.x(), position.y(), position.z());
-	osg::Vec3 osgLastPosition = osg::Vec3(m_lastPosition.x(), m_lastPosition.y(), m_lastPosition.z());
-	// add new fence part
-	if ((position - m_lastPosition).length() > FENCE_PART_LENGTH)
-	{
-		//m_routeModel->addFencePart(m_lastPosition, position);
-		m_routeView->addFencePart(osgLastPosition,osgPosition);
-		m_lastPosition = position;
-	}
+	//adjustPositionUsingFenceOffset(rotation, position);
+	//osg::Vec3 osgPosition = osg::Vec3(position.x(), position.y(), position.z());
+	//osg::Vec3 osgLastPosition = osg::Vec3(m_lastPosition.x(), m_lastPosition.y(), m_lastPosition.z());
+	//// add new fence part
+	//if ((position - m_lastPosition).length() > FENCE_PART_LENGTH)
+	//{
+	//	//m_routeModel->addFencePart(m_lastPosition, position);
+	//	m_routeView->addFencePart(osgLastPosition,osgPosition);
+	//	m_lastPosition = position;
+	//}
 
-	// update fence gap
-	m_routeView->updateFenceGap(osgLastPosition, osgPosition);
+	//// update fence gap
+	//m_routeView->updateFenceGap(osgLastPosition, osgPosition);
+	m_routeView->m_playerPositionUniform->set(btToOSGVec3(position));
 }
 
 

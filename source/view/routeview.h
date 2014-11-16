@@ -53,9 +53,10 @@ namespace troen
 		std::weak_ptr<RouteModel>		m_model;
 
 		osg::Uniform*	m_fadeOutFactorUniform;
-
+		osg::Uniform* m_playerPositionUniform;
 		osg::Vec3 m_playerColor;
 		float m_routeWidth;
+
 
 		RouteController* m_fenceController;
 		int m_stripPointers[4];

@@ -123,20 +123,23 @@ void RouteView::updateFenceGap(osg::Vec3 lastPosition, osg::Vec3 position)
 
 void RouteView::initializeShader()
 {
-	osg::ref_ptr<osg::StateSet> NodeState = m_node->getOrCreateStateSet();
+	osg::ref_ptr<osg::StateSet> nodeState = m_node->getOrCreateStateSet();
 	
 	osg::Uniform* fenceColorU = new osg::Uniform("fenceColor", m_playerColor);
-	NodeState->addUniform(fenceColorU);
+	nodeState->addUniform(fenceColorU);
 
 	osg::Uniform* modelIDU = new osg::Uniform("modelID", GLOW);
-	NodeState->addUniform(modelIDU);
+	nodeState->addUniform(modelIDU);
 
 	m_fadeOutFactorUniform = new osg::Uniform("fadeOutFactor", 1.f);
-	NodeState->addUniform(m_fadeOutFactorUniform);
+	nodeState->addUniform(m_fadeOutFactorUniform);
 
-	NodeState->setMode(GL_BLEND, osg::StateAttribute::ON);
-	NodeState->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	NodeState->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::FENCE], osg::StateAttribute::ON);
+	m_playerPositionUniform = new osg::Uniform("playerPosition", osg::Vec3(0.0, 0.0, 0.0));
+	nodeState->addUniform(m_playerPositionUniform);
+
+	nodeState->setMode(GL_BLEND, osg::StateAttribute::ON);
+	nodeState->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	nodeState->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::FENCE], osg::StateAttribute::ON);
 
 	shaders::m_allShaderPrograms[shaders::FENCE]->addBindAttribLocation("a_relWidth", 5);
 }
