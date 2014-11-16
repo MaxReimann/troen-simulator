@@ -5,7 +5,7 @@ uniform bool isReflecting;
 out vec2 uv;
 uniform bool bendingActivated;
 
-void mainDeform();
+void mainDeform(vec4);
 void mainDeformReflected();
 
 
@@ -22,7 +22,7 @@ void main(void)
 	//mainDeformReflected();
 
 	if (bendingActivated && !isReflecting) {
-		mainDeform();}
+		mainDeform(gl_Vertex);}
 	
 	return;
 

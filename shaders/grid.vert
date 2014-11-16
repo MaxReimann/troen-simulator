@@ -5,7 +5,7 @@ uniform float objectID;
 uniform vec2 nearFar;
 uniform bool bendingActivated;
 
-void mainDeform();
+void mainDeform(vec4);
 
 out vec2 uv;
 out vec3 vertex_objCoords;
@@ -25,7 +25,7 @@ void main()
 	// linearDepth = (-(gl_ModelViewMatrix * gl_Vertex).z-nearFar.x)/(nearFar.y-nearFar.x);
 	// gl_TexCoord[1] = vec4(objectID);
 	if (bendingActivated)
-		mainDeform();
+		mainDeform(gl_Vertex);
 
 	bendedVertex = gl_Position;
 

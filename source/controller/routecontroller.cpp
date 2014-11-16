@@ -59,6 +59,7 @@ void RouteController::update(btVector3 position, btQuaternion rotation)
 
 	//// update fence gap
 	//m_routeView->updateFenceGap(osgLastPosition, osgPosition);
+	//m_player
 	m_routeView->m_playerPositionUniform->set(btToOSGVec3(position));
 }
 

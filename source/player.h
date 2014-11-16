@@ -6,6 +6,7 @@
 // troen
 #include "forwarddeclarations.h"
 #include "troengame.h"
+
 #include "sampleosgviewer.h"
 
 #include "controller/bikecontroller.h"
@@ -56,11 +57,11 @@ namespace troen
 		//
 		bool hasGameView()									{ return m_hasGameView; }
 		osg::ref_ptr<SampleOSGViewer> viewer()				{ return m_viewer; };
-		osg::ref_ptr<SampleOSGViewer> navigationViewer()	{ return m_navigationWindow->navViewer(); };
 		osg::ref_ptr<osgViewer::View> gameView()			{ return m_gameView; };
 		osg::ref_ptr<osg::Group> playerNode()				{ return m_playerNode; };
 		std::shared_ptr<Reflection> reflection()			{ return m_reflection; };
 		std::shared_ptr<NavigationWindow> navigationWindow(){ return m_navigationWindow; };
+		osg::ref_ptr<SampleOSGViewer> navigationViewer();
 
 		//
 		// setters
@@ -82,6 +83,8 @@ namespace troen
 		void setBendingUniform(troen::windowType window, bool value);
 		void setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNode);
 		bool isDead();
+		std::shared_ptr<std::vector<osg::Camera*>> cameras(){ return m_cameras; };
+		void setCameraSpecificUniforms();
 	private:
 		TroenGame*						m_troenGame;
 		//
@@ -112,7 +115,13 @@ namespace troen
 		osg::ref_ptr<osg::Group>		m_playerNode;
 		std::shared_ptr<Reflection>		m_reflection;
 		std::shared_ptr<NavigationWindow> m_navigationWindow;
-		osg::ref_ptr<osg::Uniform>		m_bendingActivatedU;
 		std::vector<Route>				m_routes;
+
+		std::shared_ptr<std::vector<osg::Camera*>> m_cameras;
+		
+		typedef std::vector<osg::ref_ptr<osg::Uniform>> uniformVec;
+		uniformVec		m_bendingActivatedUs;
+		uniformVec		m_isReflectingUs;
+		uniformVec		m_playerPositionUs;
 	};
 }

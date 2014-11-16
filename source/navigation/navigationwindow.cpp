@@ -12,6 +12,7 @@
 #include "../model/bikemodel.h"
 #include "../gameeventhandler.h"
 
+
 using namespace troen;
 
 
@@ -62,12 +63,10 @@ NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeControlle
 	m_rootNode = new osg::Group();
 	m_view = new osgViewer::View();
 	m_view->getCamera()->setCullMask(CAMERA_MASK_MAIN);
-	m_view->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
-	m_bendingActiveUniform = new osg::Uniform("bendingActivated", false);
-	m_view->getCamera()->getOrCreateStateSet()->addUniform(m_bendingActiveUniform);
 	m_view->setSceneData(m_rootNode);
 	m_view->addEventHandler(eventHandler.get());
 	m_view->setUserValue("window_type", (int) NAVIGATION_WINDOW);
+	bikeController->player()->cameras()->push_back(m_view->getCamera());
 
 #ifdef WIN32
 	m_view->apply(new osgViewer::SingleWindow(800, 200, DEFAULT_WINDOW_WIDTH / 2, DEFAULT_WINDOW_HEIGHT / 2));

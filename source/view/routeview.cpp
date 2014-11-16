@@ -196,9 +196,9 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition, 
 		osg::Vec3 firstRight = rightPoint - osg::Vec3(currentDirection, 0.0);
 
 		pushVertex(firstLeft, FLOOR, 0.f);
-		pushVertex(firstRight, FLOOR, 1.f);
+		pushVertex(firstRight, FLOOR, 0.f);
 
-		pushVertex(firstLeft + up, ROOF, 0.f);
+		pushVertex(firstLeft + up, ROOF, 1.f);
 		pushVertex(firstRight + up, ROOF, 1.f);
 
 		pushVertex(firstLeft, LEFT, 0.f);
@@ -211,9 +211,9 @@ void RouteView::addFencePart(osg::Vec3 lastPosition, osg::Vec3 currentPosition, 
 
 	// game fence part
 	pushVertex(leftPoint, FLOOR, 0.f);
-	pushVertex(rightPoint, FLOOR, 1.f);
+	pushVertex(rightPoint, FLOOR, 0.f);
 
-	pushVertex(leftPoint + up, ROOF, 0.f);
+	pushVertex(leftPoint + up, ROOF, 1.f);
 	pushVertex(rightPoint + up, ROOF, 1.f);
 
 	pushVertex(leftPoint, LEFT, 0.f);

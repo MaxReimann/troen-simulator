@@ -186,6 +186,7 @@ bool TroenGameBuilder::composeSceneGraph()
 		}
 		else if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_BENDED_NAVI_NONE)
 		{
+			localPlayer->setBendingUniform(MAIN_WINDOW, true);
 			t->m_rootNode->addChild(bendedScene);
 		}
 

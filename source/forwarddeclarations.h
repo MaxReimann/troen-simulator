@@ -101,6 +101,7 @@ namespace troen
 	class Reflection;
 	class ResourcePool;
 	class SplineDeformationRendering;
+	class NavigationWindow;
 
 
 	namespace util

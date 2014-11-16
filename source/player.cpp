@@ -25,7 +25,7 @@
 #include "view/nodefollowcameramanipulator.h"
 
 #include "model/bikemodel.h"
-#include "troengame.h"
+
 #include "navigation/routeparser.h"
 
 
@@ -92,7 +92,7 @@ m_hasGameView(config->ownView[id])
 	// View
 	//
 	////////////////////////////////////////////////////////////////////////////////
-
+	m_cameras = std::make_shared<std::vector<osg::Camera*>>();
 	if (config->ownView[m_id])
 	{
 		m_playerNode = new osg::Group();
@@ -100,10 +100,8 @@ m_hasGameView(config->ownView[id])
 
 		m_gameView = new osgViewer::View();
 		m_gameView->getCamera()->setCullMask(CAMERA_MASK_MAIN);
-		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(new osg::Uniform("isReflecting", false));
-		m_bendingActivatedU = new osg::Uniform("bendingActivated", true);
-		m_gameView->getCamera()->getOrCreateStateSet()->addUniform(m_bendingActivatedU);
 		m_gameView->setSceneData(m_playerNode);
+		m_cameras->push_back(m_gameView->getCamera());
 
 		osg::ref_ptr<NodeFollowCameraManipulator> manipulator
 			= new NodeFollowCameraManipulator();
@@ -118,7 +116,9 @@ m_hasGameView(config->ownView[id])
 
 		//second window with navigation infos (map/bended views)
 		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler());
-		//m_bikeController->addUniformsToNode(m_navigationWindow->mapNode());
+
+		//must be called after all 3d cameras have been setup
+		setCameraSpecificUniforms();
 		
 
 #ifdef WIN32
@@ -255,8 +255,27 @@ bool Player::isDead()
 
 void Player::setBendingUniform(troen::windowType window, bool value)
 {
-	if (window == MAIN_WINDOW)
-		m_bendingActivatedU->set(value);
-	else
-		m_navigationWindow->m_bendingActiveUniform->set(value);
+	m_bendingActivatedUs[window]->set(value);
+}
+
+osg::ref_ptr<SampleOSGViewer> Player::navigationViewer()
+{
+	return m_navigationWindow->navViewer();
+}
+
+void  Player::setCameraSpecificUniforms()
+{
+	m_bendingActivatedUs = uniformVec();
+	m_isReflectingUs = uniformVec();
+
+	for (int i = 0; i < m_cameras->size(); i++)
+	{
+		osg::StateSet* state = m_cameras->at(i)->getOrCreateStateSet();
+		
+		m_bendingActivatedUs.push_back(new osg::Uniform("bendingActivated", false));
+		m_isReflectingUs.push_back(new osg::Uniform("isReflecting", false));
+
+		state->addUniform(m_bendingActivatedUs.back());
+		state->addUniform(m_isReflectingUs.back());
+	}
 }
