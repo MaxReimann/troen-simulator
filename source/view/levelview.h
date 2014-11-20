@@ -16,31 +16,33 @@ namespace troen
 	class LevelView : public AbstractView
 	{
 	public:
-		LevelView(std::shared_ptr<LevelModel> model, std::string levelName);
-		void reload(std::string levelName);
+		LevelView(std::shared_ptr<AbstractModel> model, std::string levelName);
+		virtual ~LevelView(){};
+		virtual void reload(std::string levelName);
 
-		osg::ref_ptr<osg::Group> getFloor();
+		virtual osg::ref_ptr<osg::Group> getFloor();
 		void addItemBox(osg::ref_ptr<osg::MatrixTransform>& matrixTransform);
 		void removeItemBox(osg::ref_ptr<osg::MatrixTransform>& matrixTransform);
 
 		void setBendingFactor(float bendingFactor);
 		void setBendingActive(bool val);
-	private:
-		osg::ref_ptr<osg::Group> constructFloors(const int levelSize);
-		osg::ref_ptr<osg::Group> constructObstacles(const int levelSize, std::string levelName);
+	protected:
+		virtual osg::ref_ptr<osg::Group> constructFloors(const int levelSize, std::string texPath="data/textures/floor.tga");
+		virtual osg::ref_ptr<osg::Group> constructObstacles(const int levelSize, std::string levelName);
+		virtual void initSpecifics(std::shared_ptr<AbstractModel> model);
 
-		osg::ref_ptr<osg::Group> constructGroupForBoxes(std::vector<BoxModel> &boxes);
-		osg::ref_ptr<osg::Group> constructRadarElementsForBoxes(std::vector<BoxModel> &boxes);
+		virtual osg::ref_ptr<osg::Group> constructGroupForBoxes(std::vector<BoxModel> &boxes);
+		virtual osg::ref_ptr<osg::Group> constructRadarElementsForBoxes(std::vector<BoxModel> &boxes);
 
-		osg::ref_ptr<osg::Group> m_floors;
+		virtual void setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string filePath, int unit, bool override = false);
+		virtual void addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, int levelSize, int modelID, float alpha, float trueColor = 0.0);
 
-		void setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string filePath, int unit, bool override = false);
-		void addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, int levelSize, int modelID, float alpha, float trueColor = 0.0);
 		std::shared_ptr<LevelModel> m_model;
+		osg::ref_ptr<osg::Group> m_floors;
 
 		osg::Uniform *m_bendedUniform;
 		osg::Uniform *m_bendingActiveUniform;
 		osg::Group *m_itemGroup;
-
+		std::string m_levelName;
 	};
 }

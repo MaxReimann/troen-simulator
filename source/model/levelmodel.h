@@ -47,23 +47,25 @@ namespace troen
 	{
 	public:
 		LevelModel(const LevelController* levelController, std::string levelName);
-		btScalar getLevelSize();
+		virtual ~LevelModel(){};
+		virtual btScalar getLevelSize();
+		
+		virtual void reload(std::string levelName);
+		virtual std::vector<BoxModel>& getFloors() { return m_floors; };
+		virtual std::vector<BoxModel>& getObstacles() { return m_obstacles; };
 
-		void reload(std::string levelName);
 
-		std::vector<BoxModel>& getFloors() { return m_floors; };
-		std::vector<BoxModel>& getObstacles() { return m_obstacles; };
+	protected:
+		virtual void initSpecifics();
+		virtual void addBoxes(std::vector<BoxModel> &boxes, const COLLISIONTYPE type = ABSTRACTTYPE);
+		virtual void addFloor(const float yPosition);
 
-	private:
-
-		void addBoxes(std::vector<BoxModel> &boxes, const COLLISIONTYPE type = ABSTRACTTYPE);
-		void addFloor(const float yPosition);
 		void addObstaclesFromFile(std::string levelName);
-
 		const LevelController* m_levelController;
 
 		std::vector<BoxModel> m_floors;
 		std::vector<BoxModel> m_obstacles;
+		std::string m_levelName;
 	};
 
 }

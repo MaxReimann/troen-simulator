@@ -8,12 +8,17 @@
 
 namespace troen
 {
+	enum levelModelType
+	{
+		TROEN,
+		BERLIN
+	};
 	class LevelController : public AbstractController
 	{
 	public:
 		LevelController(TroenGame* troenGame, std::string levelName);
 
-		virtual btTransform getSpawnPointForBikeWithIndex(const int index);
+		btTransform getSpawnPointForBikeWithIndex(const int index);
 		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
 		void addItemBox();
 		void update();
@@ -27,16 +32,19 @@ namespace troen
 		void removeRigidBodiesFromWorld();
 		void reload();
 
-	private:
+	protected:
 		std::shared_ptr<LevelView> m_levelView;
 		std::shared_ptr<LevelModel> m_levelModel;
 		std::vector<btTransform> m_initialBikePositionTransforms;
-		virtual void initializeSpawnPoints();
+		void initializeSpawnPoints();
+		void initSpecifics();
 		std::weak_ptr<PhysicsWorld> m_world;
 
 		TroenGame* m_troenGame;
 		std::string m_levelName;
 		int m_currentItemCount;
 		int m_targetItemCount = 100;
+		levelModelType m_levelType;
 	};
+
 }

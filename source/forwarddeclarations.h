@@ -76,6 +76,7 @@ namespace troen
 
 	class BikeModel;
 	class LevelModel;
+	class CityModel;
 	class RouteModel;
 	class AbstractModel;
 	class PhysicsWorld;
@@ -91,6 +92,7 @@ namespace troen
 
 	class BikeView;
 	class LevelView;
+	class CityView;
 	class RouteView;
 	class AbstractView;
 	class HUDView;

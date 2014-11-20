@@ -19,10 +19,16 @@ LevelModel::LevelModel(const LevelController* levelController, std::string level
 {
 	AbstractModel();
 	m_levelController = levelController;
+	m_levelName = levelName;
 	m_rigidBodies = std::vector<std::shared_ptr<btRigidBody>>();
 
+	initSpecifics();
+}
+
+void LevelModel::initSpecifics()
+{
 	addFloor(-10);
-	addObstaclesFromFile(levelName);
+	addObstaclesFromFile(m_levelName);
 }
 
 void LevelModel::reload(std::string levelName)

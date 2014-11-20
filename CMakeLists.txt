@@ -204,6 +204,8 @@ set(sources
 	source/model/physicsworld.cpp
 	source/model/bikemotionstate.h
 	source/model/objectinfo.h
+	source/model/citymodel.cpp
+	source/model/citymodel.h
 
 	source/controller/bikecontroller.h
 	source/controller/bikecontroller.cpp
@@ -221,6 +223,8 @@ set(sources
 
 	source/view/bikeview.h
 	source/view/bikeview.cpp
+	source/view/cityview.cpp
+	source/view/cityview.h
 	source/view/levelview.h
 	source/view/levelview.cpp
 	source/view/routeview.h

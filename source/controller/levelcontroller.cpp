@@ -1,4 +1,5 @@
 #include "levelcontroller.h"
+#include <typeinfo>
 // OSG
 #include <osg/Group>
 // bullet
@@ -9,21 +10,43 @@
 #include "../view/LevelView.h"
 #include "../model/physicsworld.h"
 
+#include "../model/citymodel.h"
+#include "../view/cityview.h"
+
 #include "itemcontroller.h"
 #include "../troengame.h"
+
 
 using namespace troen;
 
 LevelController::LevelController(TroenGame* troenGame, std::string levelName) : m_levelName(levelName)
 {
 	AbstractController();
-	m_model = m_levelModel = std::make_shared<LevelModel>(this, levelName);
-	m_view = m_levelView = std::make_shared<LevelView>(m_levelModel, levelName);
+
+
+	m_levelType = BERLIN;
+	initSpecifics();
 
 	m_troenGame = troenGame;
 	m_currentItemCount = 0;
 
 	initializeSpawnPoints();
+}
+
+void LevelController::initSpecifics()
+{
+	if (m_levelType == BERLIN)
+	{
+		m_model = m_levelModel = std::make_shared<CityModel>(this, m_levelName);
+		m_view = m_levelView = std::make_shared<CityView>(m_levelModel, m_levelName);
+	}
+	else
+	{
+		m_model = m_levelModel = std::make_shared<LevelModel>(this, m_levelName);
+		m_view = m_levelView = std::make_shared<LevelView>(m_levelModel, m_levelName);
+	}
+
+
 }
 
 void LevelController::reload()

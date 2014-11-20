@@ -68,23 +68,28 @@ protected:
 };
 
 
-LevelView::LevelView(std::shared_ptr<LevelModel> model, std::string levelName) :
+LevelView::LevelView(std::shared_ptr<AbstractModel> model, std::string levelName) :
 AbstractView()
 {
-	m_model = model;
-
-	int levelSize = m_model->getLevelSize();
-
-	m_node->addChild(constructFloors(levelSize));
-	m_node->addChild(constructObstacles(levelSize, levelName));
-
+	m_levelName = levelName;
+	initSpecifics(model);
 
 	osg::StateSet *stateSet = m_node->getOrCreateStateSet();
 	m_bendedUniform = new osg::Uniform("bendingFactor", 0.f);
 	stateSet->addUniform(m_bendedUniform);
-
 	m_bendingActiveUniform = new osg::Uniform("bendingActivated",false);
 
+}
+
+//specific to levelview, allow for cityview overriding
+void LevelView::initSpecifics(std::shared_ptr<AbstractModel> model)
+{
+	m_model = std::dynamic_pointer_cast<LevelModel>(model);
+	int levelSize = m_model->getLevelSize();
+
+
+	m_node->addChild(constructFloors(levelSize));
+	m_node->addChild(constructObstacles(levelSize, m_levelName));
 
 	m_itemGroup = new osg::Group();
 	m_itemGroup->setName("itemGroup");
@@ -101,7 +106,7 @@ void LevelView::reload(std::string levelName)
 	m_node->addChild(constructFloors(levelSize));
 }
 
-osg::ref_ptr<osg::Group> LevelView::constructFloors(int levelSize)
+osg::ref_ptr<osg::Group> LevelView::constructFloors(const int levelSize, std::string texPath)
 {
 	osg::ref_ptr<osg::Group> floorsGroup = new osg::Group();
 
@@ -113,7 +118,7 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(int levelSize)
 	osg::StateSet *floorStateSet = floors->getOrCreateStateSet();
 	//osg::Uniform* textureMapU = new osg::Uniform("diffuseTexture", 0);
 	//floorStateSet->addUniform(textureMapU);
-	setTexture(floorStateSet, "data/textures/floor.tga", 0);
+	setTexture(floorStateSet, texPath, 0);
 
 	//will be overwritten if reflection is used
 	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node>>(floors), shaders::GRID_NOREFLECTION, levelSize, GLOW, 1.0);
