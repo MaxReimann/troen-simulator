@@ -53,10 +53,10 @@ namespace troen
 		virtual void reload(std::string levelName);
 		virtual std::vector<BoxModel>& getFloors() { return m_floors; };
 		virtual std::vector<BoxModel>& getObstacles() { return m_obstacles; };
+		virtual void initSpecifics();
 
 
 	protected:
-		virtual void initSpecifics();
 		virtual void addBoxes(std::vector<BoxModel> &boxes, const COLLISIONTYPE type = ABSTRACTTYPE);
 		virtual void addFloor(const float yPosition);
 

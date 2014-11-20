@@ -46,6 +46,9 @@ void LevelController::initSpecifics()
 		m_view = m_levelView = std::make_shared<LevelView>(m_levelModel, m_levelName);
 	}
 
+	m_levelModel->initSpecifics(); //loading of model specific data
+	m_levelView->initSpecifics(m_levelModel);
+
 
 }
 

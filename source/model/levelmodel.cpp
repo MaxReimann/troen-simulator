@@ -21,8 +21,6 @@ LevelModel::LevelModel(const LevelController* levelController, std::string level
 	m_levelController = levelController;
 	m_levelName = levelName;
 	m_rigidBodies = std::vector<std::shared_ptr<btRigidBody>>();
-
-	initSpecifics();
 }
 
 void LevelModel::initSpecifics()

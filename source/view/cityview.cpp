@@ -29,24 +29,22 @@ using namespace troen;
 CityView::CityView(std::shared_ptr<AbstractModel> model, std::string levelName) :
 LevelView(model, levelName)
 {
-	m_node->removeChildren(0, m_node->getNumChildren()); //undo effects of initspecific in base class
-	initSpecifics(model);
 }
 
 //specific to cityview, called by LevelView()
 void CityView::initSpecifics(std::shared_ptr<AbstractModel> model)
 {
-	m_model = std::dynamic_pointer_cast<CityModel>(model);
-	int levelSize = m_model->getLevelSize();
+	m_model = model;
+	int levelSize = std::dynamic_pointer_cast<CityModel>(m_model)->getLevelSize();
 
 	m_node->addChild(constructFloors(levelSize));
 	m_node->addChild(constructCity(levelSize, m_levelName));
 }
 
-osg::ref_ptr<osg::Group> CityView::constructFloors(int levelSize)
-{
-	return LevelView::constructFloors(levelSize);
-}
+//osg::ref_ptr<osg::Group> CityView::constructFloors(int levelSize)
+//{
+//	return LevelView::constructFloors(levelSize);
+//}
 
 osg::ref_ptr<osg::Group> CityView::constructCity(int levelSize, std::string levelName)
 {

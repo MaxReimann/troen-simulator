@@ -17,12 +17,10 @@ namespace troen
 	{
 	public:
 		CityView(std::shared_ptr<AbstractModel> model, std::string levelName);
+		void initSpecifics(std::shared_ptr<AbstractModel> model);
 	
 	protected:
-		void initSpecifics(std::shared_ptr<AbstractModel> model);
-		osg::ref_ptr<osg::Group> constructFloors(const int levelSize);
+		//osg::ref_ptr<osg::Group> constructFloors(const int levelSize);
 		osg::ref_ptr<osg::Group> constructCity(int levelSize, std::string levelName);
-
-		std::shared_ptr<CityModel> m_model;
 	};
 }

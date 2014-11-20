@@ -23,6 +23,8 @@
 #include "shaders.h"
 #include "../constants.h"
 
+#define CAST_TO_LEVEL(X) std::dynamic_pointer_cast<LevelModel>(X)
+
 using namespace troen;
 
 
@@ -72,7 +74,6 @@ LevelView::LevelView(std::shared_ptr<AbstractModel> model, std::string levelName
 AbstractView()
 {
 	m_levelName = levelName;
-	initSpecifics(model);
 
 	osg::StateSet *stateSet = m_node->getOrCreateStateSet();
 	m_bendedUniform = new osg::Uniform("bendingFactor", 0.f);
@@ -85,7 +86,7 @@ AbstractView()
 void LevelView::initSpecifics(std::shared_ptr<AbstractModel> model)
 {
 	m_model = std::dynamic_pointer_cast<LevelModel>(model);
-	int levelSize = m_model->getLevelSize();
+	int levelSize = getLevelModel()->getLevelSize();
 
 
 	m_node->addChild(constructFloors(levelSize));
@@ -100,7 +101,7 @@ void LevelView::reload(std::string levelName)
 {
 	m_node->removeChildren(0, m_node->getNumChildren());
 
-	int levelSize = m_model->getLevelSize();
+	int levelSize = getLevelModel()->getLevelSize();
 
 	m_node->addChild(constructObstacles(levelSize, levelName));
 	m_node->addChild(constructFloors(levelSize));
@@ -128,7 +129,7 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(const int levelSize, std::st
 	floorsGroup->addChild(floors);
 
 
-	osg::ref_ptr<osg::Group> radarFloors = constructRadarElementsForBoxes(m_model->getFloors());
+	osg::ref_ptr<osg::Group> radarFloors = constructRadarElementsForBoxes(getLevelModel()->getFloors());
 	radarFloors->setNodeMask(CAMERA_MASK_RADAR);
 	floorsGroup->addChild(radarFloors);
 
@@ -176,7 +177,7 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::strin
 	
 	mainGroup->setNodeMask(CAMERA_MASK_MAIN);
 
-	osg::ref_ptr<osg::Group> radarObstacles = constructRadarElementsForBoxes(m_model->getObstacles());
+	osg::ref_ptr<osg::Group> radarObstacles = constructRadarElementsForBoxes(getLevelModel()->getObstacles());
 	radarObstacles->setNodeMask(CAMERA_MASK_RADAR);
 	obstaclesGroup->addChild(radarObstacles);
 	obstaclesGroup->addChild(mainGroup);
@@ -321,5 +322,7 @@ void LevelView::setBendingActive(bool val)
 	m_bendingActiveUniform->set(val);
 }
 
-
-
+std::shared_ptr<LevelModel> LevelView::getLevelModel()
+{ 
+	return std::dynamic_pointer_cast<LevelModel>(m_model); 
+}
