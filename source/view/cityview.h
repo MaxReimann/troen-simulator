@@ -20,7 +20,9 @@ namespace troen
 		void initSpecifics(std::shared_ptr<AbstractModel> model);
 	
 	protected:
-		//osg::ref_ptr<osg::Group> constructFloors(const int levelSize);
-		osg::ref_ptr<osg::Group> constructCity(int levelSize, std::string levelName);
+		osg::ref_ptr<osg::Group> constructFloors(osg::Vec2 levelSize);
+		osg::ref_ptr<osg::Group> constructCity(osg::Vec2 levelSize, std::string levelName);
+
+		std::shared_ptr<CityModel> getCityModel();
 	};
 }

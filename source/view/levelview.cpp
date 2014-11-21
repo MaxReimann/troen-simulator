@@ -86,7 +86,9 @@ AbstractView()
 void LevelView::initSpecifics(std::shared_ptr<AbstractModel> model)
 {
 	m_model = std::dynamic_pointer_cast<LevelModel>(model);
-	int levelSize = getLevelModel()->getLevelSize();
+	
+	int levelSizeX = getLevelModel()->getLevelSize();
+	osg::Vec2 levelSize = osg::Vec2(levelSizeX, levelSizeX);
 
 
 	m_node->addChild(constructFloors(levelSize));
@@ -101,17 +103,18 @@ void LevelView::reload(std::string levelName)
 {
 	m_node->removeChildren(0, m_node->getNumChildren());
 
-	int levelSize = getLevelModel()->getLevelSize();
+	int levelSizeX = getLevelModel()->getLevelSize();
+	osg::Vec2 levelSize = osg::Vec2(levelSizeX, levelSizeX);
 
 	m_node->addChild(constructObstacles(levelSize, levelName));
 	m_node->addChild(constructFloors(levelSize));
 }
 
-osg::ref_ptr<osg::Group> LevelView::constructFloors(const int levelSize, std::string texPath)
+osg::ref_ptr<osg::Group> LevelView::constructFloors(osg::Vec2  levelSize, std::string texPath, std::string modelPath)
 {
 	osg::ref_ptr<osg::Group> floorsGroup = new osg::Group();
 
-	osg::ref_ptr<osg::Node> floors = osgDB::readNodeFile("data/models/floor_highres.ive");
+	osg::ref_ptr<osg::Node> floors = osgDB::readNodeFile(modelPath);
 	floors->setNodeMask(CAMERA_MASK_MAIN);
 
 	floors->setName("floorsNode");
@@ -137,7 +140,7 @@ osg::ref_ptr<osg::Group> LevelView::constructFloors(const int levelSize, std::st
   return floorsGroup;
 }
 
-osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::string levelName)
+osg::ref_ptr<osg::Group> LevelView::constructObstacles(osg::Vec2  levelSize, std::string levelName)
 {
 	osg::ref_ptr<osg::Group> obstaclesGroup = new osg::Group();
 	obstaclesGroup->setName("obstaclesGroup");
@@ -188,7 +191,7 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(int levelSize, std::strin
 }
 
 
-void LevelView::addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, int levelSize, int modelID, float alpha, float trueColor /*= 0.0*/)
+void LevelView::addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, osg::Vec2 levelSize, int modelID, float alpha, float trueColor /*= 0.0*/)
 {
 	osg::StateSet *stateSet = node->getOrCreateStateSet();
 	//stateSet->ref();

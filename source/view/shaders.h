@@ -30,6 +30,7 @@ namespace troen
 							BIKE,
 							GRID,
 							GRID_NOREFLECTION,
+							FLOOR_CITY,
 							FENCE,
 							GBUFFER,
 							HBLUR,

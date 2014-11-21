@@ -14,6 +14,7 @@ namespace troen
 	public:
 		CityModel(const LevelController* levelController, std::string levelName);
 		void reload(std::string levelName);
+		btScalar getLevelSize();
 
 	private:
 		void initSpecifics();

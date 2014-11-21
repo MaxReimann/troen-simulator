@@ -1,6 +1,6 @@
 #version 130
 
-uniform int levelSize;
+uniform vec2 levelSize;
 uniform float objectID;
 uniform vec2 nearFar;
 uniform bool bendingActivated;
@@ -14,16 +14,15 @@ out vec4 bendedVertex;
 void main()
 {
 
-	uv = gl_Vertex.xy / levelSize + vec2(0.5, 0.5);
+	uv = gl_Vertex.xy / levelSize+ vec2(0.5, 0.5);
+	//citymodel specific tranlation
+	uv.x -= 50.0 / levelSize.x;
+	uv.y -= 10.0 / levelSize.y;
 
 	vertex_objCoords = gl_Vertex.xyz;
 
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex ;
-
-	// todo bended
-	// theNormal = normalize(gl_NormalMatrix * gl_Normal);
-	// linearDepth = (-(gl_ModelViewMatrix * gl_Vertex).z-nearFar.x)/(nearFar.y-nearFar.x);
-	// gl_TexCoord[1] = vec4(objectID);
+	
 	if (bendingActivated)
 		mainDeform(gl_Vertex);
 

@@ -36,3 +36,9 @@ void CityModel::reload(std::string levelName)
 	addFloor(-10);
 }
 
+
+btScalar CityModel::getLevelSize()
+{
+	return btScalar(13000);
+}
+

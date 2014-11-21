@@ -28,14 +28,14 @@ namespace troen
 		void setBendingFactor(float bendingFactor);
 		void setBendingActive(bool val);
 	protected:
-		virtual osg::ref_ptr<osg::Group> constructFloors(const int levelSize, std::string texPath="data/textures/floor.tga");
-		virtual osg::ref_ptr<osg::Group> constructObstacles(const int levelSize, std::string levelName);
+		virtual osg::ref_ptr<osg::Group> constructFloors(osg::Vec2  levelSize, std::string texPath = "data/textures/floor.tga", std::string modelPath = "data/models/floor_highres.ive");
+		virtual osg::ref_ptr<osg::Group> constructObstacles(osg::Vec2  levelSize, std::string levelName);
 
 		virtual osg::ref_ptr<osg::Group> constructGroupForBoxes(std::vector<BoxModel> &boxes);
 		virtual osg::ref_ptr<osg::Group> constructRadarElementsForBoxes(std::vector<BoxModel> &boxes);
 
 		virtual void setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string filePath, int unit, bool override = false);
-		virtual void addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, int levelSize, int modelID, float alpha, float trueColor = 0.0);
+		virtual void addShaderAndUniforms(osg::ref_ptr<osg::Node> node, int shaderIndex, osg::Vec2 levelSize, int modelID, float alpha, float trueColor = 0.0);
 		virtual std::shared_ptr<LevelModel> getLevelModel();
 
 		std::shared_ptr<AbstractModel> m_model;
