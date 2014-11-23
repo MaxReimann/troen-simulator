@@ -7,6 +7,7 @@
 #include <btBulletDynamicsCommon.h>
 // troen
 #include "../forwarddeclarations.h"
+#include "../constants.h"
 #include "abstractview.h"
 #include "../model/levelmodel.h"
 #include "../controller/itemcontroller.h"

@@ -197,7 +197,10 @@ bool TroenGameBuilder::composeSceneGraph()
 		t->m_sceneNode->addChild(t->m_levelController->getViewNode());
 
 		for (auto player : t->m_players)
+		{
 			t->m_sceneNode->addChild(player->routeController()->getViewNode());
+			t->m_sceneNode->addChild(player->bikeController()->getViewNode());
+		}
 	}
 
 	// sceneNode has to be added to reflection after adding all (non hud) objects

@@ -1,6 +1,7 @@
 #pragma once
 //troen
 #include "../forwarddeclarations.h"
+#include "../constants.h"
 #include "abstractmodel.h"
 #include <btBulletDynamicsCommon.h>
 
@@ -48,7 +49,7 @@ namespace troen
 	public:
 		LevelModel(const LevelController* levelController, std::string levelName);
 		virtual ~LevelModel(){};
-		virtual btScalar getLevelSize();
+		virtual btPoint getLevelSize();
 		
 		virtual void reload(std::string levelName);
 		virtual std::vector<BoxModel>& getFloors() { return m_floors; };

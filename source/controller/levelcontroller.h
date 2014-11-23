@@ -15,6 +15,7 @@ namespace troen
 	};
 	class LevelController : public AbstractController
 	{
+		friend class LevelModel;
 	public:
 		LevelController(TroenGame* troenGame, std::string levelName);
 
@@ -32,6 +33,7 @@ namespace troen
 		void removeRigidBodiesFromWorld();
 		void reload();
 
+		TroenGame* m_troenGame;
 	protected:
 		std::shared_ptr<LevelView> m_levelView;
 		std::shared_ptr<LevelModel> m_levelModel;
@@ -40,7 +42,6 @@ namespace troen
 		void initSpecifics();
 		std::weak_ptr<PhysicsWorld> m_world;
 
-		TroenGame* m_troenGame;
 		std::string m_levelName;
 		int m_currentItemCount;
 		int m_targetItemCount = 100;

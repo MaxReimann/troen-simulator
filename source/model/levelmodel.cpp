@@ -141,10 +141,10 @@ void LevelModel::addObstaclesFromFile(std::string levelName)
 
 void LevelModel::addFloor(float yPosition)
 {
-	btScalar size = getLevelSize();
+	btPoint size = getLevelSize();
 	m_floors.push_back({
 		btVector3(0, 0, yPosition),
-		btVector3(size, size, 20)
+		btVector3(size.first, size.second, 20)
 	});
 
 	addBoxes(m_floors, LEVELGROUNDTYPE);
@@ -179,7 +179,7 @@ void LevelModel::addBoxes(std::vector<BoxModel> &boxes, COLLISIONTYPE type)
 	}
 }
 
-btScalar LevelModel::getLevelSize()
+btPoint LevelModel::getLevelSize()
 {
-	return btScalar(LEVEL_SIZE);
+	return btPoint(LEVEL_SIZE, LEVEL_SIZE);
 }

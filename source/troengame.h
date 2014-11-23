@@ -82,6 +82,8 @@ namespace troen
 		}
 		std::vector<std::shared_ptr<Player>> players()
 			{ return m_players; };
+		//convenience
+		BikeModel* activeBikeModel();
 		osg::ref_ptr<SkyDome> skyDome()
 			{ return m_skyDome; };
 		ResourcePool* resourcePool(){ return &m_resourcePool; };

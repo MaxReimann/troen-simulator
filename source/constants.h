@@ -4,6 +4,7 @@
 // OSG
 #include <osg/Array>
 #include "forwarddeclarations.h"
+#include <btBulletDynamicsCommon.h>
 #include "qstring.h"
 
 // http://stackoverflow.com/questions/3681140/how-do-i-avoid-both-global-variables-and-magic-numbers
@@ -122,6 +123,8 @@ namespace troen
 		NAVIGATION_WINDOW,
 		BOTH_WINDOWS
 	};
+
+	typedef std::pair<btScalar, btScalar> btPoint;
 
 }
 
@@ -268,6 +271,9 @@ namespace troen
 
 #define toVec2(v) \
 	osg::Vec2(v.x(), v.y())
+
+#define pairToVec2(v) \
+	osg::Vec2(v.first, v.second)
 
 
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/

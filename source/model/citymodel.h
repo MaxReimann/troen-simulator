@@ -5,21 +5,25 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "levelmodel.h"
+#include "qimage.h"
 
 namespace troen
 {
 
 	class CityModel : public LevelModel
 	{
+		
 	public:
 		CityModel(const LevelController* levelController, std::string levelName);
 		void reload(std::string levelName);
-		btScalar getLevelSize();
+		btPoint getLevelSize();
 
 		static void callbackWrapper(void* pObject);
 	private:
 		void initSpecifics();
 		void physicsUpdate();
+		QImage m_collisionImage;
+		int m_count;
 	};
 
 }

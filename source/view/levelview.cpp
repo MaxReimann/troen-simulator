@@ -87,9 +87,7 @@ void LevelView::initSpecifics(std::shared_ptr<AbstractModel> model)
 {
 	m_model = std::dynamic_pointer_cast<LevelModel>(model);
 	
-	int levelSizeX = getLevelModel()->getLevelSize();
-	osg::Vec2 levelSize = osg::Vec2(levelSizeX, levelSizeX);
-
+	osg::Vec2 levelSize = pairToVec2(getLevelModel()->getLevelSize());
 
 	m_node->addChild(constructFloors(levelSize));
 	m_node->addChild(constructObstacles(levelSize, m_levelName));
@@ -103,8 +101,7 @@ void LevelView::reload(std::string levelName)
 {
 	m_node->removeChildren(0, m_node->getNumChildren());
 
-	int levelSizeX = getLevelModel()->getLevelSize();
-	osg::Vec2 levelSize = osg::Vec2(levelSizeX, levelSizeX);
+	osg::Vec2 levelSize = pairToVec2(getLevelModel()->getLevelSize());
 
 	m_node->addChild(constructObstacles(levelSize, levelName));
 	m_node->addChild(constructFloors(levelSize));
