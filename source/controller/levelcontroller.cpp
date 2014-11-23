@@ -39,6 +39,7 @@ void LevelController::initSpecifics()
 	{
 		m_model = m_levelModel = std::make_shared<CityModel>(this, m_levelName);
 		m_view = m_levelView = std::make_shared<CityView>(m_levelModel, m_levelName);
+
 	}
 	else
 	{
@@ -101,6 +102,12 @@ void LevelController::removeRigidBodiesFromWorld()
 void LevelController::addRigidBodiesToWorld()
 {
 	m_world.lock()->addRigidBodies(getRigidBodies(), COLGROUP_LEVEL, COLMASK_LEVEL);
+
+	if (m_levelType == BERLIN)
+	{
+		m_world.lock()->registerCustomCallback(
+			(void*)m_levelModel.get(), CityModel::callbackWrapper);
+	}
 }
 
 void LevelController::addItemBox()

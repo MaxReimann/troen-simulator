@@ -18,7 +18,6 @@ using namespace troen;
 CityModel::CityModel(const LevelController* levelController, std::string levelName) : 
 LevelModel(levelController,levelName)
 {
-
 }
 
 void CityModel::initSpecifics()
@@ -42,3 +41,16 @@ btScalar CityModel::getLevelSize()
 	return btScalar(13000);
 }
 
+void CityModel::physicsUpdate()
+{
+
+}
+
+// static wrapper-function to be able to callback the member function
+void CityModel::callbackWrapper(void* pObject)
+{
+	CityModel* mySelf = (CityModel*)pObject;
+
+	// call member
+	mySelf->physicsUpdate();
+}

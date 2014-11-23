@@ -25,7 +25,9 @@ m_lastSimulationTime(0),
 m_useDebugView(useDebugView),
 m_gameLogic(gameLogic)
 {
+	m_customCallbacks = std::vector<std::pair<void*, pt2Function>>();
 	initializeWorld();
+
 
 	if (m_useDebugView)
 	{
@@ -363,10 +365,24 @@ void PhysicsWorld::checkForCollisionEvents()
 	// the pairs we found in this iteration
 	m_pairsLastUpdate = pairsThisUpdate;
 	m_removedRigidBodies.clear();
+
+	for (std::pair<void*,pt2Function> pair : m_customCallbacks)
+	{
+		void *p2Object = pair.first;
+		pt2Function function = pair.second;
+		//execute custom function on object
+		function(p2Object);
+	}
 }
 
 
 void tickCallback(btDynamicsWorld *world, btScalar timeStep) {
 	PhysicsWorld *w = static_cast<PhysicsWorld *>(world->getWorldUserInfo());
 	w->checkForCollisionEvents();
+
+}
+
+void PhysicsWorld::registerCustomCallback(void *p2Object, pt2Function func)
+{
+	m_customCallbacks.push_back(std::pair<void*,pt2Function>(p2Object,func));
 }

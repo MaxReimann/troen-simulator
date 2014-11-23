@@ -16,9 +16,10 @@ namespace troen
 		void reload(std::string levelName);
 		btScalar getLevelSize();
 
+		static void callbackWrapper(void* pObject);
 	private:
 		void initSpecifics();
-
+		void physicsUpdate();
 	};
 
 }

@@ -17,6 +17,7 @@ typedef std::set<CollisionPair> CollisionPairSet;
 namespace troen
 {
 
+	typedef void(*pt2Function)(void*);
 
 /*! The PhysicsWorld provides a level of abstraction over the btDynamicsWorld of Bullet. Primarily, it is responsible for stepping the world, adding/removing collision bodies and detecting collisions between them.*/
 	class PhysicsWorld
@@ -51,7 +52,7 @@ namespace troen
 		};
 
 		std::mutex* getMutex() { return &m_physicsMutex; };
-
+		void registerCustomCallback(void *p2Object, pt2Function func);
 	private:
 		btDiscreteDynamicsWorld*			m_world;
 		btSequentialImpulseConstraintSolver*m_solver;
@@ -72,5 +73,6 @@ namespace troen
 		std::array<std::array<int, 100>, 100> m_discretizedWorld;
 
 		std::mutex m_physicsMutex;
+		std::vector<std::pair<void*,pt2Function>> m_customCallbacks;
 	};
 }

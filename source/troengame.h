@@ -19,6 +19,7 @@
 #include "view/skydome.h"
 
 
+
 #define MAX_BIKES 6
 namespace troen
 {
@@ -75,6 +76,10 @@ namespace troen
 		{
 			return m_levelController;
 		};
+		std::shared_ptr<PhysicsWorld> physicsWorld()
+		{
+			return m_physicsWorld;
+		}
 		std::vector<std::shared_ptr<Player>> players()
 			{ return m_players; };
 		osg::ref_ptr<SkyDome> skyDome()
