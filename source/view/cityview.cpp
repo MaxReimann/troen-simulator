@@ -35,7 +35,8 @@ LevelView(model, levelName)
 void CityView::initSpecifics(std::shared_ptr<AbstractModel> model)
 {
 	m_model = model;
-	osg::Vec2 levelSize(14065.44, 12721.44); //freom blender file
+	 //freom blender file
+	osg::Vec2 levelSize = pairToVec2(getCityModel()->getLevelSize());
 
 
 	m_node->addChild(constructFloors(levelSize));
@@ -72,10 +73,10 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, std::strin
 	osg::ref_ptr<osg::Group> obstaclesGroup = new osg::Group();
 	obstaclesGroup->setName("obstaclesGroup");
 
-	osg::ref_ptr<osg::Group> readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/berlin_l1_processed.ive"));
+	osg::ref_ptr<osg::Group> readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/full_level.ive"));
 	obstaclesGroup->addChild(readObstacles);
 
-	setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/generalized/01_00/texatlas.tga", 0, true);
+	//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/generalized/01_00/texatlas.tga", 0, true);
 	addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
 
 	return obstaclesGroup;

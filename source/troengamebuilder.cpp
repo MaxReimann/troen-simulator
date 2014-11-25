@@ -199,7 +199,7 @@ bool TroenGameBuilder::composeSceneGraph()
 		for (auto player : t->m_players)
 		{
 			t->m_sceneNode->addChild(player->routeController()->getViewNode());
-			t->m_sceneNode->addChild(player->bikeController()->getViewNode());
+			//t->m_sceneNode->addChild(player->bikeController()->getViewNode());
 		}
 	}
 

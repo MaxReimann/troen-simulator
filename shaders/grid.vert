@@ -16,8 +16,8 @@ void main()
 
 	uv = gl_Vertex.xy / levelSize+ vec2(0.5, 0.5);
 	//citymodel specific tranlation
-	uv.x -= 50.0 / levelSize.x;
-	uv.y -= 10.0 / levelSize.y;
+	uv.x -= 16.0 / levelSize.x;
+	uv.y += 18.0 / levelSize.y;
 
 	vertex_objCoords = gl_Vertex.xyz;
 

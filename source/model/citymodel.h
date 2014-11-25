@@ -1,11 +1,18 @@
 #pragma once
+#include <QDialog>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
+#include "qimage.h"
+
+
 //troen
 #include "../forwarddeclarations.h"
 #include "abstractmodel.h"
 #include <btBulletDynamicsCommon.h>
 
 #include "levelmodel.h"
-#include "qimage.h"
+
 
 namespace troen
 {

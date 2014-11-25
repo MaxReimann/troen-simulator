@@ -21,7 +21,7 @@ using namespace troen;
 CityModel::CityModel(const LevelController* levelController, std::string levelName) : 
 LevelModel(levelController,levelName)
 {
-	m_collisionImage = QImage("data/textures/berlin_binary.png");
+	m_collisionImage = QImage("data/textures/berlin_binary_detailed.png");
 	//m_collisionImage.load()
 	m_count = 0;
 }
@@ -44,7 +44,7 @@ void CityModel::reload(std::string levelName)
 
 btPoint CityModel::getLevelSize()
 {
-	return btPoint(14065.44, 12721.44); //from blender
+	return btPoint(13002, 11761); //from blender
 }
 
 void CityModel::physicsUpdate()
@@ -55,21 +55,21 @@ void CityModel::physicsUpdate()
 	double lv_w = getLevelSize().first;
 	double lv_h = getLevelSize().second;
 
-	double x_offset = -50.0;
-	double y_offset = -10.0;
+	double x_offset = 0;// -50.0;
+	double y_offset = 0;// -10.0;
 	
 	btVector3 pos = m_levelController->m_troenGame->activeBikeModel()->getPositionBt();
 
 	btCollisionShape* shape = m_levelController->m_troenGame->activeBikeModel()->getRigidBody()->getCollisionShape();
 	btVector3 halfExtents = ((btBoxShape*)shape)->getHalfExtentsWithMargin();
 	int count = 0;
-	double xChecks[]{ pos.x() - halfExtents.x(), pos.x(), pos.x() + halfExtents.x()}; 
+	double xChecks[]{ pos.x() };// -halfExtents.x(), pos.x(), pos.x() + halfExtents.x()};
 
 	for (double x: xChecks)
 	{
 
-		btScalar xrel = (x + x_offset+ lv_w / 2.0) / lv_w;
-		btScalar yrel = (pos.y() + y_offset + lv_h / 2.0) / lv_h;
+		double xrel = (x + x_offset+ lv_w / 2.0) / lv_w;
+		double yrel = (pos.y() + y_offset + lv_h / 2.0) / lv_h;
 
 		int x_pix = xrel * (double)w;
 		int y_pix = yrel * (double)h;
@@ -89,3 +89,4 @@ void CityModel::callbackWrapper(void* pObject)
 	// call member
 	mySelf->physicsUpdate();
 }
+
