@@ -1,10 +1,4 @@
 #pragma once
-#include <QDialog>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsItem>
-#include "qimage.h"
-
 
 //troen
 #include "../forwarddeclarations.h"
@@ -12,6 +6,8 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "levelmodel.h"
+#include "qimage.h"
+
 
 
 namespace troen
@@ -29,8 +25,15 @@ namespace troen
 	private:
 		void initSpecifics();
 		void physicsUpdate();
+		void setupDebugView();
 		QImage m_collisionImage;
 		int m_count;
+		osg::ref_ptr<osgViewer::View> m_view;
+		osg::ref_ptr<SampleOSGViewer> m_debugViewer;
+		std::shared_ptr<util::ChronoTimer>	m_debugViewTimer;
+		bool m_started;
+		int m_nextTime=false;
+		std::vector<unsigned char> m_data;
 	};
 
 }
