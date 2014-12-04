@@ -34,6 +34,7 @@ namespace troen
 		void reload();
 
 		TroenGame* m_troenGame;
+		void debugSnapShot();
 	protected:
 		std::shared_ptr<LevelView> m_levelView;
 		std::shared_ptr<LevelModel> m_levelModel;

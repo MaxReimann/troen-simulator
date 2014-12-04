@@ -6,6 +6,7 @@
 #include "gamelogic.h"
 #include "view/shaders.h"
 #include "BendedViews/src/SplineDeformationRendering.h"
+#include "controller/levelcontroller.h"
 
 using namespace troen;
 
@@ -76,6 +77,9 @@ void GameEventHandler::attachGameLogic(std::shared_ptr<GameLogic>& gamelogic)
 	 case osgGA::GUIEventAdapter::KEY_Tab:
 		m_troenGame->toggleHUDVisibility();
 		break;	 
+	 case osgGA::GUIEventAdapter::KEY_Q:
+		 m_troenGame->levelController()->debugSnapShot();
+		 break;
 	 default: 
 	  return false; 
 	 }

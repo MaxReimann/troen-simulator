@@ -20,9 +20,13 @@
 #include "../sampleosgviewer.h"
 #include "../util/chronotimer.h"
 #include "osgDB/ReadFile"
+#include "osgDB/WriteFile"
+#include "qfile.h"
+#include "qtextstream.h"
 
 static bool debugging = true;
-
+const int viewer_width = 1024;
+const int viewer_height = 1024;
 
 using namespace troen;
 
@@ -32,10 +36,10 @@ LevelModel(levelController, levelName)
 	m_collisionImage = QImage("data/textures/berlin_binary_detailed.png");
 	//m_collisionImage.load()
 	m_count = 0;
+	m_started = false;
 
 	if (debugging)
 		setupDebugView();
-
 }
 
 void CityModel::initSpecifics()
@@ -46,64 +50,41 @@ void CityModel::initSpecifics()
 
 void CityModel::setupDebugView()
 {
-	const int viewer_width = 512;
-	const int viewer_height = 512;
 
-	m_debugViewTimer = std::make_shared<util::ChronoTimer>(true, true);
+	m_image = new osg::Image;
+	m_image->allocateImage(viewer_width, viewer_width, 1, GL_RGB, GL_UNSIGNED_BYTE);
+
+	QRgb pix;
+	for (long x = 0; x < viewer_width; x++)
+	{
+		for (long y = 0; y < viewer_height; y++)
+		{
+			pix = m_collisionImage.pixel(x, y);
+			*(m_image->data(x, y) + 0) = qBlue(pix);
+			*(m_image->data(x, y) + 1) = qRed(pix);
+			*(m_image->data(x, y) + 2) = qGreen(pix);
+		}
+	}
+	m_image->dirty();
+
 	m_view = new osgViewer::View();
 
 	osg::ref_ptr<osg::Group> root = new osg::Group;
 	osg::ref_ptr<osg::Texture2D> testTexture = new osg::Texture2D;
+	assert(m_image.valid());
 
-	m_data = std::vector<unsigned char>(viewer_width*viewer_height * 3);
-	unsigned char *data = new unsigned char[viewer_width*viewer_height * 3];
-
-	QRgb pix;
-	for (long y = 0; y < viewer_height; y++)
-	{
-		for (long x = 0; x < viewer_width; x++)
-		{
-			pix = m_collisionImage.pixel(x, y);
-			data[x*3 + y*viewer_width] = 255;// qRed(pix);
-			data[x*3 + y*viewer_width + 1] = 100;//qGreen(pix);
-			data[x*3 + y*viewer_width + 2] = 255;// qBlue(pix);
-		}
-	}
-
-	osg::ref_ptr<osg::Image> image = new osg::Image;
-	//image->allocateImage(width, height, length, GL_RGB, GL_UNSIGNED_BYTE);
-	image->setOrigin(osg::Image::BOTTOM_LEFT);//start countingpixels on the Bottom left of the picture 
-	image->setImage(viewer_width, viewer_height, 1, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, data, osg::Image::USE_NEW_DELETE);
-
-
-	assert(image.valid());
-
-	testTexture->setImage(image);
+	testTexture->setImage(m_image);
 
 	osg::Camera* camera = m_view->getCamera();
-
 	// set the projection matrix
-	//camera->setProjectionMatrix(osg::Matrix::ortho2D(0,1280,0,1024));
-
-	// set the view matrix
-	camera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+	//camera->setProjectionMatrix(osg::Matrix::ortho2D(0, 1, 0, 1));
 	camera->setViewMatrix(osg::Matrix::identity());
 
-	// only clear the depth buffer
-	//camera->setClearMask(GL_DEPTH_BUFFER_BIT);
-
-	//// draw subgraph after main camera view.
-	//camera->setRenderOrder(osg::Camera::POST_RENDER);
-
-	osg::Geode* geode(new osg::Geode());
-	//geode->addDrawable(osg::createTexturedQuadGeometry(osg::Vec3(-1, -1, 0), osg::Vec3(2, 0, 0), osg::Vec3(0, 2, 0)));
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
 	osg::ref_ptr<osg::Geometry> pictureQuad = osg::createTexturedQuadGeometry(osg::Vec3(0.0f, 0.0f, 0.0f),
 		osg::Vec3(viewer_width, 0.0f, 0.0f),
 		osg::Vec3(0.0f, 0.0f, viewer_height),
-		0.0f,
-		0.0f,
-		1.0f,
-		1.0f);
+		0.0f, 0.0f, 1.0f, 1.0f);
 	pictureQuad->getOrCreateStateSet()->setTextureAttributeAndModes(0, testTexture.get());
 	geode->addDrawable(pictureQuad);
 	geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
@@ -122,8 +103,7 @@ void CityModel::setupDebugView()
 	osg::ref_ptr<RealizeOperation> renderOp = new RealizeOperation;
 	m_debugViewer->setRealizeOperation(renderOp);
 
-	//m_debugViewer->realize();
-	m_debugViewer->run();
+	m_debugViewer->realize();
 }
 
 void CityModel::reload(std::string levelName)
@@ -142,8 +122,51 @@ btPoint CityModel::getLevelSize()
 	return btPoint(13002, 11761); //from blender
 }
 
+void CityModel::writeDebugImage(int x_pix, int y_pix)
+{
+
+	QRgb pix;
+	for (long x = 0; x < viewer_width; x++)
+	{
+		for (long y = 0; y < viewer_height; y++)
+		{
+			pix = m_collisionImage.pixel(x + x_pix - viewer_width / 2,
+				y + y_pix - viewer_height / 2);
+			if (abs(x - viewer_width / 2) < 2 && abs(y - viewer_height / 2) < 2)
+				pix = QColor::fromRgb(255, 0, 0).rgb();
+
+			*(m_image->data(x, y) + 0) = qRed(pix);
+			*(m_image->data(x, y) + 1) = qBlue(pix);
+			*(m_image->data(x, y) + 2) = qGreen(pix);
+		}
+	}
+
+	m_image->dirty();
+	if (!osgDB::writeImageFile(*(m_image.get()), "data/test/result.tga"))
+		std::cout << "fail" << std::endl;
+
+	btVector3 pos = m_levelController->m_troenGame->activeBikeModel()->getPositionBt();
+
+	QFile file("data/test/currentpos.txt");
+	if (file.open(QFile::WriteOnly | QFile::Truncate))
+	{
+		QTextStream stream(&file);
+		stream << " xpix: " << x_pix << " ypix:" << y_pix << " xpos: " << pos.x() << " posy: " << pos.y();
+		stream.flush();
+		file.close();
+	}
+
+
+}
+
+
+
 void CityModel::physicsUpdate()
 {
+
+
+
+
 	int w = m_collisionImage.width();
 	int h = m_collisionImage.height();
 
@@ -158,7 +181,8 @@ void CityModel::physicsUpdate()
 	btCollisionShape* shape = m_levelController->m_troenGame->activeBikeModel()->getRigidBody()->getCollisionShape();
 	btVector3 halfExtents = ((btBoxShape*)shape)->getHalfExtentsWithMargin();
 	int count = 0;
-	double xChecks[]{ pos.x() };// -halfExtents.x(), pos.x(), pos.x() + halfExtents.x()};
+	double xChecks[]{  pos.x() };// -halfExtents.x(), pos.x(), pos.x() + halfExtents.x()
+
 
 	for (double x : xChecks)
 	{
@@ -171,24 +195,31 @@ void CityModel::physicsUpdate()
 
 		QRgb pixel = m_collisionImage.pixel(x_pix, y_pix);
 		QColor color(pixel);
-		//if (color.red() + color.green() + color.blue() < 20.0)
-		//	std::cout << ++m_count << std::endl;
+		if (color.red() + color.green() + color.blue() < 20.0)
+			std::cout << ++m_count << std::endl;
 
 		if (debugging)
 		{
 			if (!m_started)
 			{
+				m_debugViewTimer = std::make_shared<util::ChronoTimer>(true, true);
 				m_debugViewTimer->start();
 				m_started = true;
 				m_nextTime = m_debugViewTimer->elapsed();
 			}
 
-			//if (m_debugViewTimer->elapsed() >= m_nextTime)
-			//{
-			//	// assign the time for the next update
-			//	m_nextTime += 200;
-			//	m_debugViewer->frame();
-			//}
+			if (m_debugViewTimer->elapsed() >= m_nextTime)
+			{
+				// assign the time for the next update
+				m_nextTime += 200;
+				///m_debugViewer->frame();
+			}
+
+			if (m_key_event)
+			{
+				writeDebugImage(x_pix, y_pix);
+				m_key_event = false;
+			}
 		}
 
 
