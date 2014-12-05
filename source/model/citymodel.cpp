@@ -173,22 +173,22 @@ void CityModel::physicsUpdate()
 	double lv_w = getLevelSize().first;
 	double lv_h = getLevelSize().second;
 
-	double x_offset = 0;// -50.0;
-	double y_offset = 0;// -10.0;
-
 	btVector3 pos = m_levelController->m_troenGame->activeBikeModel()->getPositionBt();
 
 	btCollisionShape* shape = m_levelController->m_troenGame->activeBikeModel()->getRigidBody()->getCollisionShape();
 	btVector3 halfExtents = ((btBoxShape*)shape)->getHalfExtentsWithMargin();
 	int count = 0;
-	double xChecks[]{  pos.x() };// -halfExtents.x(), pos.x(), pos.x() + halfExtents.x()
 
+	double checks[][2]{{ pos.x() - BIKE_DIMENSIONS.x() / 2, pos.y() + BIKE_DIMENSIONS.y() / 2 },
+	{ pos.x() + BIKE_DIMENSIONS.x() / 2, pos.y() + BIKE_DIMENSIONS.y() / 2 },
+	{ pos.x() - BIKE_DIMENSIONS.x() / 2, pos.y() - BIKE_DIMENSIONS.y() / 2 },
+	{ pos.x() + BIKE_DIMENSIONS.x() / 2, pos.y() - BIKE_DIMENSIONS.y() / 2 }};
 
-	for (double x : xChecks)
+	for (double *corner : checks)
 	{
 
-		double xrel = (x + x_offset + lv_w / 2.0) / lv_w;
-		double yrel = (pos.y() + y_offset + lv_h / 2.0) / lv_h;
+		double xrel = (corner[0] + lv_w / 2.0) / lv_w;
+		double yrel = (corner[1] + lv_h / 2.0) / lv_h;
 
 		int x_pix = xrel * (double)w;
 		int y_pix = yrel * (double)h;
