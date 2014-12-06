@@ -179,7 +179,7 @@ void LevelModel::addBoxes(std::vector<BoxModel> &boxes, COLLISIONTYPE type)
 	}
 }
 
-btPoint LevelModel::getLevelSize()
+const btPoint LevelModel::getLevelSize()
 {
 	return btPoint(LEVEL_SIZE, LEVEL_SIZE);
 }

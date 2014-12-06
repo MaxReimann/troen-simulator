@@ -49,7 +49,7 @@ namespace troen
 	public:
 		LevelModel(const LevelController* levelController, std::string levelName);
 		virtual ~LevelModel(){};
-		virtual btPoint getLevelSize();
+		virtual const btPoint getLevelSize();
 		
 		virtual void reload(std::string levelName);
 		virtual std::vector<BoxModel>& getFloors() { return m_floors; };

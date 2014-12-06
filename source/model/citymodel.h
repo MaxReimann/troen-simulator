@@ -19,16 +19,18 @@ namespace troen
 	public:
 		CityModel(const LevelController* levelController, std::string levelName);
 		void reload(std::string levelName);
-		btPoint getLevelSize();
+		const inline btPoint getLevelSize();
 
 		static void callbackWrapper(void* pObject, btPersistentManifold *resultManifold);
 	protected:
 		void initSpecifics();
 		void physicsUpdate(btPersistentManifold *manifold);
 		void setupDebugView();
-		void writeDebugImage(int x_pix, int y_pix);
+		void writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *markPoints=nullptr, std::vector<osg::Vec2> *markPoints2=nullptr);
 		void debugUpdate(int x_pix, int y_pix);
-		void findCollisionEdge(std::vector<osg::Vec2> &points, osg::Vec2 checks[4]);
+		void findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks);
+		inline osg::Vec2 worldToPixelIndex(osg::Vec2 p);
+		osg::Vec2 findBorder(osg::Vec2 startI, osg::Vec2 direction);
 		QImage m_collisionImage;
 		int m_count;
 		osg::ref_ptr<osgViewer::View> m_view;
@@ -38,6 +40,7 @@ namespace troen
 		int m_nextTime = false;
 		bool m_key_event = false;
 		osg::ref_ptr<osg::Image> m_image;
+		std::vector<osg::Vec2> m_checks;
 	};
 
 }

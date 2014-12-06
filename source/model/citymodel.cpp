@@ -25,11 +25,26 @@
 #include "qtextstream.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
 
+
+
 static bool debugging = false;
 const int viewer_width = 1024;
 const int viewer_height = 1024;
 
 using namespace troen;
+
+template<class T>
+inline bool contains(std::vector<T>  v, T x)
+{
+	return std::find(v.begin(), v.end(), x) != v.end();
+}
+
+//return positive modulo
+template<class T>
+inline T posMod(T a, T b)
+{
+	return (a%b + b) % b;
+}
 
 CityModel::CityModel(const LevelController* levelController, std::string levelName) :
 LevelModel(levelController, levelName)
@@ -39,6 +54,8 @@ LevelModel(levelController, levelName)
 	m_count = 0;
 	m_started = false;
 
+	m_checks = std::vector<osg::Vec2>{ osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0),
+		osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0)};
 	if (debugging)
 		setupDebugView();
 }
@@ -61,26 +78,47 @@ void CityModel::reload(std::string levelName)
 }
 
 
-btPoint CityModel::getLevelSize()
+const btPoint CityModel::getLevelSize()
 {
 	return btPoint(13002, 11761); //from blender
 }
 
-void CityModel::writeDebugImage(int x_pix, int y_pix)
+void CityModel::writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *markPoints, std::vector<osg::Vec2> *markPoints2)
 {
 	QRgb pix;
+	std::vector<osg::Vec2> redPoints = std::vector<osg::Vec2>();
+	//redPoints.push_back(osg::Vec2(viewer_width/2, viewer_height/2));
+	if (markPoints != nullptr)
+	{
+		for (osg::Vec2 p : *markPoints)
+			redPoints.push_back(p);
+	}
+
 	for (long x = 0; x < viewer_width; x++)
 	{
 		for (long y = 0; y < viewer_height; y++)
 		{
 			pix = m_collisionImage.pixel(x + x_pix - viewer_width / 2,
 				y + y_pix - viewer_height / 2);
-			if (abs(x - viewer_width / 2) < 2 && abs(y - viewer_height / 2) < 2)
-				pix = QColor::fromRgb(255, 0, 0).rgb();
+			for (osg::Vec2 p : redPoints)
+			{
+				float adjustedX = p.x() - (x_pix - viewer_width / 2);
+				float adjustedY = p.y() - (y_pix - viewer_height / 2);
+				if (abs(x - adjustedX) < 0.5 && abs(y - adjustedY) < 0.5)
+					pix = QColor::fromRgb(255, 0, 0).rgb();
+			}
+			if (markPoints2!=nullptr)
+			for (osg::Vec2 p : *markPoints2)
+			{
+				float adjustedX = p.x() - (x_pix - viewer_width / 2);
+				float adjustedY = p.y() - (y_pix - viewer_height / 2);
+				if (abs(x - adjustedX) < 0.5 && abs(y - adjustedY) < 0.5)
+					pix = QColor::fromRgb(0, 255, 0).rgb();
+			}
 
 			*(m_image->data(x, y) + 0) = qRed(pix);
-			*(m_image->data(x, y) + 1) = qBlue(pix);
-			*(m_image->data(x, y) + 2) = qGreen(pix);
+			*(m_image->data(x, y) + 1) = qGreen(pix);
+			*(m_image->data(x, y) + 2) = qBlue(pix);
 		}
 	}
 
@@ -128,46 +166,28 @@ void CityModel::debugUpdate(int x_pix, int y_pix)
 
 void CityModel::physicsUpdate(btPersistentManifold *manifold)
 {
-	int w = m_collisionImage.width();
-	int h = m_collisionImage.height();
+	osg::Vec2 pos = toVec2(m_levelController->m_troenGame->activeBikeModel()->getPositionBt());
+	osg::Vec2 direction = toVec2(m_levelController->m_troenGame->activeBikeModel()->getDirection());
+	direction.normalize();
+	osg::Vec2 frontPoint = pos + direction * BIKE_DIMENSIONS.y();
+	osg::Vec2 backPoint = pos - direction * BIKE_DIMENSIONS.y();
+	
+	osg::Vec2 perp(-direction.y(), direction.x());
 
-	double lv_w = getLevelSize().first;
-	double lv_h = getLevelSize().second;
-
-	const btCollisionObject *bikeColObject = static_cast<const btCollisionObject*>(
-		m_levelController->m_troenGame->activeBikeModel()->getRigidBody().get());
-	const btCollisionObject *cityColObject = static_cast<const btCollisionObject*>(m_rigidBodies.at(0).get());
-	manifold->setBodies(bikeColObject, cityColObject);
-	manifold->setContactBreakingThreshold(1.0);
-
-	btVector3 pos = m_levelController->m_troenGame->activeBikeModel()->getPositionBt();
-	btCollisionShape* shape = m_levelController->m_troenGame->activeBikeModel()->getRigidBody()->getCollisionShape();
-	btVector3 halfExtents = ((btBoxShape*)shape)->getHalfExtentsWithMargin();
-
-	btVector3 minV, maxV;
-	m_levelController->m_troenGame->activeBikeModel()->getRigidBody()->getAabb(minV, maxV);
-
-	//osg::Vec2 checks[4]{osg::Vec2(pos.x() - BIKE_DIMENSIONS.x() / 2, pos.y() + BIKE_DIMENSIONS.y() / 2),
-	//	osg::Vec2(pos.x() + BIKE_DIMENSIONS.x() / 2, pos.y() + BIKE_DIMENSIONS.y() / 2),
-	//	osg::Vec2(pos.x() - BIKE_DIMENSIONS.x() / 2, pos.y() - BIKE_DIMENSIONS.y() / 2),
-	//	osg::Vec2(pos.x() + BIKE_DIMENSIONS.x() / 2, pos.y() - BIKE_DIMENSIONS.y() / 2)};
-
-	osg::Vec2 checks[4]{osg::Vec2(minV.x(), maxV.y()), toVec2(maxV), 
-		toVec2(minV), osg::Vec2(maxV.x(), minV.y())};
+	m_checks[0] = frontPoint - perp*BIKE_DIMENSIONS.x() / 2;
+	m_checks[1] = frontPoint + perp*BIKE_DIMENSIONS.x() / 2;
+	m_checks[2] = backPoint + perp*BIKE_DIMENSIONS.x() / 2;
+	m_checks[3] = backPoint - perp*BIKE_DIMENSIONS.x() / 2;
 
 
 	bool collision = false;
 	std::vector<osg::Vec2> collisionPoint;
-	for (osg::Vec2 corner : checks)
+	for (osg::Vec2 corner : m_checks)
 	{
 
-		double xrel = (corner.x() + lv_w / 2.0) / lv_w;
-		double yrel = (corner.y() + lv_h / 2.0) / lv_h;
+		osg::Vec2 pixelIndex = worldToPixelIndex(corner);
 
-		int x_pix = xrel * (double)w;
-		int y_pix = yrel * (double)h;
-
-		QRgb pixel = m_collisionImage.pixel(x_pix, y_pix);
+		QRgb pixel = m_collisionImage.pixel(pixelIndex.x(), pixelIndex.y());
 		QColor color(pixel);
 		if (color.red() + color.green() + color.blue() < 20.0)
 		{
@@ -175,16 +195,31 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 			collisionPoint.push_back(corner);
 
 			if (debugging)
-				debugUpdate(x_pix, y_pix);
+				debugUpdate(pixelIndex.x(), pixelIndex.y());
 		}
 	}
 
+	if (collision)
+	{
+		findCollisionEdge(collisionPoint,m_checks);
 
-	findCollisionEdge(collisionPoint,checks);
+		const btCollisionObject *bikeColObject = static_cast<const btCollisionObject*>(
+			m_levelController->m_troenGame->activeBikeModel()->getRigidBody().get());
+		const btCollisionObject *cityColObject = static_cast<const btCollisionObject*>(m_rigidBodies.at(0).get());
+		manifold->setBodies(bikeColObject, cityColObject);
+		manifold->setContactBreakingThreshold(1.0);
+	}
 
 
 
 
+}
+
+osg::Vec2 CityModel::worldToPixelIndex(osg::Vec2 p)
+{
+	osg::Vec2 levelSize = pairToVec2(getLevelSize());
+	osg::Vec2 picSize = osg::Vec2(m_collisionImage.width(), m_collisionImage.height());
+	return compMult(compDiv( (p + levelSize / 2.0), (levelSize) ), picSize);
 }
 
 // static wrapper-function to be able to callback the member function
@@ -196,40 +231,65 @@ void CityModel::callbackWrapper(void* pObject, btPersistentManifold *manifold)
 	mySelf->physicsUpdate(manifold);
 }
 
-void CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, osg::Vec2 checks[4])
+void CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks)
 {
 	osg::Vec2 direction1, direction2;
 
 	if (points.size() == 1)
 	{
-		if (points.front() == checks[0])
+		int i=0;
+		for (; i < 4; i++)
 		{
-			direction1 = (checks[0]-checks[1]);
-			direction2 = (checks[2] - checks[0]);
+			if (points.front() == checks[i])
+				break;
 		}
-		else if (points.front() == checks[1])
-		{
-			direction1 = (checks[1] - checks[0]);
-			direction2 = (checks[3] - checks[0]);
-		}
+
+		direction1 = checks[(i + 1) % 4] - checks[i];
+		direction2 = checks[posMod(i - 1,4)] - checks[i];
+
+		// insert same again, to apply 2nd direction later
+		points.push_back(points.front());
 		
 	}
 	else if (points.size() == 2)
-	{
-		//int moves[][2]{{ 0, -1 }, { -1, 0 }, { 0, 1 }, { 1, 0 }};
 		for (int i = 0; i < 4; i++)
-		{
-			if (points.front() == checks[i] && points.back() == checks[(i + 1) % 4] ||
-				points.back() == checks[i] && points.front() == checks[(i + 1) % 4])
+			if (contains(points, checks[i]) && contains(points, checks[(i + 1) % 4]))
 			{
-				direction1 = checks[(i + 2) % 4] - checks[i];
-				direction2 = checks[(i + 3) % 4] - checks[(i + 1) % 4];
+				direction1 = checks[posMod(i - 1, 4)] - checks[i];
+				direction2 = checks[(i + 2) % 4] - checks[(i + 1) % 4];
+				break;
 			}
-		}
 
+	else if (points.size() == 3)
+		for (int i = 0; i < 4; i++)
+			if (!contains(points, checks[i]))
+			{
+				direction1 = checks[posMod(i - 1, 4)] - checks[i];
+				direction2 = checks[(i + 2) % 4] - checks[(i + 1) % 4];
+				break;
+			}
+
+	direction1.normalize();
+	direction2.normalize();
+	osg::Vec2 pix1 = worldToPixelIndex(points[0]);
+	osg::Vec2 pix2 = worldToPixelIndex(points[1]);
+
+	osg::Vec2 p1 = findBorder(pix1, direction1);
+	osg::Vec2 p2 = findBorder(pix2, direction2);
+	std::vector<osg::Vec2> markPoints{ p1, p2 };
+
+	std::vector<osg::Vec2> markPoints2{ worldToPixelIndex(checks[0]),
+		worldToPixelIndex(checks[1]),
+		worldToPixelIndex(checks[2]),
+		worldToPixelIndex(checks[3])
+	};
+
+
+	if (debugging)
+	{
+		writeDebugImage(pix1.x(), pix1.y(), &markPoints,&markPoints2);
+		while (1);
 	}
-
-
 	//btTransform bikeTrans;
 	//bikeTrans.setOrigin(btVector3(corner[0], corner[1], 10.0));
 
@@ -245,6 +305,23 @@ void CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, osg::Vec2 chec
 
 }
 
+osg::Vec2 CityModel::findBorder(osg::Vec2 startI, osg::Vec2 normalizedDirection)
+{
+	osg::Vec2 pixelIndex = startI;
+	int count = 0;
+
+	//search for border in direction, max 100 iterations
+	while (count++ < 100) 
+	{
+		QRgb pixel = m_collisionImage.pixel(pixelIndex.x(), pixelIndex.y());
+		if (qRed(pixel) + qGreen(pixel) + qBlue(pixel) >= 200.0*3)
+			return pixelIndex;
+		
+		pixelIndex += normalizedDirection;
+	}
+
+	return pixelIndex;
+}
 
 void CityModel::setupDebugView()
 {

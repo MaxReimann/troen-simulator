@@ -272,8 +272,16 @@ namespace troen
 #define toVec2(v) \
 	osg::Vec2(v.x(), v.y())
 
+
 #define pairToVec2(v) \
 	osg::Vec2(v.first, v.second)
+
+//component Multiplication
+#define compMult(v1,v2) \
+	osg::Vec2(v1.x()*v2.x(), v1.y() * v2.y())
+
+#define compDiv(v1,v2) \
+	osg::Vec2(v1.x() / v2.x(), v1.y() / v2.y())
 
 
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/

@@ -76,7 +76,7 @@ btTransform LevelController::getRandomSpawnPoint()
 void LevelController::initializeSpawnPoints()
 {
 	btVector3 Z_AXIS(0, 0, 1);
-	m_initialBikePositionTransforms.push_back(btTransform(btQuaternion(Z_AXIS, (float)PI * 3.f / 4.f), btVector3(0, 0, BIKE_DIMENSIONS.z() / 2 + 100)));
+	m_initialBikePositionTransforms.push_back(btTransform(btQuaternion(Z_AXIS, (float)PI * 3.f / 4.f), btVector3(-181, 379, BIKE_DIMENSIONS.z() / 2 + 100)));
 	m_initialBikePositionTransforms.push_back(btTransform(btQuaternion(Z_AXIS, (float)PI * 1.f / 4.f), btVector3(20, -20, BIKE_DIMENSIONS.z() / 2 + 500)));
 	m_initialBikePositionTransforms.push_back(btTransform(btQuaternion(Z_AXIS, (float)-PI * 1.f / 4.f), btVector3(-20, -20, BIKE_DIMENSIONS.z() / 2 + 500)));
 	m_initialBikePositionTransforms.push_back(btTransform(btQuaternion(Z_AXIS, (float)-PI * 3.f / 4.f), btVector3(-20, 20, BIKE_DIMENSIONS.z() / 2 + 500)));
