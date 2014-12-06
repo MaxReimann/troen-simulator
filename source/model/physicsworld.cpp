@@ -366,12 +366,19 @@ void PhysicsWorld::checkForCollisionEvents()
 	m_pairsLastUpdate = pairsThisUpdate;
 	m_removedRigidBodies.clear();
 
-	for (std::pair<void*,pt2Function> pair : m_customCallbacks)
+	for (std::pair<void*, pt2Function> pair : m_customCallbacks)
 	{
 		void *p2Object = pair.first;
-		pt2Function function = pair.second;
+		pt2Function customCollisionDetection = pair.second;
+		btPersistentManifold manifold;
 		//execute custom function on object
-		function(p2Object);
+		customCollisionDetection(p2Object, &manifold);
+		
+		const btRigidBody* pBody0 = static_cast<const btRigidBody*>(manifold.getBody0());
+		const btRigidBody* pBody1 = static_cast<const btRigidBody*>(manifold.getBody1());
+
+		if (manifold.getNumContacts() > 0)
+			m_gameLogic.lock()->collisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1, &manifold);
 	}
 }
 

@@ -17,7 +17,7 @@ typedef std::set<CollisionPair> CollisionPairSet;
 namespace troen
 {
 
-	typedef void(*pt2Function)(void*);
+	typedef void (*pt2Function)(void*, btPersistentManifold *m);
 
 /*! The PhysicsWorld provides a level of abstraction over the btDynamicsWorld of Bullet. Primarily, it is responsible for stepping the world, adding/removing collision bodies and detecting collisions between them.*/
 	class PhysicsWorld

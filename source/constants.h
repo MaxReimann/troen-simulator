@@ -297,9 +297,9 @@ enum InterpolationMethod
 template<typename T>
 inline const T interpolate(
 	const T t
-	, const InterpolationMethod function = InterpolateLinear)
+	, const InterpolationMethod customCollisionDetection = InterpolateLinear)
 {
-	switch (function)
+	switch (customCollisionDetection)
 	{
 	case InterpolateSmoothStep:
 		return smoothstep(t);

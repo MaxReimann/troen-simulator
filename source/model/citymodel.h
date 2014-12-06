@@ -21,12 +21,14 @@ namespace troen
 		void reload(std::string levelName);
 		btPoint getLevelSize();
 
-		static void callbackWrapper(void* pObject);
+		static void callbackWrapper(void* pObject, btPersistentManifold *resultManifold);
 	protected:
 		void initSpecifics();
-		void physicsUpdate();
+		void physicsUpdate(btPersistentManifold *manifold);
 		void setupDebugView();
 		void writeDebugImage(int x_pix, int y_pix);
+		void debugUpdate(int x_pix, int y_pix);
+		void findCollisionEdge(std::vector<osg::Vec2> &points, osg::Vec2 checks[4]);
 		QImage m_collisionImage;
 		int m_count;
 		osg::ref_ptr<osgViewer::View> m_view;
