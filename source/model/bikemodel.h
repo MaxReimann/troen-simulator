@@ -54,7 +54,6 @@ namespace troen
 		btTransform getTransform();
 		btVector3 BikeModel::getDirection();
 		std::shared_ptr<btRigidBody> getRigidBody();
-		btCollisionObjectWrapper getWrapper();
 	private:
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;
 		float m_oldVelocity;

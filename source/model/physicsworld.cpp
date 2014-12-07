@@ -13,6 +13,7 @@
 #include "../sound/audiomanager.h"
 
 #include <ctime>
+#include "citymodel.h"
 
 using namespace troen;
 static void tickCallback(btDynamicsWorld *world, btScalar timeStep);
@@ -212,7 +213,7 @@ void PhysicsWorld::initializeWorld()
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
 
 	// potential bottleneck
-	m_solver = new btSequentialImpulseConstraintSolver;
+	m_solver = new mybtSequentialImpulseConstraintSolver;
 
 	m_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
 
@@ -379,6 +380,7 @@ void PhysicsWorld::checkForCollisionEvents()
 		if (manifold.getNumContacts() > 0)
 			m_gameLogic.lock()->collisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1, &manifold);
 	}
+
 }
 
 
