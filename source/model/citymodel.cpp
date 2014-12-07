@@ -24,6 +24,7 @@
 #include "qfile.h"
 #include "qtextstream.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
+#include "BulletCollision/CollisionShapes/btStaticPlaneShape.h"
 
 
 
@@ -201,11 +202,20 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 
 	if (collision)
 	{
-		findCollisionEdge(collisionPoint,m_checks);
+		osg::Vec2 planeNormal;
+		osg::Vec2 planeCenter = findCollisionEdge(collisionPoint, m_checks, planeNormal);
+
+		btTransform planeTrans;
+		planeTrans.setOrigin(btVector3(planeCenter.x(), planeCenter.y(), 0.0));
+		btStaticPlaneShape planeShape(btVector3(planeNormal.x(),planeNormal.y(),0.0), 0.0);
+		const btCollisionObject *cityColObject = static_cast<const btCollisionObject*>(m_rigidBodies.at(0).get());
+
+		btCollisionObjectWrapper planeWrap((const btCollisionObjectWrapper*)nullptr,
+			&planeShape, cityColObject, planeTrans, 0, 1);
 
 		const btCollisionObject *bikeColObject = static_cast<const btCollisionObject*>(
 			m_levelController->m_troenGame->activeBikeModel()->getRigidBody().get());
-		const btCollisionObject *cityColObject = static_cast<const btCollisionObject*>(m_rigidBodies.at(0).get());
+		
 		manifold->setBodies(bikeColObject, cityColObject);
 		manifold->setContactBreakingThreshold(1.0);
 	}
@@ -231,7 +241,7 @@ void CityModel::callbackWrapper(void* pObject, btPersistentManifold *manifold)
 	mySelf->physicsUpdate(manifold);
 }
 
-void CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks)
+osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec2 &resultNormal)
 {
 	osg::Vec2 direction1, direction2;
 
@@ -276,27 +286,32 @@ void CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<os
 
 	osg::Vec2 p1 = findBorder(pix1, direction1);
 	osg::Vec2 p2 = findBorder(pix2, direction2);
-	std::vector<osg::Vec2> markPoints{ p1, p2 };
 
-	std::vector<osg::Vec2> markPoints2{ worldToPixelIndex(checks[0]),
-		worldToPixelIndex(checks[1]),
-		worldToPixelIndex(checks[2]),
-		worldToPixelIndex(checks[3])
-	};
 
 
 	if (debugging)
 	{
+		std::vector<osg::Vec2> markPoints{ p1, p2 };
+
+		std::vector<osg::Vec2> markPoints2{ worldToPixelIndex(checks[0]),
+			worldToPixelIndex(checks[1]),
+			worldToPixelIndex(checks[2]),
+			worldToPixelIndex(checks[3])
+		};
 		writeDebugImage(pix1.x(), pix1.y(), &markPoints,&markPoints2);
 		while (1);
 	}
+
+	resultNormal.set(-(p2 - p1).y(), (p2 - p1).x());
+
+	//center
+	return (p2 + p1) / 2;
 	//btTransform bikeTrans;
 	//bikeTrans.setOrigin(btVector3(corner[0], corner[1], 10.0));
 
 	//btCollisionObjectWrapper b1((const btCollisionObjectWrapper*)NULL,
 	//	(const btCollisionShape*)NULL, bikeColObject, (const btTransform)bikeTrans, 0, 0);
-	//btCollisionObjectWrapper b2((const btCollisionObjectWrapper*)NULL,
-	//	(const btCollisionShape*)NULL, cityColObject, (const btTransform)btTransform(), 0, 1);
+
 
 	//btManifoldResult colResult(&b1, &b2);
 	//colResult.setPersistentManifold(manifold);

@@ -272,6 +272,8 @@ namespace troen
 #define toVec2(v) \
 	osg::Vec2(v.x(), v.y())
 
+#define osgToBtVec3(v) \
+	(btVector3(v.x(), v.y(), v.z()))
 
 #define pairToVec2(v) \
 	osg::Vec2(v.first, v.second)

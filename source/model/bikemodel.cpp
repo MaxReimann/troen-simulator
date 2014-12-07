@@ -10,6 +10,7 @@
 #include "bikemotionstate.h"
 #include "objectinfo.h"
 #include "GetTime.h"
+#include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
 
 using namespace troen;
 
@@ -370,4 +371,13 @@ void BikeModel::freeze()
 {
 	m_bikeRigidBody->setAngularVelocity(btVector3(0, 0, 0));
 	m_bikeRigidBody->setLinearVelocity(btVector3(0, 0, 0));
+}
+
+btCollisionObjectWrapper BikeModel::getWrapper()
+{
+	btCollisionObjectWrapper bikeWrap((const btCollisionObjectWrapper*)nullptr,
+		m_bikeRigidBody->getCollisionShape(), static_cast<const btCollisionObject*>(m_bikeRigidBody.get()),
+		getTransform(), 0, 1);
+
+	return bikeWrap;
 }

@@ -365,7 +365,6 @@ void PhysicsWorld::checkForCollisionEvents()
 	// the pairs we found in this iteration
 	m_pairsLastUpdate = pairsThisUpdate;
 	m_removedRigidBodies.clear();
-
 	for (std::pair<void*, pt2Function> pair : m_customCallbacks)
 	{
 		void *p2Object = pair.first;
