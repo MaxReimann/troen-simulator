@@ -30,9 +30,17 @@ m_fenceLimitActivated(true)
 RouteController::RouteController(
 	Player * player,
 	btTransform initialTransform,
-	Route route) : RouteController(player, initialTransform) //c++11 delegation
+	Route route) 
 {
+	m_player = player;
+	m_model = m_routeModel = std::make_shared<RouteModel>(this);
+	m_view = m_routeView = std::shared_ptr<RouteView>(new RouteView(this, player->color(), m_model));
 
+	btQuaternion rotation = initialTransform.getRotation();
+	btVector3 position = initialTransform.getOrigin();
+	adjustPositionUsingFenceOffset(rotation, position);
+
+	m_lastPosition = position;
 	m_Route = route;
 	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 8);
 	m_routeView->setupStrips(m_subdividedPoints.size());

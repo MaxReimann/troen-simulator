@@ -213,7 +213,7 @@ void PhysicsWorld::initializeWorld()
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
 
 	// potential bottleneck
-	m_solver = new mybtSequentialImpulseConstraintSolver;
+	m_solver = new btSequentialImpulseConstraintSolver;
 
 	m_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
 
@@ -310,6 +310,7 @@ void PhysicsWorld::stepSimulation(long double currentTime)
 
 }
 
+
 void PhysicsWorld::checkForCollisionEvents()
 {
 	// keep a list of the collision pairs we
@@ -374,14 +375,32 @@ void PhysicsWorld::checkForCollisionEvents()
 		//execute custom function on object
 		customCollisionDetection(p2Object, &manifold);
 		
-		const btRigidBody* pBody0 = static_cast<const btRigidBody*>(manifold.getBody0());
-		const btRigidBody* pBody1 = static_cast<const btRigidBody*>(manifold.getBody1());
+		//const btRigidBody* pBody0 = static_cast<const btRigidBody*>(manifold.getBody0());
+		//const btRigidBody* pBody1 = static_cast<const btRigidBody*>(manifold.getBody1());
 
-		if (manifold.getNumContacts() > 0)
-			m_gameLogic.lock()->collisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1, &manifold);
+		//if (manifold.getNumContacts() > 0)
+		//	m_gameLogic.lock()->collisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1, &manifold);
+
+		//btTransform planeTrans;
+		//planeTrans.setIdentity();
+		//planeTrans.setOrigin(btVector3(1, 2, 0.0));
+		//std::shared_ptr<btDefaultMotionState> wallMotionState = std::make_shared<btDefaultMotionState>(planeTrans);
+
+		//std::shared_ptr<btStaticPlaneShape> planeShape = std::make_shared<btStaticPlaneShape>(btVector3(0, 1, 0.0), 0.0);
+
+
+		////mass=0 -> static object
+		//btRigidBody::btRigidBodyConstructionInfo
+		//	wallRigidBodyCI(0, wallMotionState.get(), planeShape, btVector3(0, 0, 0));
+
+		//btRigidBody *cityRigidBody = new btRigidBody(wallRigidBodyCI);
+
+		//this->addRigidBody(cityRigidBody);
+		//m_world->updateAabbs();
 	}
 
 }
+
 
 
 void tickCallback(btDynamicsWorld *world, btScalar timeStep) {

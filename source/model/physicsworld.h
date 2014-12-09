@@ -55,7 +55,7 @@ namespace troen
 		void registerCustomCallback(void *p2Object, pt2Function func);
 	private:
 		btDiscreteDynamicsWorld*			m_world;
-		mybtSequentialImpulseConstraintSolver*m_solver;
+		btSequentialImpulseConstraintSolver*m_solver;
 		btDefaultCollisionConfiguration*	m_collisionConfiguration;
 		btCollisionDispatcher*				m_dispatcher;
 		btBroadphaseInterface*				m_broadphase;

@@ -48,7 +48,7 @@ namespace osgGA
 
 // Bullet
 class btDiscreteDynamicsWorld;
-class mybtSequentialImpulseConstraintSolver;
+class btSequentialImpulseConstraintSolver;
 class btDefaultCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;
