@@ -294,6 +294,17 @@ void PhysicsWorld::stepSimulation(long double currentTime)
 	// timeStep < maxSubSteps * fixedTimeStep
 	// where the parameters are given as follows:
 	// stepSimulation(timeStep, maxSubSteps, fixedTimeStep)
+	for (std::pair<void*, pt2Function> pair : m_customCallbacks)
+	{
+		void *p2Object = pair.first;
+		pt2Function customCollisionDetection = pair.second;
+		btPersistentManifold manifold;
+		//execute custom function on object
+		customCollisionDetection(p2Object, &manifold);
+	}
+
+
+
 	getMutex()->lock();
 	m_world->stepSimulation(timeSinceLastSimulation/1000.f, 8);
 	getMutex()->unlock();
@@ -367,37 +378,6 @@ void PhysicsWorld::checkForCollisionEvents()
 	// the pairs we found in this iteration
 	m_pairsLastUpdate = pairsThisUpdate;
 	m_removedRigidBodies.clear();
-	for (std::pair<void*, pt2Function> pair : m_customCallbacks)
-	{
-		void *p2Object = pair.first;
-		pt2Function customCollisionDetection = pair.second;
-		btPersistentManifold manifold;
-		//execute custom function on object
-		customCollisionDetection(p2Object, &manifold);
-		
-		//const btRigidBody* pBody0 = static_cast<const btRigidBody*>(manifold.getBody0());
-		//const btRigidBody* pBody1 = static_cast<const btRigidBody*>(manifold.getBody1());
-
-		//if (manifold.getNumContacts() > 0)
-		//	m_gameLogic.lock()->collisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1, &manifold);
-
-		//btTransform planeTrans;
-		//planeTrans.setIdentity();
-		//planeTrans.setOrigin(btVector3(1, 2, 0.0));
-		//std::shared_ptr<btDefaultMotionState> wallMotionState = std::make_shared<btDefaultMotionState>(planeTrans);
-
-		//std::shared_ptr<btStaticPlaneShape> planeShape = std::make_shared<btStaticPlaneShape>(btVector3(0, 1, 0.0), 0.0);
-
-
-		////mass=0 -> static object
-		//btRigidBody::btRigidBodyConstructionInfo
-		//	wallRigidBodyCI(0, wallMotionState.get(), planeShape, btVector3(0, 0, 0));
-
-		//btRigidBody *cityRigidBody = new btRigidBody(wallRigidBodyCI);
-
-		//this->addRigidBody(cityRigidBody);
-		//m_world->updateAabbs();
-	}
 
 }
 

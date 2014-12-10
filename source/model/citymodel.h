@@ -28,7 +28,7 @@ namespace troen
 		void setupDebugView();
 		void writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *markPoints=nullptr, std::vector<osg::Vec2> *markPoints2=nullptr);
 		void debugUpdate(int x_pix, int y_pix);
-		osg::Vec2 findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec2 &resultNormal);
+		osg::Vec2 findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec3 &resultNormal);
 		inline osg::Vec2 worldToPixelIndex(osg::Vec2 p);
 		osg::Vec2 findBorder(osg::Vec2 startI, osg::Vec2 direction);
 		QImage m_collisionImage;

@@ -69,6 +69,8 @@ LevelModel(levelController, levelName)
 		setupDebugView();
 
 	m_solver = std::make_shared<btSequentialImpulseConstraintSolver>();
+	m_planeShape = std::make_shared<btStaticPlaneShape>(btVector3(0, 0, 1), 0);
+	m_wallMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
 }
 
 void CityModel::initSpecifics()
@@ -214,55 +216,47 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 	{
 
 
-		osg::Vec2 planeNormal;
+		osg::Vec3 planeNormal;
 		osg::Vec2 planeCenter = findCollisionEdge(collisionPoint, m_checks, planeNormal);
 
 		btTransform planeTrans;
+		planeTrans.setIdentity();
 		planeTrans.setOrigin(btVector3(planeCenter.x(), planeCenter.y(), 0.0));
 		
-		m_wallMotionState.reset(new btDefaultMotionState(planeTrans));
+		btDefaultMotionState *motionState = new btDefaultMotionState(planeTrans);
+		m_wallMotionState.reset(motionState);
 		//m_wallMotionState = std::make_shared<btDefaultMotionState>(planeTrans);
 		
-		m_planeShape.reset(new btStaticPlaneShape(btVector3(planeNormal.x(), planeNormal.y(), 0.0), 0.0));
+		m_planeShape.reset(new btStaticPlaneShape(osgToBtVec3(planeNormal), 0.0));
+
+
+		btVector3 planeInertia(0, 0, 0);
+		m_planeShape->calculateLocalInertia(0, planeInertia);
 		//m_planeShape = std::make_shared<;
 
 		//mass=0 -> static object
 		btRigidBody::btRigidBodyConstructionInfo
-			wallRigidBodyCI(btScalar(0), m_wallMotionState.get(), m_planeShape.get(), btVector3(0, 0, 0)); 
+			wallRigidBodyCI(0, m_wallMotionState.get(), m_planeShape.get(), btVector3(0, 0, 0)); 
 
 		btRigidBody *cityRigidBody = new btRigidBody(wallRigidBodyCI);
 
-
-		//btCollisionObject *bikeColObject = m_levelController->m_troenGame->activeBikeModel()->getRigidBody().get();
-		//
-
-
-		//btCollisionObjectWrapper planeWrap((const btCollisionObjectWrapper*)nullptr,
-		//	&planeShape, cityColObject, planeTrans, 0, 1);
-		//btCollisionObjectWrapper bikeWrap((const btCollisionObjectWrapper*)nullptr,
-		//	bikeColObject->getCollisionShape(), static_cast<const btCollisionObject*>(bikeColObject),
-		//	bikeColObject->getWorldTransform(), 0, 1);
-
-
-		//btCollisionObject* colliders[2] = { cityRigidBody.get(), bikeColObject };
+		// for collision event handling
+		ObjectInfo* info = new ObjectInfo(const_cast<LevelController*>(m_levelController), LEVELWALLTYPE);
+		cityRigidBody->setUserPointer(info);
 
 		btDiscreteDynamicsWorld *world = m_levelController->m_troenGame->physicsWorld()->getDiscreteWorld();
 
-		if (m_lastBody != nullptr)
-		{
-			world->removeRigidBody(m_lastBody.get());
-			m_lastBody.reset(cityRigidBody);
-		}
-		else
-		{
-			m_lastBody = std::shared_ptr<btRigidBody>(cityRigidBody);
-		}
+		//if (m_lastBody != nullptr)
+		//{
+		//	//world->removeRigidBody(m_lastBody.get());
+		//	m_lastBody.reset(cityRigidBody);
+		//}
+		//else
+		//{
+		//	m_lastBody = std::shared_ptr<btRigidBody>(cityRigidBody);
+		//}
 
 		world->addRigidBody(cityRigidBody);
-
-		int c = 1;
-		int d = 4 * c;
-
 		//manifold->setBodies(&cityRigidBody, bikeColObject);
 		//manifold->setContactBreakingThreshold(5.0);
 		//manifold->setContactBreakingThreshold(1.0);
@@ -302,7 +296,7 @@ void CityModel::callbackWrapper(void* pObject, btPersistentManifold *manifold)
 	mySelf->physicsUpdate(manifold);
 }
 
-osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec2 &resultNormal)
+osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec3 &resultNormal)
 {
 	osg::Vec2 direction1, direction2;
 
@@ -363,7 +357,8 @@ osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vect
 		while (1);
 	}
 
-	resultNormal.set(-(p2 - p1).y(), (p2 - p1).x());
+	
+	resultNormal.set(osg::Vec3(p2-p1,0)^osg::Vec3(0,0,1));
 
 	//center
 	return (p2 + p1) / 2;
