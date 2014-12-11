@@ -63,14 +63,14 @@ LevelModel(levelController, levelName)
 	m_count = 0;
 	m_started = false;
 
-	m_checks = std::vector<osg::Vec2>{ osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0),
+	m_checks = std::vector<osg::Vec2>{ 
+		osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0),
 		osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0)};
+	m_lastBodies = std::vector<std::shared_ptr<rigidBodyWrap>>();
+
 	if (debugging)
 		setupDebugView();
 
-	m_solver = std::make_shared<btSequentialImpulseConstraintSolver>();
-	m_planeShape = std::make_shared<btStaticPlaneShape>(btVector3(0, 0, 1), 0);
-	m_wallMotionState = std::make_shared<btDefaultMotionState>(btTransform::getIdentity());
 }
 
 void CityModel::initSpecifics()
@@ -214,68 +214,64 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 
 	if (collision)
 	{
+		const btVector3 boxSize(10, 5, 10);
+		m_lastColliding = true;
 
+		osg::Vec2 edge;
+		osg::Vec2 planeCenter = findCollisionEdge(collisionPoint, m_checks, edge);
+		osg::Vec2 polarCoord(edge);
+		polarCoord.normalize();
 
-		osg::Vec3 planeNormal;
-		osg::Vec2 planeCenter = findCollisionEdge(collisionPoint, m_checks, planeNormal);
+		//rotation to x Axis
+		double rotAroundZ = atan(polarCoord.y() / polarCoord.x());
 
-		btTransform planeTrans;
-		planeTrans.setIdentity();
-		planeTrans.setOrigin(btVector3(planeCenter.x(), planeCenter.y(), 0.0));
+		btQuaternion rotation;
+		rotation.setEuler(0.0, 0.0, rotAroundZ);
+
+		btVector3 origin(planeCenter.x(), planeCenter.y(), 0.0);
+		btVector3 planeNormal = osgToBtVec3((osg::Vec3(edge, 0.0) ^ osg::Vec3(0, 0, 1))).normalized();
+		// shift so one box side is on the wall edge
+		origin -= planeNormal * boxSize.y() / 2;
 		
-		btDefaultMotionState *motionState = new btDefaultMotionState(planeTrans);
-		m_wallMotionState.reset(motionState);
-		//m_wallMotionState = std::make_shared<btDefaultMotionState>(planeTrans);
+		// if wall already created recently, angle should be the same
+		if (m_lastBodies.size() > 0 && m_lastBodies.at(0)->worldTransform.getRotation().angle(rotation) < 0.1)
+		{
+			std::cout << "exists" << std::endl;
+			return;
+		}
 		
-		m_planeShape.reset(new btStaticPlaneShape(osgToBtVec3(planeNormal), 0.0));
+		std::shared_ptr<rigidBodyWrap> bodyWrap = std::make_shared<rigidBodyWrap>();
 
+		bodyWrap->worldTransform;
+		bodyWrap->worldTransform.setIdentity();
+		bodyWrap->worldTransform.setOrigin(origin);
+		bodyWrap->worldTransform.setRotation(rotation);
+
+		btDefaultMotionState *motionState = new btDefaultMotionState();
+		bodyWrap->motionState = btDefaultMotionState();
+
+		bodyWrap->shape = btBoxShape(boxSize);
+		
 
 		btVector3 planeInertia(0, 0, 0);
-		m_planeShape->calculateLocalInertia(0, planeInertia);
-		//m_planeShape = std::make_shared<;
+		bodyWrap->shape.calculateLocalInertia(0, planeInertia);
 
 		//mass=0 -> static object
 		btRigidBody::btRigidBodyConstructionInfo
-			wallRigidBodyCI(0, m_wallMotionState.get(), m_planeShape.get(), btVector3(0, 0, 0)); 
+			wallRigidBodyCI(0, &(bodyWrap->motionState), &(bodyWrap->shape), btVector3(0, 0, 0));
 
-		btRigidBody *cityRigidBody = new btRigidBody(wallRigidBodyCI);
+		bodyWrap->body = std::make_shared<btRigidBody>(wallRigidBodyCI);
+		bodyWrap->body->setWorldTransform(bodyWrap->worldTransform);
 
 		// for collision event handling
 		ObjectInfo* info = new ObjectInfo(const_cast<LevelController*>(m_levelController), LEVELWALLTYPE);
-		cityRigidBody->setUserPointer(info);
+		bodyWrap->body->setUserPointer(info);
 
 		btDiscreteDynamicsWorld *world = m_levelController->m_troenGame->physicsWorld()->getDiscreteWorld();
 
-		//if (m_lastBody != nullptr)
-		//{
-		//	//world->removeRigidBody(m_lastBody.get());
-		//	m_lastBody.reset(cityRigidBody);
-		//}
-		//else
-		//{
-		//	m_lastBody = std::shared_ptr<btRigidBody>(cityRigidBody);
-		//}
-
-		world->addRigidBody(cityRigidBody);
-		//manifold->setBodies(&cityRigidBody, bikeColObject);
-		//manifold->setContactBreakingThreshold(5.0);
-		//manifold->setContactBreakingThreshold(1.0);
-
-		//int conts = world->getNumConstraints();
-
-		//
-		//m_solver->solveGroup(colliders, 2,
-		//	&manifold, 1,
-		//	nullptr, 0,
-		//	world->getSolverInfo(),
-		//	nullptr, nullptr);
-
-		//set "empty" rigid city body, because shape and stuff not needed anymore
-		//manifold->setBodies(bikeColObject, m_rigidBodies.at(0).get());
-
+		world->addRigidBody(bodyWrap->body.get());
+		m_lastBodies.push_back(bodyWrap);
 	}
-
-
 
 
 }
@@ -287,6 +283,15 @@ osg::Vec2 CityModel::worldToPixelIndex(osg::Vec2 p)
 	return compMult(compDiv( (p + levelSize / 2.0), (levelSize) ), picSize);
 }
 
+osg::Vec2 CityModel::pixelToWorld(osg::Vec2 pixel)
+{
+	osg::Vec2 levelSize = pairToVec2(getLevelSize());
+	osg::Vec2 picSize = osg::Vec2(m_collisionImage.width(), m_collisionImage.height());
+	double x = ((pixel.x() / picSize.x()) * levelSize.x()) - levelSize.x() / 2;
+	double y = ((pixel.y() / picSize.y()) * levelSize.y()) - levelSize.y() / 2;
+	return osg::Vec2(x, y);
+}
+
 // static wrapper-function to be able to callback the member function
 void CityModel::callbackWrapper(void* pObject, btPersistentManifold *manifold)
 {
@@ -296,7 +301,7 @@ void CityModel::callbackWrapper(void* pObject, btPersistentManifold *manifold)
 	mySelf->physicsUpdate(manifold);
 }
 
-osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec3 &resultNormal)
+osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec2 &resultVector)
 {
 	osg::Vec2 direction1, direction2;
 
@@ -339,8 +344,8 @@ osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vect
 	osg::Vec2 pix1 = worldToPixelIndex(points[0]);
 	osg::Vec2 pix2 = worldToPixelIndex(points[1]);
 
-	osg::Vec2 p1 = findBorder(pix1, direction1);
-	osg::Vec2 p2 = findBorder(pix2, direction2);
+	osg::Vec2 p1 = pixelToWorld( findBorder(pix1, direction1) );
+	osg::Vec2 p2 = pixelToWorld( findBorder(pix2, direction2) );
 
 
 
@@ -358,22 +363,11 @@ osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vect
 	}
 
 	
-	resultNormal.set(osg::Vec3(p2-p1,0)^osg::Vec3(0,0,1));
+	//resultNormal.set(osg::Vec3(p2-p1,0)^osg::Vec3(0,0,1));
+	resultVector.set((p2 - p1).x(),(p2-p1).y());
 
 	//center
 	return (p2 + p1) / 2;
-	//btTransform bikeTrans;
-	//bikeTrans.setOrigin(btVector3(corner[0], corner[1], 10.0));
-
-	//btCollisionObjectWrapper b1((const btCollisionObjectWrapper*)NULL,
-	//	(const btCollisionShape*)NULL, bikeColObject, (const btTransform)bikeTrans, 0, 0);
-
-
-	//btManifoldResult colResult(&b1, &b2);
-	//colResult.setPersistentManifold(manifold);
-	//// adds contanct point to manifold
-	//colResult.addContactPoint(btVector3(0, -1, 0), btVector3(corner[0], corner[1], 10.0), 0.1);
-
 }
 
 osg::Vec2 CityModel::findBorder(osg::Vec2 startI, osg::Vec2 normalizedDirection)
@@ -451,3 +445,4 @@ void CityModel::setupDebugView()
 
 	m_debugViewer->realize();
 }
+

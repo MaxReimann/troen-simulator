@@ -294,14 +294,7 @@ void PhysicsWorld::stepSimulation(long double currentTime)
 	// timeStep < maxSubSteps * fixedTimeStep
 	// where the parameters are given as follows:
 	// stepSimulation(timeStep, maxSubSteps, fixedTimeStep)
-	for (std::pair<void*, pt2Function> pair : m_customCallbacks)
-	{
-		void *p2Object = pair.first;
-		pt2Function customCollisionDetection = pair.second;
-		btPersistentManifold manifold;
-		//execute custom function on object
-		customCollisionDetection(p2Object, &manifold);
-	}
+
 
 
 
@@ -378,6 +371,15 @@ void PhysicsWorld::checkForCollisionEvents()
 	// the pairs we found in this iteration
 	m_pairsLastUpdate = pairsThisUpdate;
 	m_removedRigidBodies.clear();
+
+	for (std::pair<void*, pt2Function> pair : m_customCallbacks)
+	{
+		void *p2Object = pair.first;
+		pt2Function customCollisionDetection = pair.second;
+		btPersistentManifold manifold;
+		//execute custom function on object
+		customCollisionDetection(p2Object, &manifold);
+	}
 
 }
 
