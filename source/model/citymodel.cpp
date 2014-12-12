@@ -36,11 +36,12 @@
 
 
 
-static bool debugging = false;
+static const bool debugging = false;
 const int viewer_width = 1024;
 const int viewer_height = 1024;
 
 using namespace troen;
+
 
 template<class T>
 inline bool contains(std::vector<T>  v, T x)
@@ -69,7 +70,10 @@ LevelModel(levelController, levelName)
 	m_lastBodies = std::vector<std::shared_ptr<rigidBodyWrap>>();
 
 	if (debugging)
+	{
 		setupDebugView();
+
+	}
 
 }
 
@@ -113,13 +117,6 @@ void CityModel::writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *ma
 		{
 			pix = m_collisionImage.pixel(x + x_pix - viewer_width / 2,
 				y + y_pix - viewer_height / 2);
-			for (osg::Vec2 p : redPoints)
-			{
-				float adjustedX = p.x() - (x_pix - viewer_width / 2);
-				float adjustedY = p.y() - (y_pix - viewer_height / 2);
-				if (abs(x - adjustedX) < 0.5 && abs(y - adjustedY) < 0.5)
-					pix = QColor::fromRgb(255, 0, 0).rgb();
-			}
 			if (markPoints2!=nullptr)
 			for (osg::Vec2 p : *markPoints2)
 			{
@@ -127,6 +124,13 @@ void CityModel::writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *ma
 				float adjustedY = p.y() - (y_pix - viewer_height / 2);
 				if (abs(x - adjustedX) < 0.5 && abs(y - adjustedY) < 0.5)
 					pix = QColor::fromRgb(0, 255, 0).rgb();
+			}
+			for (osg::Vec2 p : redPoints)
+			{
+				float adjustedX = p.x() - (x_pix - viewer_width / 2);
+				float adjustedY = p.y() - (y_pix - viewer_height / 2);
+				if (abs(x - adjustedX) < 0.5 && abs(y - adjustedY) < 0.5)
+					pix = QColor::fromRgb(255, 0, 0).rgb();
 			}
 
 			*(m_image->data(x, y) + 0) = qRed(pix);
@@ -194,7 +198,7 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 
 
 	bool collision = false;
-	std::vector<osg::Vec2> collisionPoint;
+	std::vector<osg::Vec2> collisionPoints;
 	for (osg::Vec2 corner : m_checks)
 	{
 
@@ -205,7 +209,7 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		if (color.red() + color.green() + color.blue() < 20.0)
 		{
 			collision = true;
-			collisionPoint.push_back(corner);
+			collisionPoints.push_back(corner);
 
 			if (debugging)
 				debugUpdate(pixelIndex.x(), pixelIndex.y());
@@ -214,31 +218,51 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 
 	if (collision)
 	{
-		const btVector3 boxSize(10, 5, 10);
+		const btVector3 boxSize(50, 5, 10);
 		m_lastColliding = true;
 
 		osg::Vec2 edge;
-		osg::Vec2 planeCenter = findCollisionEdge(collisionPoint, m_checks, edge);
+		osg::Vec2 planeCenter = findCollisionEdge(collisionPoints, m_checks, edge);
+		
+		btVector3 origin(planeCenter.x(), planeCenter.y(), 0.0);
+		btVector3 mainVector = btVector3(edge.x(), edge.y(), 0.0).normalized();
+		
+		btVector3 planeNormal = mainVector.cross(btVector3(0,0,1)).normalized();
+
+		
+		//std::vector<btVector3> vertices{ mainVector * boxSize.x(), 
+		//	mainVector * boxSize.x() + planeNormal*boxSize.y(), 
+		//	-mainVector * boxSize.x() + planeNormal*boxSize.y(),
+		//	-mainVector * boxSize.x()
+		//};
+		//for (int i = 0; i < 4; i++)
+		//{
+		//	vertices.push_back(vertices.at(i) + btVector3(0, 0, boxSize.z()));
+		//}
+
 		osg::Vec2 polarCoord(edge);
 		polarCoord.normalize();
 
 		//rotation to x Axis
 		double rotAroundZ = atan(polarCoord.y() / polarCoord.x());
+		if (rotAroundZ < 0)
+		{
+			rotAroundZ += PI;
+		}
 
 		btQuaternion rotation;
-		rotation.setEuler(0.0, 0.0, rotAroundZ);
+		rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
 
-		btVector3 origin(planeCenter.x(), planeCenter.y(), 0.0);
-		btVector3 planeNormal = osgToBtVec3((osg::Vec3(edge, 0.0) ^ osg::Vec3(0, 0, 1))).normalized();
+
 		// shift so one box side is on the wall edge
 		origin -= planeNormal * boxSize.y() / 2;
 		
 		// if wall already created recently, angle should be the same
-		if (m_lastBodies.size() > 0 && m_lastBodies.at(0)->worldTransform.getRotation().angle(rotation) < 0.1)
-		{
-			std::cout << "exists" << std::endl;
-			return;
-		}
+		//if (m_lastBodies.size() > 0 && m_lastBodies.at(0)->worldTransform.getRotation().angle(rotation) < 0.1)
+		//{
+		//	std::cout << "exists" << std::endl;
+		//	return;
+		//}
 		
 		std::shared_ptr<rigidBodyWrap> bodyWrap = std::make_shared<rigidBodyWrap>();
 
@@ -251,6 +275,8 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		bodyWrap->motionState = btDefaultMotionState();
 
 		bodyWrap->shape = btBoxShape(boxSize);
+		//for (auto vert : vertices)
+		//	bodyWrap->shape.addPoint(vert);
 		
 
 		btVector3 planeInertia(0, 0, 0);
@@ -351,21 +377,22 @@ osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vect
 
 	if (debugging)
 	{
-		std::vector<osg::Vec2> markPoints{ p1, p2 };
+		std::vector<osg::Vec2> redPoints{ findBorder(pix1, direction1), findBorder(pix2, direction2) };
 
 		std::vector<osg::Vec2> markPoints2{ worldToPixelIndex(checks[0]),
 			worldToPixelIndex(checks[1]),
 			worldToPixelIndex(checks[2]),
 			worldToPixelIndex(checks[3])
 		};
-		writeDebugImage(pix1.x(), pix1.y(), &markPoints,&markPoints2);
+		writeDebugImage(pix1.x(), pix1.y(), &redPoints, &markPoints2);
+		resultVector.set((p2 - p1).x(), (p2 - p1).y());
+		std::cout << resultVector.x() << " " << resultVector.y() << std::endl;
 		while (1);
 	}
 
 	
 	//resultNormal.set(osg::Vec3(p2-p1,0)^osg::Vec3(0,0,1));
 	resultVector.set((p2 - p1).x(),(p2-p1).y());
-
 	//center
 	return (p2 + p1) / 2;
 }
@@ -439,10 +466,10 @@ void CityModel::setupDebugView()
 #endif
 
 	m_debugViewer = new SampleOSGViewer();
-	m_debugViewer->addView(m_view);
-	osg::ref_ptr<RealizeOperation> renderOp = new RealizeOperation;
-	m_debugViewer->setRealizeOperation(renderOp);
+	//m_debugViewer->addView(m_view);
+	//osg::ref_ptr<RealizeOperation> renderOp = new RealizeOperation;
+	//m_debugViewer->setRealizeOperation(renderOp);
 
-	m_debugViewer->realize();
+	//m_debugViewer->realize();
 }
 

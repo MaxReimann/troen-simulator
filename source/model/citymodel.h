@@ -9,7 +9,6 @@
 #include "qimage.h"
 
 
-
 namespace troen
 {
 	struct rigidBodyWrap
@@ -19,7 +18,7 @@ namespace troen
 		btTransform worldTransform;
 		std::shared_ptr<btRigidBody> body;
 
-		rigidBodyWrap() : shape(btBoxShape(btVector3(0, 0, 0))),
+		rigidBodyWrap() : shape(btBoxShape(btVector3(0,0,1))),
 			motionState(btDefaultMotionState()),
 			worldTransform(btTransform())
 		{}
