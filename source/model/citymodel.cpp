@@ -216,9 +216,9 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		}
 	}
 
-	if (collision && !m_lastColliding)
+	if (collision && m_lastCollidingTimer==0)
 	{
-		m_lastColliding = true;
+		m_lastCollidingTimer = 10;
 		
 		const btVector3 boxSize(10, 5, 10);
 
@@ -229,17 +229,6 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		btVector3 mainVector = btVector3(edge.x(), edge.y(), 0.0).normalized();
 		
 		btVector3 planeNormal = mainVector.cross(btVector3(0,0,1)).normalized();
-
-		
-		//std::vector<btVector3> vertices{ mainVector * boxSize.x(), 
-		//	mainVector * boxSize.x() + planeNormal*boxSize.y(), 
-		//	-mainVector * boxSize.x() + planeNormal*boxSize.y(),
-		//	-mainVector * boxSize.x()
-		//};
-		//for (int i = 0; i < 4; i++)
-		//{
-		//	vertices.push_back(vertices.at(i) + btVector3(0, 0, boxSize.z()));
-		//}
 
 		osg::Vec2 polarCoord(edge);
 		polarCoord.normalize();
@@ -263,13 +252,6 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		else
 			origin += planeNormal * boxSize.y();
 		
-		// if wall already created recently, angle should be the same
-		//if (m_lastBodies.size() > 0 && m_lastBodies.at(0)->worldTransform.getRotation().angle(rotation) < 0.1)
-		//{
-		//	std::cout << "exists" << std::endl;
-		//	return;
-		//}
-		
 		std::shared_ptr<rigidBodyWrap> bodyWrap = std::make_shared<rigidBodyWrap>();
 
 		bodyWrap->worldTransform;
@@ -281,10 +263,6 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		bodyWrap->motionState = btDefaultMotionState();
 
 		bodyWrap->shape = btBoxShape(boxSize);
-		//for (auto vert : vertices)
-		//	bodyWrap->shape.addPoint(vert);
-		
-
 		btVector3 planeInertia(0, 0, 0);
 		bodyWrap->shape.calculateLocalInertia(0, planeInertia);
 
@@ -306,7 +284,11 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 	}
 	else if (!collision)
 	{
-		m_lastColliding = false;
+		m_lastCollidingTimer = 0;
+	}
+	else
+	{
+		m_lastCollidingTimer--;
 	}
 
 }

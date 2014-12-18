@@ -51,7 +51,7 @@ namespace troen
 		bool m_started;
 		int m_nextTime = false;
 		bool m_key_event = false;
-		bool m_lastColliding = false;
+		int m_lastCollidingTimer = 0;
 
 		osg::ref_ptr<osg::Image> m_image;
 		std::vector<osg::Vec2> m_checks;
