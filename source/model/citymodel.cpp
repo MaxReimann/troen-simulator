@@ -216,10 +216,11 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		}
 	}
 
-	if (collision)
+	if (collision && !m_lastColliding)
 	{
-		const btVector3 boxSize(50, 5, 10);
 		m_lastColliding = true;
+		
+		const btVector3 boxSize(10, 5, 10);
 
 		osg::Vec2 edge;
 		osg::Vec2 planeCenter = findCollisionEdge(collisionPoints, m_checks, edge);
@@ -255,7 +256,12 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 
 
 		// shift so one box side is on the wall edge
-		origin -= planeNormal * boxSize.y() / 2;
+		float posDistance = (btToOSGVec3((origin + planeNormal)) - osg::Vec3(pos, 0.f)).length();
+		float negDistance = (btToOSGVec3((origin - planeNormal)) - osg::Vec3(pos, 0.f)).length();
+		if (negDistance > posDistance)
+			origin -= planeNormal * boxSize.y();
+		else
+			origin += planeNormal * boxSize.y();
 		
 		// if wall already created recently, angle should be the same
 		//if (m_lastBodies.size() > 0 && m_lastBodies.at(0)->worldTransform.getRotation().angle(rotation) < 0.1)
@@ -298,7 +304,10 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		world->addRigidBody(bodyWrap->body.get());
 		m_lastBodies.push_back(bodyWrap);
 	}
-
+	else if (!collision)
+	{
+		m_lastColliding = false;
+	}
 
 }
 
