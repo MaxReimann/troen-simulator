@@ -1,7 +1,9 @@
 import bpy
 import os
+import math
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 from bpy_extras.io_utils import ExportHelper
+from mathutils import Vector
 
 
 ### HOWTO: open this file in blender text editor. Edit your scene and make  sure only cubes are used (only translate and scale are supported for now)
@@ -34,6 +36,88 @@ class AddPath(bpy.types.Operator):
                 object.name = "NavigationRoute"
 
         return {"FINISHED"}
+
+class AddBoundaries(bpy.types.Operator):
+    """Add a street boundary to route"""
+    bl_idname = "troen.curve_add_boundary"
+    bl_label = "Add boundary to selected"
+    bl_options = {'UNDO'}
+    
+    def invoke(self, context, event) :
+        for object in bpy.context.selected_objects:
+            if object.name.startswith("NavigationRoute"):
+                self.add_boundary(object)
+
+        return {"FINISHED"}
+
+    def add_boundary(self, curve):
+        spline = curve.data.splines[0]
+        points = [x.co for x in spline.points]
+        points = self.subdivide_adaptive(points, 5)
+        length = 0.0
+        for i in range(1,len(points)):
+            length += (points[i-1] +  points[i]).length 
+            print((points[i-1] +  points[i]).length)
+        length /= len(points)
+        length /= 25.0
+        vectors = []
+        
+
+        for i in range(1,len(points)):
+            vec = (curve.matrix_world * (points[i] - points[i-1])).xyz
+            norm = vec.cross(Vector((0,0,1)))
+            norm.normalize()
+            norm*= 0.2
+
+            direction = vec
+            direction.normalize()
+            rotZ = math.atan(direction.y / direction.x)
+            if rotZ < 0:
+                rotZ += 3.141592
+            mid_point = (curve.matrix_world *(points[i-1]+points[i])/2.0).xyz
+            #right cube
+            start = mid_point+norm
+            bpy.ops.mesh.primitive_cube_add(location=(start.x,start.y,start.z))
+            cube = bpy.context.active_object
+            cube.name = curve.name + "." + "route_boundary.r"
+            cube.scale = (length,0.05,0.2)
+            cube.rotation_euler = (0,0,rotZ)
+
+            #left cube
+            start = mid_point-norm
+            bpy.ops.mesh.primitive_cube_add(location=(start.x,start.y,start.z))
+            cube = bpy.context.active_object
+            cube.name = curve.name + "." + "route_boundary.l"
+            cube.scale = (length,0.05,0.2)
+            cube.rotation_euler = (0,0,rotZ)
+
+
+    def subdivide_adaptive(self, _input, level):
+        def length(vec1, vec2):
+            return math.sqrt((vec1.x-vec2.x)**2 + (vec1.y-vec2.y)**2 + (vec1.z-vec2.z)**2)
+        points = _input
+        thresh = 0.3
+        for j in range(level):
+            subdivided = []
+            print("level %i\n\n"%j)
+            for i in range(1,len(points)-1):
+                if j < 3:
+                    print(length(points[i - 1], points[i]))
+                    print(points[i-1])
+                    print(points[i])
+                if length(points[i - 1], points[i]) > thresh :
+                    p1 = (points[i - 1] + points[i]) / 2.0
+                    p2 = (points[i] + points[i + 1]) / 2.0
+                    p_i_new = (points[i] + (p1 + p2) / 2.0) / 2.0
+                    subdivided.append(p1)
+                    subdivided.append(p_i_new)
+                else :
+                    subdivided.append(points[i])
+            points = []
+            points.append(_input[0])
+            points += subdivided
+            points.append(_input[-1])
+        return points
 
 class ExportPath(bpy.types.Operator, ExportHelper):
     """Export Path to Troen (data\\routes)"""
@@ -109,6 +193,7 @@ class CustomPanel(bpy.types.Panel):
         col = split.column(align=True)
 
         col.operator("troen.curve_add_named", text="Add Path", icon='CURVE_PATH')
+        col.operator("troen.curve_add_boundary", text="Add Boundary", icon='CURVE_PATH')
         
 
         col.operator("troen.curve_export_troen", text="Export to Troen", icon='EXPORT')
@@ -116,11 +201,13 @@ class CustomPanel(bpy.types.Panel):
 
 def register():
     bpy.utils.register_class(AddPath)
+    bpy.utils.register_class(AddBoundaries)
     bpy.utils.register_class(ExportPath)
     bpy.utils.register_class(CustomPanel)
 
 def unregister():
     bpy.utils.unregister_class(AddPath)
+    bpy.utils.unregister_class(AddBoundaries)
     bpy.utils.unregister_class(ExportPath)
     bpy.utils.unregister_class(CustomPanel)
 
