@@ -67,7 +67,7 @@ class AddBoundaries(bpy.types.Operator):
             vec = (curve.matrix_world * (points[i] - points[i-1])).xyz
             norm = vec.cross(Vector((0,0,1)))
             norm.normalize()
-            norm*= 0.2
+            norm*= 0.30
 
             direction = vec
             direction.normalize()
@@ -82,6 +82,7 @@ class AddBoundaries(bpy.types.Operator):
             cube.name = curve.name + "." + "route_boundary.r"
             cube.scale = (length,0.05,0.2)
             cube.rotation_euler = (0,0,rotZ)
+            cube.layers = curve.layers
 
             #left cube
             start = mid_point-norm
@@ -90,6 +91,7 @@ class AddBoundaries(bpy.types.Operator):
             cube.name = curve.name + "." + "route_boundary.l"
             cube.scale = (length,0.05,0.2)
             cube.rotation_euler = (0,0,rotZ)
+            cube.layers = curve.layers
 
 
     def subdivide_adaptive(self, _input, level):
@@ -151,6 +153,12 @@ class ExportPath(bpy.types.Operator, ExportHelper):
             default='OPT_A',
             )
 
+    export_bounds = BoolProperty(
+            name="Export Boundaries",
+            description="Boundaries will be exported in an extra file",
+            default=True,
+            )
+
     def execute(self, context) :
         output = ""
 
@@ -171,8 +179,64 @@ class ExportPath(bpy.types.Operator, ExportHelper):
 
             my_file.write(output)
 
+        if self.export_bounds:
+            self.export_boundaries()
+
 
         return {"FINISHED"}
+
+    def export_boundaries(self):
+        routes = {}
+        for ob in bpy.context.selectable_objects:
+            if ob.name.startswith("NavigationRoute") and "boundary" in ob.name:
+                name_split = ob.name.split(".")
+                curve_name = name_split[0]
+                if name_split[1] != "boundary":
+                    curve_name = name_split[0] + "." + name_split[1]
+                if curve_name not in routes:
+                    routes[curve_name] = []
+
+                routes[curve_name].append(ob)
+
+        for bounds in routes.values():
+            path = self.filepath.rsplit(".", 1)[0] + ".bounds" 
+            with open(path, "w") as output_file:
+                output_file.write(self.get_model_autogen(bounds))
+
+    def get_model_autogen(self, obstacles):
+        #write out the cubes location and dimensions
+        auto_gen_code  = ""
+        for ob_index, obstacle in enumerate(obstacles):
+            auto_gen_code += self.create_box_collision_shape_str().format(
+                                                          pos_x=str(obstacle.location.x*SCALE),
+                                                          pos_y=str(obstacle.location.y*SCALE),
+                                                          pos_z=str(obstacle.location.z*SCALE),
+                                                          length_x=str(obstacle.dimensions.x*SCALE),
+                                                          length_y=str(obstacle.dimensions.y*SCALE),
+                                                          length_z=str(obstacle.dimensions.z*SCALE),
+                                                          quat_x=str(obstacle.rotation_quaternion.x),
+                                                          quat_y=str(obstacle.rotation_quaternion.y),
+                                                          quat_z=str(obstacle.rotation_quaternion.z),
+                                                          quat_w=str(obstacle.rotation_quaternion.w),
+                                                          name=str(obstacle.name),
+                                                          collisionType="LEVELWALLTYPE")
+            if ob_index < len(obstacles) -1:
+                auto_gen_code += "\n"
+        return auto_gen_code
+
+    def create_box_collision_shape_str(self):
+        return """{pos_x}
+{pos_y}
+{pos_z}
+{length_x}
+{length_y}
+{length_z}
+{quat_x}
+{quat_y}
+{quat_z}
+{quat_w}
+{name}
+{collisionType}"""
 
 
 class CustomPanel(bpy.types.Panel):
