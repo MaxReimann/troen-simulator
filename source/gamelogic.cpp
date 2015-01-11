@@ -488,9 +488,7 @@ void GameLogic::resetBike(BikeController *bikeController)
 {
 	bikeController->reset();
 
-	// TODO should happen in reset()
-	btTransform position = m_troenGame->m_levelController->getRandomSpawnPoint();
-	bikeController->moveBikeToPosition(position);
+
 }
 
 void GameLogic::resetBikePositions()

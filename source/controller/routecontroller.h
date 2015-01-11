@@ -38,12 +38,17 @@ namespace troen
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool active);
 		btTransform getFirstWayPoint();
+		btTransform getLastWayPoint();
 
 	private:
 		std::shared_ptr<RouteView> m_routeView;
 		std::shared_ptr<RouteModel> m_routeModel;
 
 		void adjustPositionUsingFenceOffset(const btQuaternion& rotation, btVector3& position);
+		void trackRouteProgress(btVector3 playerPosition);
+		double getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 playerPosition);
+		int findNearestPointIndex(osg::Vec3 playerPos, double &distance);
+		int findNearestPointIndex(int start, int end, osg::Vec3 playerPos, double &distance);
 		btVector3 m_lastPosition;
 		bool m_fenceLimitActivated;
 
@@ -51,5 +56,6 @@ namespace troen
 		std::weak_ptr<PhysicsWorld> m_world;
 		Route m_Route;
 		std::vector<osg::Vec3> m_subdividedPoints;
+		int m_nextPointIndex;
 	};
 }

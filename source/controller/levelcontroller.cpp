@@ -168,3 +168,4 @@ void LevelController::debugSnapShot()
 		std::dynamic_pointer_cast<CityModel>(m_model)->m_key_event = true;
 	}
 }
+

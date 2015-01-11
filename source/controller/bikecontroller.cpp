@@ -61,10 +61,12 @@ void BikeController::reset()
 	if (m_pollingThread != nullptr)
 		m_pollingThread->setVibration(false);
 
-	m_player->routeController()->removeAllFences();
 	m_player->setHealth(BIKE_DEFAULT_HEALTH);
 	m_player->setPoints(0);
 	m_timeOfLastCollision = -1;
+	btTransform position = player()->routeController()->getLastWayPoint();
+	position.setOrigin(position.getOrigin() + btVector3(0, 0, 10.0));
+	moveBikeToPosition(position);
 }
 
 void BikeController::registerCollision(const btScalar impulse)

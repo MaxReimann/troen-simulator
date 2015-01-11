@@ -96,7 +96,7 @@ btTransform troen::Route::getTransform(int index)
 		vec = waypoints.at(index) - waypoints.at(index-1);
 
 	
-	double rotAroundZ = atan(vec.y() / vec.x());
+	double rotAroundZ = PI / 2 - atan(vec.y() / vec.x());
 	if (rotAroundZ < 0)
 	{
 		rotAroundZ += PI;

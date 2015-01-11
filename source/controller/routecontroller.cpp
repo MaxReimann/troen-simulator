@@ -1,3 +1,5 @@
+#include <stack>
+#include <osg/Vec3>
 #include "routecontroller.h"
 // troen
 #include "../constants.h"
@@ -6,7 +8,6 @@
 #include "../model/routemodel.h"
 #include "../model/physicsworld.h"
 
-#include <osg/Vec3>
 
 using namespace troen;
 
@@ -42,6 +43,7 @@ RouteController::RouteController(
 
 	m_lastPosition = position;
 	m_Route = route;
+	m_nextPointIndex = 0;
 	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 8);
 	m_routeView->setupStrips(m_subdividedPoints.size());
 
@@ -54,23 +56,83 @@ RouteController::RouteController(
 
 void RouteController::update(btVector3 position, btQuaternion rotation)
 {
-	//adjustPositionUsingFenceOffset(rotation, position);
-	//osg::Vec3 osgPosition = osg::Vec3(position.x(), position.y(), position.z());
-	//osg::Vec3 osgLastPosition = osg::Vec3(m_lastPosition.x(), m_lastPosition.y(), m_lastPosition.z());
-	//// add new fence part
-	//if ((position - m_lastPosition).length() > FENCE_PART_LENGTH)
-	//{
-	//	//m_routeModel->addFencePart(m_lastPosition, position);
-	//	m_routeView->addFencePart(osgLastPosition,osgPosition);
-	//	m_lastPosition = position;
-	//}
-
-	//// update fence gap
-	//m_routeView->updateFenceGap(osgLastPosition, osgPosition);
-	//m_player
+	trackRouteProgress(position);
 	m_routeView->m_playerPositionUniform->set(btToOSGVec3(position));
 }
 
+double RouteController::getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 playerPosition)
+{
+
+	osg::Vec3 pre, post;
+	osg::Vec3 next = m_subdividedPoints[curPointIndex];
+	if (curPointIndex > 0)
+		pre = m_subdividedPoints[curPointIndex - 1];
+	else
+		pre = next;
+
+	if (curPointIndex < m_subdividedPoints.size() - 1)
+		post = m_subdividedPoints[curPointIndex + 1];
+	else
+		post = next;
+
+	osg::Vec3 normal = (post - pre) ^ osg::Vec3(0, 0, 1);
+	//point on normal line through m_nextPointIndex point
+	osg::Vec3 p1 = next + normal;
+	//dist: (| (x_2 - x_1)x(x_1 - x_0) | ) / (| x_2 - x_1 | )
+	double distanceToLine = (normal ^ (next - playerPosition)).length() / normal.length();
+
+	return distanceToLine;
+}
+
+int RouteController::findNearestPointIndex(osg::Vec3 playerPos, double &distance)
+{
+	int start = m_nextPointIndex - 1;
+	int end = m_subdividedPoints.size() - 1;
+
+	const double threshold = 50.0;
+
+	for (int res = 100; res >= 1; res /= 2)
+	{
+		for (int i = start; i <= end; i += res)
+		{
+			if (i % (res * 2) == 0) //already checked
+				continue;
+
+			distance = (m_subdividedPoints[i] - playerPos).length();
+			if (distance < threshold)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+
+void RouteController::trackRouteProgress(btVector3 playerPosition)
+{
+	osg::Vec3 next = m_subdividedPoints[m_nextPointIndex];
+	osg::Vec3 playerPos = btToOSGVec3(playerPosition);
+	double distanceToLine = getDistanceToRouteNormalAt(m_nextPointIndex, playerPos );
+
+	double distanceToPoint = (next - playerPos).length();
+
+	if (distanceToPoint < 150.0 || (distanceToLine < 15.0 && distanceToPoint < 300))
+	{
+		if (m_nextPointIndex < m_subdividedPoints.size() - 1)
+			m_nextPointIndex++;
+		else
+			std::cout << "finished this route!" << std::endl;
+	}
+	else{
+		double dist;
+		int i = findNearestPointIndex(playerPos, dist);
+		if (i!=-1)
+			m_nextPointIndex = i;
+
+	}
+
+}
 
 
 void RouteController::attachWorld(std::shared_ptr<PhysicsWorld> &world)
@@ -146,4 +208,34 @@ void RouteController::updateFadeOutFactor(float fadeOutFactor)
 btTransform RouteController::getFirstWayPoint()
 {
 	return m_Route.getTransform(0);
+}
+
+
+btTransform RouteController::getLastWayPoint()
+{
+	btTransform trans;
+	osg::Vec3 vec;
+	int index;
+	if (m_nextPointIndex > 0)
+		index = m_nextPointIndex - 1;
+	else
+		index = m_nextPointIndex;
+
+	trans.setOrigin(osgToBtVec3((m_subdividedPoints[index])));
+
+	if (index != m_subdividedPoints.size() - 1)
+		vec = m_subdividedPoints[index + 1] - m_subdividedPoints[index];
+	else
+		vec = m_subdividedPoints[index] - m_subdividedPoints[index - 1];
+
+	double rotAroundZ = PI / 2 - atan(vec.y() / vec.x());
+	if (rotAroundZ < 0)
+		rotAroundZ += PI;
+
+	btQuaternion rotation;
+	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
+
+	trans.setRotation(rotation);
+
+	return trans;
 }

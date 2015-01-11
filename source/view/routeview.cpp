@@ -149,18 +149,25 @@ std::vector<osg::Vec3> RouteView::subdivide(std::vector<osg::Vec3>& input, int l
 	typedef std::vector<osg::Vec3> v3Array;
 
 	v3Array points = v3Array(input);
+	double thresh = 0.1;
 	for (int j = 0; j < level; j++)
 	{
 		v3Array subdivided = v3Array();
 
 		for (int i = 1; i < points.size() - 1; i++)
 		{
-			osg::Vec3 p_1 = (points[i - 1] + points[i]) / 2.f;
-			osg::Vec3 p_2 = (points[i] + points[i + 1]) / 2.f;
-			osg::Vec3 p_i_new = (points[i] + (p_1 + p_2) / 2.f) / 2.f;
+			if ((points[i - 1] - points[i]).length() > thresh)
+			{
+				osg::Vec3 p_1 = (points[i - 1] + points[i]) / 2.f;
+				osg::Vec3 p_2 = (points[i] + points[i + 1]) / 2.f;
+				osg::Vec3 p_i_new = (points[i] + (p_1 + p_2) / 2.f) / 2.f;
+				subdivided.push_back(p_1);
+				subdivided.push_back(p_i_new);
+			}
+			else{
+				subdivided.push_back(points[i]);
+			}
 
-			subdivided.push_back(p_1);
-			subdivided.push_back(p_i_new);
 		}
 		points.clear();
 		points.push_back(input[0]);
