@@ -95,6 +95,9 @@ void CityModel::reload(std::string levelName)
 }
 
 
+
+
+
 const btPoint CityModel::getLevelSize()
 {
 	return btPoint(13002, 11761); //from blender

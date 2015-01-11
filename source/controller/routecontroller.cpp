@@ -142,3 +142,8 @@ void RouteController::updateFadeOutFactor(float fadeOutFactor)
 {
 	m_routeView->updateFadeOutFactor(fadeOutFactor);
 }
+
+btTransform RouteController::getFirstWayPoint()
+{
+	return m_Route.getTransform(0);
+}

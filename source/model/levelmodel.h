@@ -46,6 +46,7 @@ namespace troen
 
 	class LevelModel : public AbstractModel
 	{
+		friend LevelController;
 	public:
 		LevelModel(const LevelController* levelController, std::string levelName);
 		virtual ~LevelModel(){};
@@ -62,6 +63,7 @@ namespace troen
 		virtual void addFloor(const float yPosition);
 
 		void addObstaclesFromFile(std::string levelName);
+		void addObstaclesFromFile(std::string levelName, std::string filePath);
 		const LevelController* m_levelController;
 
 		std::vector<BoxModel> m_floors;

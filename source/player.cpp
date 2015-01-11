@@ -71,7 +71,10 @@ m_hasGameView(config->ownView[id])
 	// Controller
 	//
 	////////////////////////////////////////////////////////////////////////////////
-	const btTransform initialTransform = game->levelController()->getSpawnPointForBikeWithIndex(id);
+	std::shared_ptr<RouteParser> parseRoutes = std::make_shared<RouteParser>();
+	m_routes = parseRoutes->routes();
+
+	const btTransform initialTransform = m_routes.at(0).getTransform(0);
 
 	m_bikeController = std::make_shared<BikeController>(
 		this,
@@ -79,8 +82,7 @@ m_hasGameView(config->ownView[id])
 		initialTransform,
 		game->resourcePool());
 
-	std::shared_ptr<RouteParser> parseRoutes = std::make_shared<RouteParser>();
-	m_routes = parseRoutes->routes();
+	game->levelController()->addBoundaries(m_routes.at(0).filePath);
 
 	m_routeController = std::make_shared<RouteController>(this, initialTransform, m_routes[0]);
 

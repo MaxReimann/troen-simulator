@@ -21,7 +21,7 @@ exportDir = troenPath + "data" + os.sep + "routes" + os.sep
 
 
 #scale blender units by (this has to be the same as in the level exporter)
-SCALE = 10.0
+SCALE = 1000.0
 
 class AddPath(bpy.types.Operator):
     """Add a named Curve"""
@@ -83,6 +83,7 @@ class AddBoundaries(bpy.types.Operator):
             cube.scale = (length,0.05,0.2)
             cube.rotation_euler = (0,0,rotZ)
             cube.layers = curve.layers
+            
 
             #left cube
             start = mid_point-norm
@@ -207,6 +208,7 @@ class ExportPath(bpy.types.Operator, ExportHelper):
         #write out the cubes location and dimensions
         auto_gen_code  = ""
         for ob_index, obstacle in enumerate(obstacles):
+            get_quat = lambda x: x.rotation_euler.to_quaternion()
             auto_gen_code += self.create_box_collision_shape_str().format(
                                                           pos_x=str(obstacle.location.x*SCALE),
                                                           pos_y=str(obstacle.location.y*SCALE),
@@ -214,10 +216,10 @@ class ExportPath(bpy.types.Operator, ExportHelper):
                                                           length_x=str(obstacle.dimensions.x*SCALE),
                                                           length_y=str(obstacle.dimensions.y*SCALE),
                                                           length_z=str(obstacle.dimensions.z*SCALE),
-                                                          quat_x=str(obstacle.rotation_quaternion.x),
-                                                          quat_y=str(obstacle.rotation_quaternion.y),
-                                                          quat_z=str(obstacle.rotation_quaternion.z),
-                                                          quat_w=str(obstacle.rotation_quaternion.w),
+                                                          quat_x=str(get_quat(obstacle).x),
+                                                          quat_y=str(get_quat(obstacle).y),
+                                                          quat_z=str(get_quat(obstacle).z),
+                                                          quat_w=str(get_quat(obstacle).w),
                                                           name=str(obstacle.name),
                                                           collisionType="LEVELWALLTYPE")
             if ob_index < len(obstacles) -1:

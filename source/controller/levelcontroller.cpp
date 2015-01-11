@@ -94,6 +94,20 @@ void LevelController::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 	m_world = world;
 }
 
+void LevelController::addBoundaries(std::string path)
+{
+	if (path.find("bounds") == std::string::npos)
+	{
+		//change ending
+		int i = path.length() - 1;
+		while (path.at(i) != '.' && i >= 0) i--;
+		path = path.substr(0, i+1)+"bounds";
+		std::cout << "path: " << path << std::endl;
+
+	}
+	m_levelModel->addObstaclesFromFile("", path);
+}
+
 void LevelController::removeRigidBodiesFromWorld()
 {
 	m_world.lock()->removeRigidBodies(getRigidBodies());

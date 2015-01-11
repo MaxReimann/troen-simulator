@@ -497,7 +497,7 @@ void GameLogic::resetBikePositions()
 {
 	for (auto player : m_troenGame->m_players)
 	{
-		btTransform position = m_troenGame->m_levelController->getSpawnPointForBikeWithIndex(player->id());
+		btTransform position = player->routeController()->getFirstWayPoint();
 		player->bikeController()->moveBikeToPosition(position);
 	}
 }

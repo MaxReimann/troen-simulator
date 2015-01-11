@@ -37,6 +37,7 @@ namespace troen
 
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool active);
+		btTransform getFirstWayPoint();
 
 	private:
 		std::shared_ptr<RouteView> m_routeView;

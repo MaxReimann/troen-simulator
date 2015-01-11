@@ -32,7 +32,7 @@ namespace troen
 		void addRigidBodiesToWorld();
 		void removeRigidBodiesFromWorld();
 		void reload();
-
+		void addBoundaries(std::string path);
 		TroenGame* m_troenGame;
 		void debugSnapShot();
 	protected:

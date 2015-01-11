@@ -43,13 +43,19 @@ void LevelModel::reload(std::string levelName)
 
 void LevelModel::addObstaclesFromFile(std::string levelName)
 {
-	std::ifstream input("data/levels/" + levelName + ".level");
+	addObstaclesFromFile(levelName, "data/levels/" + levelName + ".level");
+}
+
+
+void LevelModel::addObstaclesFromFile(std::string levelName, std::string filePath)
+{
 	std::string line;
 
 	btVector3 center, dimensions;
 	btQuaternion rotation;
 	std::string name, collisionTypeString;
 
+	std::ifstream input(filePath);
 	std::vector<BoxModel> newObstacles;
 
 	while (std::getline(input, line)) {
@@ -120,7 +126,7 @@ void LevelModel::addObstaclesFromFile(std::string levelName)
 		std::getline(input, line);
 		collisionTypeString = line;
 
-		std::string collisionTypes[8] = { "ABSTRACTTYPE", "BIKETYPE", "LEVELTYPE", "LEVELWALLTYPE", "LEVELGROUNDTYPE", "LEVELOBSTACLETYPE", "FENCETYPE", "ITEMTYPE" };
+		const std::string collisionTypes[8] = { "ABSTRACTTYPE", "BIKETYPE", "LEVELTYPE", "LEVELWALLTYPE", "LEVELGROUNDTYPE", "LEVELOBSTACLETYPE", "FENCETYPE", "ITEMTYPE" };
 		int index = 0;
 		for (auto type : collisionTypes) {
 			if (type == collisionTypeString)

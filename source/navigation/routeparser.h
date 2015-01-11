@@ -18,6 +18,9 @@ namespace troen
 	public:
 		troen::trackDifficulty difficulty;
 		std::vector<osg::Vec3> waypoints;
+		std::string filePath;
+
+		btTransform getTransform(int index);
 
 	};
 

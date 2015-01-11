@@ -28,11 +28,13 @@ RouteParser::RouteParser()
 	{
 		if (!fileName.endsWith(".route"))
 			continue;
-		std::cout << (myDir.path() + myDir.separator() + fileName).toStdString() << std::endl;
-		QFile routeFile(myDir.path() + myDir.separator() +  fileName);
+		QString filePath = myDir.path() + myDir.separator() + fileName;
+		std::cout << (filePath).toStdString() << std::endl;
+		QFile routeFile(filePath);
 		if (routeFile.open(QFile::ReadOnly))
 		{
 			Route currentRoute;
+			currentRoute.filePath = filePath.toStdString();
 			parse(routeFile.readAll().trimmed(), currentRoute);
 			m_routes.push_back(currentRoute);
 		}
@@ -79,4 +81,32 @@ osg::Vec3 inline RouteParser::lineToPoint(QByteArray line)
 
 	return osg::Vec3(dpos[0], dpos[1], dpos[2]);
 
+}
+
+btTransform troen::Route::getTransform(int index)
+{
+	osg::Vec3 waypoint = waypoints.at(index);
+	btTransform trans;
+	trans.setOrigin(osgToBtVec3(waypoint));
+	osg::Vec3 vec;
+
+	if (index != waypoints.size() - 1)
+		vec = waypoints.at(index + 1) - waypoints.at(index);
+	else
+		vec = waypoints.at(index) - waypoints.at(index-1);
+
+	
+	double rotAroundZ = atan(vec.y() / vec.x());
+	if (rotAroundZ < 0)
+	{
+		rotAroundZ += PI;
+	}
+
+	btQuaternion rotation;
+	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
+
+	trans.setRotation(rotation);
+
+	return trans;
+	
 }
