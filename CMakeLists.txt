@@ -539,9 +539,9 @@ set(CPACK_OUTPUT_FILE_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 SET(CPACK_NSIS_MODIFY_PATH OFF)
 SET(CPACK_NSIS_DISPLAY_NAME "${META_PROJECT_NAME}.${META_VERSION}")
-SET(CPACK_NSIS_HELP_LINK "https://github.com/philippotto/GP2013")
-set(CPACK_NSIS_MENU_LINKS "https://github.com/philippotto/GP2013" "Troen Repository")
-set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/philippotto/GP2013")
+SET(CPACK_NSIS_HELP_LINK "https://github.com/MaxReimann/troen-simulator")
+set(CPACK_NSIS_MENU_LINKS "hhttps://github.com/MaxReimann/troen-simulator" "Troen Repository")
+set(CPACK_NSIS_URL_INFO_ABOUT "hhttps://github.com/MaxReimann/troen-simulator")
 #set(CPACK_NSIS_MUI_FINISHPAGE_RUN ${META_PROJECT_NAME})
 set(CPACK_NSIS_PACKAGE_NAME ${META_PROJECT_NAME})
 
