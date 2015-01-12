@@ -176,6 +176,8 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 				dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
 				dynamic_cast<ItemController *>(collisionBodyControllers[otherIndex]));
 			break;
+		case ZONETYPE:
+			break;
 
 		case LEVELGROUNDTYPE:
 			break;
@@ -387,6 +389,8 @@ void GameLogic::handlePlayerDeathOnFence(
 		}
 	}
 }
+
+//void GameLogic::h
 
 
 void GameLogic::handlePlayerDeathNonFence(BikeController* deadBike)

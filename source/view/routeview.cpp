@@ -13,6 +13,8 @@
 #include "../controller/routecontroller.h"
 #include "osg/Vec3"
 
+#include "../util/basicshapes.h"
+
 using namespace troen;
 
 
@@ -315,3 +317,18 @@ void RouteView::hideFencesInRadarForPlayer(const int id)
 }
 
 
+void RouteView::addEndZoneCylinder(osg::Vec3 origin, double radius, double height)
+{
+	osg::ref_ptr<osg::Geode> zoneGeode = new osg::Geode();
+	//osg::ref_ptr<osg::Cylinder> shape = new osg::Cylinder(origin, radius, height);
+	osg::ref_ptr<osg::Geometry> geometry = BasicShapes::cylinderTriStrips(radius, 32, origin + osg::Vec3(0, 0, 100.0), origin);
+
+	zoneGeode->addDrawable(geometry);
+	zoneGeode->setName("zoneGeode");
+	m_node->addChild(zoneGeode);
+
+	//m_radarElementsGroup = new osg::Group();
+	//m_radarElementsGroup->setNodeMask(CAMERA_MASK_NONE);
+	//m_node->addChild(m_radarElementsGroup);
+
+}

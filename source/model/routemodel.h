@@ -15,7 +15,7 @@ namespace troen
 		void removeFirstFencePart();
 		void removeAllFences();
 		void enforceFencePartsLimit();
-
+		void addEndZoneCylinder(btVector3 origin, double radius, double height);
 	private:
 		RouteController* m_routeController;
 		std::weak_ptr<PhysicsWorld> m_world;

@@ -51,6 +51,8 @@ RouteController::RouteController(
 	{
 		m_routeView->addFencePart(m_subdividedPoints[i - 1], m_subdividedPoints[i], false);
 	}
+
+	
 }
 
 
@@ -86,7 +88,7 @@ double RouteController::getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 
 
 int RouteController::findNearestPointIndex(osg::Vec3 playerPos, double &distance)
 {
-	int start = m_nextPointIndex - 1;
+	int start = m_nextPointIndex;
 	int end = m_subdividedPoints.size() - 1;
 
 	const double threshold = 50.0;
@@ -139,6 +141,7 @@ void RouteController::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 {
 	m_world = world;
 	m_routeModel->attachWorld(world);
+	addEndZone();
 }
 
 void RouteController::removeAllFences()
@@ -208,6 +211,16 @@ void RouteController::updateFadeOutFactor(float fadeOutFactor)
 btTransform RouteController::getFirstWayPoint()
 {
 	return m_Route.getTransform(0);
+}
+
+
+void RouteController::addEndZone()
+{
+	double radius = 50.0;
+	double height = 100.0;
+	osg::Vec3 origin = m_subdividedPoints.back();
+	m_routeView->addEndZoneCylinder(origin, radius, height);
+	m_routeModel->addEndZoneCylinder(osgToBtVec3((origin + osg::Vec3(0, 0, height / 2.0))), radius, height);
 }
 
 

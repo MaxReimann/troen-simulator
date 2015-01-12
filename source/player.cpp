@@ -74,7 +74,7 @@ m_hasGameView(config->ownView[id])
 	std::shared_ptr<RouteParser> parseRoutes = std::make_shared<RouteParser>();
 	m_routes = parseRoutes->routes();
 
-	btTransform initialTransform = m_routes.at(0).getTransform(0);
+	btTransform initialTransform = m_routes.at(0).getTransform(18);
 	initialTransform.setOrigin(initialTransform.getOrigin() + btVector3(0, 0, 10.0));
 
 	m_bikeController = std::make_shared<BikeController>(

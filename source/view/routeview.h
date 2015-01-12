@@ -42,6 +42,7 @@ namespace troen
 		void initializeFenceGap();
 		void initializeShader();
 		void inline pushVertex(osg::Vec3 v, sides side, float attrib);
+		void addEndZoneCylinder(osg::Vec3 origin, double radius, double height);
 		osg::ref_ptr<osg::Geometry>		m_geometry;
 		osg::ref_ptr<osg::Vec3Array>	m_coordinates;
 		osg::ref_ptr<osg::FloatArray>	m_relativeWidth;

@@ -94,3 +94,31 @@ void RouteModel::removeFirstFencePart()
 	m_motionStateDeque.pop_front();
 	m_collisionShapeDeque.pop_front();
 }
+
+
+void RouteModel::addEndZoneCylinder(btVector3 origin, double radius, double height)
+{
+	btVector3 dimensions(radius, height / 2.0, radius);
+	btQuaternion rot;
+	rot.setRotation(btVector3(0, 0, 1), PI_2);
+
+	std::shared_ptr<btCylinderShapeZ> zoneShape = std::make_shared<btCylinderShapeZ>(dimensions);
+	std::shared_ptr<btDefaultMotionState> zoneMotionState
+		= std::make_shared<btDefaultMotionState>(btTransform(rot, origin));
+
+	btRigidBody::btRigidBodyConstructionInfo
+		zoneRigidBodyCI(btScalar(0), zoneMotionState.get(), zoneShape.get(), btVector3(0, 0, 0));
+
+	std::shared_ptr<btRigidBody> zoneRigidBody = std::make_shared<btRigidBody>(zoneRigidBodyCI);
+
+
+	ObjectInfo* info = new ObjectInfo(m_routeController, ZONETYPE);
+	zoneRigidBody->setUserPointer(info);
+
+	m_collisionShapeDeque.push_back(zoneShape);
+	m_motionStateDeque.push_back(zoneMotionState);
+	m_rigidBodyDeque.push_back(zoneRigidBody);
+
+	m_world.lock()->addRigidBody(zoneRigidBody.get(), COLGROUP_LEVEL, COLMASK_LEVEL);
+
+}

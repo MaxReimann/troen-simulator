@@ -49,6 +49,7 @@ namespace troen
 		double getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 playerPosition);
 		int findNearestPointIndex(osg::Vec3 playerPos, double &distance);
 		int findNearestPointIndex(int start, int end, osg::Vec3 playerPos, double &distance);
+		void addEndZone();
 		btVector3 m_lastPosition;
 		bool m_fenceLimitActivated;
 
