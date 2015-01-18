@@ -33,7 +33,12 @@ class AddPath(bpy.types.Operator):
         bpy.ops.curve.primitive_nurbs_path_add()
         for object in bpy.context.selected_objects:
             if object.name.startswith("Nurbs"):
-                object.name = "NavigationRoute"
+                name = "NavigationRoute"
+                append = 0
+                while bpy.data.objects.get(name+str(append)) is not None:
+                    append+=1
+
+                object.name = name+str(append)
 
         return {"FINISHED"}
 
@@ -165,6 +170,7 @@ class ExportPath(bpy.types.Operator, ExportHelper):
 
         for obj in bpy.context.selected_objects:
             if obj.name.startswith("NavigationRoute"):
+                self.curve_name = obj.name
                 global_mat = obj.matrix_world
                 for point in obj.data.splines[0].bezier_points.data.points:
                     co = global_mat * point.co.xyz * SCALE
@@ -189,7 +195,7 @@ class ExportPath(bpy.types.Operator, ExportHelper):
     def export_boundaries(self):
         routes = {}
         for ob in bpy.context.selectable_objects:
-            if ob.name.startswith("NavigationRoute") and "boundary" in ob.name:
+            if ob.name.startswith(self.curve_name) and "boundary" in ob.name:
                 name_split = ob.name.split(".")
                 curve_name = name_split[0]
                 if name_split[1] != "boundary":
@@ -221,7 +227,7 @@ class ExportPath(bpy.types.Operator, ExportHelper):
                                                           quat_z=str(get_quat(obstacle).z),
                                                           quat_w=str(get_quat(obstacle).w),
                                                           name=str(obstacle.name),
-                                                          collisionType="LEVELWALLTYPE")
+                                                          collisionType="NAVIGATION_BOUNDARY")
             if ob_index < len(obstacles) -1:
                 auto_gen_code += "\n"
         return auto_gen_code
