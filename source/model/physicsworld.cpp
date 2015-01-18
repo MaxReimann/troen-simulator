@@ -364,11 +364,6 @@ void PhysicsWorld::checkForCollisionEvents()
 		pairsThisUpdate.begin(), pairsThisUpdate.end(),
 		std::inserter(removedPairs, removedPairs.begin()));
 
-	// iterate through all of the removed pairs sending separation events for them
-	for (CollisionPairSet::const_iterator iter = removedPairs.begin(); iter != removedPairs.end(); ++iter) {
-		m_gameLogic.lock()->separationEvent((btRigidBody*)iter->first, (btRigidBody*)iter->second);
-	}
-
 	// in the next iteration we'll want to compare against
 	// the pairs we found in this iteration
 	m_pairsLastUpdate = pairsThisUpdate;

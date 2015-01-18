@@ -59,6 +59,7 @@ namespace troen
 
 
 	protected:
+		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
 		virtual void addBoxes(std::vector<BoxModel> &boxes, const COLLISIONTYPE type = ABSTRACTTYPE);
 		virtual void addFloor(const float yPosition);
 
@@ -69,6 +70,7 @@ namespace troen
 		std::vector<BoxModel> m_floors;
 		std::vector<BoxModel> m_obstacles;
 		std::string m_levelName;
+		std::shared_ptr<PhysicsWorld> m_world;
 	};
 
 }

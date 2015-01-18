@@ -10,11 +10,12 @@
 #include "../view/LevelView.h"
 #include "../model/physicsworld.h"
 
-#include "../model/citymodel.h"
+
 #include "../view/cityview.h"
 
 #include "itemcontroller.h"
 #include "../troengame.h"
+#include "../model/objectinfo.h"
 
 
 using namespace troen;
@@ -92,6 +93,7 @@ osg::ref_ptr<osg::Group>  LevelController::getFloorView()
 void LevelController::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 {
 	m_world = world;
+	getAsLevelModel()->attachWorld(world);
 }
 
 void LevelController::addBoundaries(std::string path)
@@ -108,9 +110,32 @@ void LevelController::addBoundaries(std::string path)
 	m_levelModel->addObstaclesFromFile("", path);
 }
 
+void LevelController::removeTemporaryBoundaries()
+{
+	getAsCityModel()->clearTemporaryWalls();
+
+
+	auto bodies = getRigidBodies();
+	auto bodyIter = std::begin(bodies);
+	while (bodyIter != std::end(bodies))
+	{
+		ObjectInfo *info = static_cast<ObjectInfo *>(bodyIter->get()->getUserPointer());
+		if (static_cast<COLLISIONTYPE>(info->getUserIndex()) != LEVELGROUNDTYPE)
+		{
+			m_world.lock()->removeRigidBody(bodyIter->get());
+			bodyIter = bodies.erase(bodyIter);
+		}
+		else
+			++bodyIter;
+	}
+}
+
+
 void LevelController::removeRigidBodiesFromWorld()
 {
 	m_world.lock()->removeRigidBodies(getRigidBodies());
+	getRigidBodies().clear();
+	
 }
 
 void LevelController::addRigidBodiesToWorld()
@@ -165,7 +190,18 @@ void LevelController::debugSnapShot()
 {
 	if (m_levelType == BERLIN)
 	{
-		std::dynamic_pointer_cast<CityModel>(m_model)->m_key_event = true;
+		getAsCityModel()->m_key_event = true;
 	}
 }
+
+std::shared_ptr<LevelModel> LevelController::getAsLevelModel()
+{
+	return std::dynamic_pointer_cast<LevelModel>(m_model);
+}
+
+std::shared_ptr<CityModel> LevelController::getAsCityModel()
+{
+	return std::dynamic_pointer_cast<CityModel>(m_model);
+}
+
 

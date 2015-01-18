@@ -39,12 +39,12 @@ namespace troen
 		void setBendingActive(bool active);
 		btTransform getFirstWayPoint();
 		btTransform getLastWayPoint();
+		void createTrack(Route route);
 
 	private:
 		std::shared_ptr<RouteView> m_routeView;
 		std::shared_ptr<RouteModel> m_routeModel;
 
-		void adjustPositionUsingFenceOffset(const btQuaternion& rotation, btVector3& position);
 		void trackRouteProgress(btVector3 playerPosition);
 		double getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 playerPosition);
 		int findNearestPointIndex(osg::Vec3 playerPos, double &distance);

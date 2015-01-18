@@ -85,6 +85,8 @@ namespace troen
 		bool isDead();
 		std::shared_ptr<std::vector<osg::Camera*>> cameras(){ return m_cameras; };
 		void setCameraSpecificUniforms();
+		void setOnNextTrack();
+		bool hasNextTrack();
 	private:
 		TroenGame*						m_troenGame;
 		//
@@ -123,5 +125,6 @@ namespace troen
 		uniformVec		m_bendingActivatedUs;
 		uniformVec		m_isReflectingUs;
 		uniformVec		m_playerPositionUs;
+		int m_currentRoute;
 	};
 }

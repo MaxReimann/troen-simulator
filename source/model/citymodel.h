@@ -43,6 +43,7 @@ namespace troen
 		inline osg::Vec2 worldToPixelIndex(osg::Vec2 p);
 		inline osg::Vec2 pixelToWorld(osg::Vec2 pixel);
 		osg::Vec2 findBorder(osg::Vec2 startI, osg::Vec2 direction);
+		void clearTemporaryWalls();
 		QImage m_collisionImage;
 		int m_count;
 		osg::ref_ptr<osgViewer::View> m_view;

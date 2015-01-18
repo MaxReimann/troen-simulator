@@ -46,6 +46,11 @@ void LevelModel::addObstaclesFromFile(std::string levelName)
 	addObstaclesFromFile(levelName, "data/levels/" + levelName + ".level");
 }
 
+void LevelModel::attachWorld(std::shared_ptr<PhysicsWorld> &world)
+{
+	m_world = world;
+}
+
 
 void LevelModel::addObstaclesFromFile(std::string levelName, std::string filePath)
 {
@@ -126,7 +131,7 @@ void LevelModel::addObstaclesFromFile(std::string levelName, std::string filePat
 		std::getline(input, line);
 		collisionTypeString = line;
 
-		const std::string collisionTypes[8] = { "ABSTRACTTYPE", "BIKETYPE", "LEVELTYPE", "LEVELWALLTYPE", "LEVELGROUNDTYPE", "LEVELOBSTACLETYPE", "FENCETYPE", "ITEMTYPE" };
+		const std::string collisionTypes[10] = { "ABSTRACTTYPE", "BIKETYPE", "LEVELTYPE", "LEVELWALLTYPE", "LEVELGROUNDTYPE", "LEVELOBSTACLETYPE", "FENCETYPE", "ITEMTYPE", "ZONETYPE" , "NAVIGATION_BOUNDARY" };
 		int index = 0;
 		for (auto type : collisionTypes) {
 			if (type == collisionTypeString)

@@ -28,6 +28,9 @@ namespace troen
 			void update(long double gameTime);
 			void writeLine(CurrentBikeState& state);
 			void writeCSV();
+			void exportTaskStats(long time);
+			void recordCrash();
+			void recordWrongTurn();
 		protected:
 
 			std::vector<CurrentBikeState> m_trackedStates;
@@ -38,6 +41,9 @@ namespace troen
 			bool m_exportCSV;
 			QTextStream* m_fileStream;
 			QFile* m_file;
+			QFile* m_statfile;
+			int m_wrongTurns;
+			int m_wallCrashes;
 		};
 	} //end namespcae tracking
 } // end namespace troen

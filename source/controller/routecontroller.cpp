@@ -21,10 +21,7 @@ m_fenceLimitActivated(true)
 	m_model = m_routeModel = std::make_shared<RouteModel>(this);
 	m_view = m_routeView = std::shared_ptr<RouteView>(new RouteView(this, player->color(), m_model));
 
-	btQuaternion rotation = initialTransform.getRotation();
 	btVector3 position = initialTransform.getOrigin();
-	adjustPositionUsingFenceOffset(rotation, position);
-
 	m_lastPosition = position;
 }
 
@@ -37,11 +34,16 @@ RouteController::RouteController(
 	m_model = m_routeModel = std::make_shared<RouteModel>(this);
 	m_view = m_routeView = std::shared_ptr<RouteView>(new RouteView(this, player->color(), m_model));
 
-	btQuaternion rotation = initialTransform.getRotation();
 	btVector3 position = initialTransform.getOrigin();
-	adjustPositionUsingFenceOffset(rotation, position);
 
 	m_lastPosition = position;
+
+	createTrack(route);
+	
+}
+
+void RouteController::createTrack(Route route)
+{
 	m_Route = route;
 	m_nextPointIndex = 0;
 	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 8);
@@ -52,7 +54,8 @@ RouteController::RouteController(
 		m_routeView->addFencePart(m_subdividedPoints[i - 1], m_subdividedPoints[i], false);
 	}
 
-	
+	addEndZone();
+
 }
 
 
@@ -123,8 +126,8 @@ void RouteController::trackRouteProgress(btVector3 playerPosition)
 	{
 		if (m_nextPointIndex < m_subdividedPoints.size() - 1)
 			m_nextPointIndex++;
-		else
-			std::cout << "finished this route!" << std::endl;
+		//else
+			//std::cout << "finished this route!" << std::endl;
 	}
 	else{
 		double dist;
@@ -141,7 +144,6 @@ void RouteController::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 {
 	m_world = world;
 	m_routeModel->attachWorld(world);
-	addEndZone();
 }
 
 void RouteController::removeAllFences()
@@ -167,20 +169,9 @@ int RouteController::getFenceLimit() {
 		return 0;
 }
 
-void RouteController::adjustPositionUsingFenceOffset(const btQuaternion& rotation, btVector3& position)
-{
-	btVector3 fenceOffset = btVector3(
-		0,
-		-BIKE_DIMENSIONS.y() / 2,
-		BIKE_DIMENSIONS.z() / 2).rotate(rotation.getAxis(), rotation.getAngle()
-		);
-
-	position = position - fenceOffset;
-}
 
 void RouteController::setLastPosition(const btQuaternion rotation, btVector3 position)
 {
-	adjustPositionUsingFenceOffset(rotation, position);
 	m_lastPosition = position;
 }
 

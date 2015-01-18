@@ -62,12 +62,24 @@ void BikeController::reset()
 		m_pollingThread->setVibration(false);
 
 	m_player->setHealth(BIKE_DEFAULT_HEALTH);
-	m_player->setPoints(0);
 	m_timeOfLastCollision = -1;
 	btTransform position = player()->routeController()->getLastWayPoint();
 	position.setOrigin(position.getOrigin() + btVector3(0, 0, 10.0));
 	moveBikeToPosition(position);
 }
+
+void BikeController::respawnAt(btTransform respawnPoint)
+{
+	if (m_pollingThread != nullptr)
+		m_pollingThread->setVibration(false);
+
+	m_player->setHealth(BIKE_DEFAULT_HEALTH);
+	
+	m_initialTransform = respawnPoint;
+	moveBikeToPosition(respawnPoint);
+}
+
+
 
 void BikeController::registerCollision(const btScalar impulse)
 {
@@ -307,6 +319,8 @@ void BikeController::setState(BIKESTATE newState, double respawnTime /*=-1*/)
 	m_respawnTime = respawnTime;
 }
 
+
+
 void BikeController::updateModel(const long double gameTime)
 {
 	switch (m_state)
@@ -314,25 +328,19 @@ void BikeController::updateModel(const long double gameTime)
 	case DRIVING:
 	{
 		double speed = m_bikeModel->updateState(gameTime);
-		m_player->increasePoints(speed / 1000);
 		updateFov(speed);
 		break;
 	}
 	case RESPAWN:
 	{
 		m_bikeModel->freeze();
-		m_player->routeController()->removeAllFencesFromModel();
 		updateFov(0);
 
-		// fades fence out when player died
-		m_player->routeController()->updateFadeOutFactor(1 - (gameTime - m_respawnTime) / (RESPAWN_DURATION * 2.f / 3.f));
 
 		if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
 		{
-			moveBikeToPosition(m_initialTransform);
 			reset();
 			updateFov(0);
-			m_player->routeController()->updateFadeOutFactor(1);
 			m_state = RESPAWN_PART_2;
 		}
 		break;
@@ -345,6 +353,23 @@ void BikeController::updateModel(const long double gameTime)
 		}
 		break;
 	}
+	case RESPAWN_NEWTRACK:
+	{
+		 m_bikeModel->freeze();
+		 updateFov(0);
+		 // fades fence out
+		
+		 m_player->routeController()->updateFadeOutFactor(1 - (gameTime - m_respawnTime) / (RESPAWN_DURATION * 2.f / 3.f));
+
+		 if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
+		 {
+			 m_player->setOnNextTrack();
+			 m_player->routeController()->updateFadeOutFactor(1);
+			 m_state = RESPAWN_PART_2;
+		 }
+		 break;
+
+	}
 	case WAITING_FOR_GAMESTART:
 	case WAITING:
 		break;
@@ -353,10 +378,6 @@ void BikeController::updateModel(const long double gameTime)
 	}
 
 	m_player->increaseHealth(getTimeFactor() * 20.0);
-
-	// turbo should be only applied in one frame
-	if (m_turboInitiated)
-		m_turboInitiated = false;
 
 	if (m_pollingThread != nullptr)
 	{

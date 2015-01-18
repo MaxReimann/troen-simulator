@@ -38,7 +38,6 @@ namespace troen
 		// collision event handling
 		//
 		virtual void collisionEvent(btRigidBody* pBody0, btRigidBody * pBody1, btPersistentManifold* contactManifold);
-		virtual void separationEvent(btRigidBody * pBody0, btRigidBody * pBody1);
 
 		//
 		// logic methods
@@ -55,8 +54,6 @@ namespace troen
 		
 		//networking
 		void handleNetworkMessage(troen::networking::gameStatus status, Player *bikePlayer, Player *fencePlayer);
-		void sendStatusMessage(troen::networking::gameStatus status, Player *bikePlayer, Player *fencePlayer);
-		void processNetworkMessages();
 
 	private:
 		//
@@ -67,10 +64,6 @@ namespace troen
 			AbstractController* object,
 			const int objectType,
 			btPersistentManifold* contactManifold);
-		void handleCollisionOfBikeAndFence(
-			BikeController* bike,
-			RouteController* fence,
-			btPersistentManifold* contactManifold);
 		void handleCollisionOfTwoBikes(
 			BikeController* bike1,
 			BikeController* bike2,
@@ -80,9 +73,9 @@ namespace troen
 			ItemController* item);
 		// death handling
 		void handlePlayerDeath(BikeController* bike);
-		void handlePlayerDeathOnFence(BikeController* fenceBike, BikeController* deadBike);
 		void handlePlayerDeathNonFence(BikeController* deadBike);
 		void handlePlayerFall(BikeController* deadBike);
+		void handleEndZoneCollision(BikeController* bike);
 		// helper
 		float impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike);
 		void playCollisionSound(float impulse);

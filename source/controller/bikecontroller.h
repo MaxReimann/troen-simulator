@@ -32,7 +32,8 @@ namespace troen
 			RESPAWN,
 			RESPAWN_PART_2,
 			WAITING_FOR_GAMESTART,
-			WAITING
+			WAITING,
+			RESPAWN_NEWTRACK,
 		} BIKESTATE;
 
 		//
@@ -57,6 +58,7 @@ namespace troen
 		void activateTurbo();
 		void updateUniforms();
 		void reset();
+		void respawnAt(btTransform respawnPoint);
 
 		//
 		// getters & setters & attributes
@@ -110,7 +112,6 @@ namespace troen
 
 		void updateNetworkFence(btTransform transform);
 		long double getTimeFactor();
-
 		//
 		// communication links
 		//

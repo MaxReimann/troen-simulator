@@ -32,6 +32,9 @@ m_controller(controller), m_frequency(frequency), m_participantNumber(participan
 			(*m_fileStream) << "time" << "\t" << "x" << "\t" << "y" << "\t" << "z" << "\t" << "yaw" << "\t" << "velocity" << "\n";
 		}
 	}
+
+	m_wallCrashes = 0;
+	m_wrongTurns = 0;
 }
 
 
@@ -90,5 +93,41 @@ void TrackBike::writeCSV()
 TrackBike::~TrackBike()
 {
 	writeCSV();
+}
+
+void TrackBike::exportTaskStats(long time)
+{
+	QString fileDir("export" + QString(QDir::separator()) + "user" + QString::number(m_participantNumber));
+	std::cout << "exporting task stats" << std::endl;
+	bool success = true;
+	if (!QDir(fileDir).exists())
+		success = QDir().mkpath(fileDir);
+
+	if (!success)
+	{
+		std::cout << "couldnt create export directory" << std::endl;
+		return;
+	}
+
+	m_statfile = new QFile(fileDir + QString(QDir::separator()) + "task_stats.csv");
+	QTextStream statStream(m_statfile);
+	if (m_statfile->open(QFile::WriteOnly | QFile::Truncate))
+	{
+		statStream << "time" << "\t" << "wallCrashes" << "\t" << "wrongTurns" << "\n";
+		statStream << time << "\t" << m_wallCrashes << "\t" << m_wrongTurns << "\n";
+	}
+
+	statStream.flush();
+	m_statfile->close();
+}
+
+void TrackBike::recordCrash()
+{
+	m_wallCrashes++;
+}
+
+void TrackBike::recordWrongTurn()
+{
+	m_wrongTurns++;
 }
 

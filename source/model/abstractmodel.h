@@ -19,7 +19,8 @@ namespace troen
 		LEVELOBSTACLETYPE,
 		FENCETYPE,
 		ITEMTYPE,
-		ZONETYPE
+		ZONETYPE,
+		NAVIGATION_BOUNDARY
 	} COLLISIONTYPE;
 
 	// max 15 collision groups (enum -> short int)

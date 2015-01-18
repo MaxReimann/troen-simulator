@@ -11,6 +11,7 @@
 #endif
 //troen
 #include "constants.h"
+#include "globals.h"
 #include "gameeventhandler.h"
 #include "sampleosgviewer.h"
 
@@ -74,7 +75,8 @@ m_hasGameView(config->ownView[id])
 	std::shared_ptr<RouteParser> parseRoutes = std::make_shared<RouteParser>();
 	m_routes = parseRoutes->routes();
 
-	btTransform initialTransform = m_routes.at(0).getTransform(18);
+	m_currentRoute = 0;
+	btTransform initialTransform = m_routes.at(m_currentRoute).getTransform(18);
 	initialTransform.setOrigin(initialTransform.getOrigin() + btVector3(0, 0, 10.0));
 
 	m_bikeController = std::make_shared<BikeController>(
@@ -83,9 +85,9 @@ m_hasGameView(config->ownView[id])
 		initialTransform,
 		game->resourcePool());
 
-	game->levelController()->addBoundaries(m_routes.at(0).filePath);
 
-	m_routeController = std::make_shared<RouteController>(this, initialTransform, m_routes[0]);
+	game->levelController()->addBoundaries(m_routes.at(m_currentRoute).filePath);
+	m_routeController = std::make_shared<RouteController>(this, initialTransform, m_routes[m_currentRoute]);
 
 	// HUDController must be initialized later, because it
 	// can only be created, once all Players are created
@@ -281,4 +283,31 @@ void  Player::setCameraSpecificUniforms()
 		state->addUniform(m_bendingActivatedUs.back());
 		state->addUniform(m_isReflectingUs.back());
 	}
+}
+
+
+bool Player::hasNextTrack()
+{
+	if (m_currentRoute + 1 < m_routes.size())
+		return true;
+	else
+		return false;
+}
+
+
+void Player::setOnNextTrack()
+{
+		m_routeController->removeAllFences();
+		m_troenGame->levelController()->removeTemporaryBoundaries();
+		
+		m_currentRoute++;
+		m_routeController->createTrack(m_routes[m_currentRoute]);
+		m_troenGame->levelController()->addBoundaries(m_routes.at(m_currentRoute).filePath);
+
+		btTransform position = m_routeController->getFirstWayPoint();
+		position.setOrigin(position.getOrigin() + btVector3(0, 0, 10));
+
+
+		m_bikeController->respawnAt(position);
+
 }

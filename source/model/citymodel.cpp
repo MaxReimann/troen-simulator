@@ -280,9 +280,8 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		ObjectInfo* info = new ObjectInfo(const_cast<LevelController*>(m_levelController), LEVELWALLTYPE);
 		bodyWrap->body->setUserPointer(info);
 
-		btDiscreteDynamicsWorld *world = m_levelController->m_troenGame->physicsWorld()->getDiscreteWorld();
 
-		world->addRigidBody(bodyWrap->body.get());
+		m_world->addRigidBody(bodyWrap->body.get(), COLGROUP_LEVEL, COLMASK_LEVEL);
 		m_lastBodies.push_back(bodyWrap);
 	}
 	else if (!collision)
@@ -294,6 +293,14 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		m_lastCollidingTimer--;
 	}
 
+}
+
+void CityModel::clearTemporaryWalls()
+{
+	for (auto bodyWrap : m_lastBodies)
+		m_world->removeRigidBody(bodyWrap->body.get());
+	
+	m_lastBodies.clear();
 }
 
 osg::Vec2 CityModel::worldToPixelIndex(osg::Vec2 p)

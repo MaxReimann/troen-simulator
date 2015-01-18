@@ -35,6 +35,7 @@ namespace troen
 		void addBoundaries(std::string path);
 		TroenGame* m_troenGame;
 		void debugSnapShot();
+		void removeTemporaryBoundaries();
 	protected:
 		std::shared_ptr<LevelView> m_levelView;
 		std::shared_ptr<LevelModel> m_levelModel;
@@ -42,6 +43,8 @@ namespace troen
 		void initializeSpawnPoints();
 		void initSpecifics();
 		std::weak_ptr<PhysicsWorld> m_world;
+		std::shared_ptr<LevelModel> getAsLevelModel();
+		std::shared_ptr<CityModel> getAsCityModel();
 
 		std::string m_levelName;
 		int m_currentItemCount;
