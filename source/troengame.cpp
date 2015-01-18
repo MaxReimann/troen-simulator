@@ -166,10 +166,6 @@ void TroenGame::startGameLoop()
 
 			handleBending(double(bikeSpeed / maxSpeed));
 
-
-			if (m_postProcessing)
-				m_postProcessing->setBeat(m_audioManager->getTimeSinceLastBeat());
-
 			// do we have extra time (to draw the frame) or did we skip too many frames already?
 			if (g_gameLoopTime < nextTime || (skippedFrames > maxSkippedFrames))
 			{

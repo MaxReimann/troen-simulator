@@ -100,7 +100,6 @@ namespace troen
 		void initializeWASD(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeArrows(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeGamepadPS4(osg::ref_ptr<input::BikeInputState> bikeInputState);
-		void initializeAI(osg::ref_ptr<input::BikeInputState> bikeInputState);
 #ifdef WIN32
 		void initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeRemote(osg::ref_ptr<input::BikeInputState> bikeInputState);

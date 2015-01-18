@@ -114,7 +114,6 @@ namespace troen
 		class Gamepad;
 		class BikeInputState;
 		class PollingDevice;
-		class AI;
 		class RemotePlayer;
 	}
 

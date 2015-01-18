@@ -19,7 +19,6 @@
 #include "../input/keyboard.h"
 #include "../input/gamepad.h"
 #include "../input/gamepadps4.h"
-#include "../input/ai.h"
 #include "../input/pollingdevice.h"
 
 #include "../resourcepool.h"

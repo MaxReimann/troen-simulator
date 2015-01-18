@@ -173,30 +173,6 @@ m_hasGameView(config->ownView[id])
 		m_playerNode->getOrCreateStateSet()->addUniform(new osg::Uniform("reflectionTex", 4 + m_id));
 	}
 
-	////////////////////////////////////////////////////////////////////////////////
-	//
-	// Networking
-	//
-	////////////////////////////////////////////////////////////////////////////////
-	m_isRemote = false;
-	if (game->isNetworking())
-	{
-		if (config->ownView[m_id] || config->playerInputTypes[m_id] == input::BikeInputState::AI)
-		{
-			game->getNetworkManager()->registerLocalPlayer(this);
-
-		}
-		else if (config->playerInputTypes[m_id] == input::BikeInputState::REMOTE_PLAYER)
-		{
-			m_isRemote = true;
-			game->getNetworkManager()->registerRemotePlayerInput(m_networkID, m_bikeController->getRemote());
-
-		}
-		btTransform networkedTransform = game->getNetworkManager()->getStartPosition();
-		m_bikeController->getModel()->moveBikeToPosition(networkedTransform);
-	}
-
-
 
 
 }

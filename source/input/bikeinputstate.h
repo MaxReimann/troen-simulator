@@ -17,7 +17,7 @@ namespace input
 	public:
 		enum InputDevice
 		{
-			KEYBOARD_wasd, KEYBOARD_arrows, GAMEPAD, GAMEPADPS4, AI, REMOTE_PLAYER
+			KEYBOARD_wasd, KEYBOARD_arrows, GAMEPAD, GAMEPADPS4
 		};
 
 		BikeInputState();
