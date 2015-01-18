@@ -24,7 +24,6 @@ namespace troen
 
 		long double getTimeSinceLastUpdate();
 		float updateState(const long double time);
-		float updateRemoteState();
 		void updateAngularVelocity(float speed);
 		float calculatePossibleTurboBoost();
 		float calculateAttenuatedSpeed(float speed);

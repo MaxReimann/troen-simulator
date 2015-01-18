@@ -19,7 +19,6 @@
 #include "controller/levelcontroller.h"
 
 #include "input/bikeinputstate.h"
-#include "network/networkmanager.h"
 
 #include "view/skydome.h"
 #include "view/reflection.h"
@@ -49,22 +48,15 @@ m_hasGameView(config->ownView[id])
 
 	m_troenGame = game;
 
-	if (game->isNetworking())
-		m_networkID = game->getNetworkManager()->getPlayerWithName(QString(m_name.c_str()))->networkID;
-	
+
 	////////////////////////////////////////////////////////////////////////////////
 	//
 	// Color
 	//
 	////////////////////////////////////////////////////////////////////////////////
 
-	if (!game->isNetworking())
-		m_color = osg::Vec3(config->playerColors[id].red(), config->playerColors[id].green(), config->playerColors[id].blue());
-	else
-	{
-		QColor color = game->getNetworkManager()->getPlayerColor(m_networkID);
-		m_color = osg::Vec3(color.red(), color.green(), color.blue());
-	}
+	m_color = osg::Vec3(config->playerColors[id].red(), config->playerColors[id].green(), config->playerColors[id].blue());
+
 
 
 	////////////////////////////////////////////////////////////////////////////////

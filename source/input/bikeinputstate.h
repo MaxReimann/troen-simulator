@@ -29,8 +29,6 @@ namespace input
 		bool getTurboPressed();
 		void setViewingAngle(float angle);
 		float getViewingAngle();
-		void setRemote(bool isRemote);
-		bool isRemote();
 		btVector3 getPosition();
 		void setPosition(btVector3 position);
 		btQuaternion getRotation();
@@ -48,7 +46,6 @@ namespace input
 		float m_angle;
 		bool m_turboPressed;
 		float m_viewingAngle;
-		bool m_isRemote;
 		btVector3 m_position;
 		btQuaternion m_rotation;
 		btVector3 m_linearVeloctiy;

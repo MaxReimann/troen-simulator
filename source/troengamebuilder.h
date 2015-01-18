@@ -22,7 +22,6 @@ namespace troen
 		bool composeSceneGraph();
 		bool buildGameLogic();
 		bool buildPhysicsWorld();
-		bool setupNetworking();
 		bool composeRadarScene();
 		osg::ref_ptr<osg::Group> composePostprocessing();
 		TroenGame * t;

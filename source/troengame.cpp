@@ -33,8 +33,6 @@
 
 #include "tracking/trackbike.h"
 
-#include "network/clientmanager.h"
-#include "network/servermanager.h"
 #include <thread>
 #include <mutex>
 
@@ -53,8 +51,6 @@ m_gameThread(thread)
 
 	moveToThread(m_gameThread);
 	m_gameThread->start(QThread::HighestPriority);
-	m_serverManager = NULL;
-	m_clientManager = NULL;
 }
 
 
@@ -91,11 +87,7 @@ void TroenGame::startGameLoop()
 	m_gameTimer->start();
 	m_gameTimer->pause();
 
-	if (isNetworking())
-	{
-		getNetworkManager()->setLocalGameReady();
-		getNetworkManager()->waitOnAllPlayers(); //blocking call
-	}
+
 
 	// GAME LOOP VARIABLES
 	long double nextTime = m_gameloopTimer->elapsed();
@@ -148,11 +140,6 @@ void TroenGame::startGameLoop()
 				}
 				m_physicsWorld->stepSimulation(g_gameTime);
 			}
-
-
-
-			if (isNetworking())
-				getNetworkManager()->update(g_gameTime);
 
 			m_bikeTracker->update(g_gameTime);
 
@@ -315,59 +302,6 @@ void TroenGame::resize(int width, int height, int windowType){
 	}
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// Networking
-//
-////////////////////////////////////////////////////////////////////////////////
-
-//setup the network connection
-std::string TroenGame::setupServer(std::vector<QString> playerNames)
-{
-
-		std::cout << "[TroenGame::initialize] networking Server..." << std::endl;
-		m_serverManager = std::make_shared<networking::ServerManager>(this, playerNames);
-		m_serverManager->openServer();
-		return std::string("ok");
-}
-
-std::string TroenGame::setupClient(QString playerName, std::string connectAddr)
-{
-		std::cout << "[TroenGame::initialize] networking Client..." << std::endl;
-		m_clientManager = std::make_shared<networking::ClientManager>(this, playerName);
-		m_clientManager->openClient(connectAddr);
-		return std::string("ok");
-}
-
-
-
-bool TroenGame::synchronizeGameStart(GameConfig config)
-{
-	getNetworkManager()->synchronizeGameStart(config);
-	return true;
-}
-
-
-bool TroenGame::isNetworking()
-{
-	if (getNetworkManager() != nullptr)
-	{
-		if (getNetworkManager()->isValidSession())
-			return true;
-	}
-	return false;
-}
-
-std::shared_ptr<networking::NetworkManager> TroenGame::getNetworkManager()
-{
-	if (m_clientManager != NULL)
-		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_clientManager);
-	else if (m_serverManager != NULL)
-		return static_cast<std::shared_ptr<networking::NetworkManager>>(m_serverManager);
-	else
-		return NULL;
-}
 
 void TroenGame::reloadLevel()
 {

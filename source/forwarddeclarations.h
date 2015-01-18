@@ -114,7 +114,6 @@ namespace troen
 		class Gamepad;
 		class BikeInputState;
 		class PollingDevice;
-		class RemotePlayer;
 	}
 
 	namespace sound
@@ -122,14 +121,6 @@ namespace troen
 		class AudioManager;
 	}
 	
-	namespace networking
-	{
-		struct bikeUpdateMessage;
-		class NetworkPlayerInfo;
-		class NetworkManager;
-		class ClientManager;
-		class ServerManager;
-	}
 
 	namespace tracking
 	{

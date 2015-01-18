@@ -101,19 +101,6 @@ long double BikeModel::getTimeSinceLastUpdate()
 	return m_timeSinceLastUpdate;
 }
 
-float BikeModel::updateRemoteState()
-{
-	if (m_bikeInputState->isNewPosition())
-	{
-		btTransform trans;
-		trans.setRotation(m_bikeInputState->getRotation());
-		trans.setOrigin(m_bikeInputState->getPosition() );
-		m_bikeRigidBody->setWorldTransform(trans);
-		m_bikeInputState->setIsNewPosition(false);
-	}
-	m_bikeRigidBody->setLinearVelocity(m_bikeInputState->getLinearVelocity());
-	return m_bikeInputState->getLinearVelocity().length();
-}
 
 float BikeModel::calculatePossibleTurboBoost()
 {
@@ -179,12 +166,6 @@ float BikeModel::updateState(long double time)
 {
 	m_timeSinceLastUpdate = time - m_lastUpdateTime;
 	m_lastUpdateTime = time;
-
-	if (m_bikeInputState->isRemote())
-	{
-		return updateRemoteState();
-	}
-
 	float timeFactor = m_timeSinceLastUpdate / 16.6f;
 
 	// call this exactly once per frame

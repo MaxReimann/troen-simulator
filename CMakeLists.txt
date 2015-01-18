@@ -259,14 +259,6 @@ set(sources
 	source/util/basicshapes.cpp
 
 
-	source/network/networkmanager.h
-	source/network/networkmanager.cpp
-	source/network/clientmanager.cpp
-	source/network/clientmanager.h
-	source/network/servermanager.cpp
-	source/network/servermanager.h
-	source/input/remoteplayer.cpp
-	source/input/remoteplayer.h
 
 	source/tracking/tracker.cpp
 	source/tracking/tracker.h

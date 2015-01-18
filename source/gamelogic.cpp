@@ -32,8 +32,6 @@ m_timeLimit(timeLimit*1000*60),
 m_gameStartTime(-1),
 m_limitedFenceMode(true)
 {
-	if (m_troenGame->isNetworking())
-		m_receivedGameMessages = m_troenGame->getNetworkManager()->m_receivedGameStatusMessages;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -190,8 +188,6 @@ void GameLogic::handleCollisionOfTwoBikes(
 	// TODO
 	// set different thredsholds of collisions between bikes
 	// they dont have as much impact ?
-	if (m_troenGame->isNetworking() && !m_troenGame->getNetworkManager()->isServer())
-		return; //only server has authority over collision
 
 	handleCollisionOfBikeAndNonmovingObject(bike1, bike2, BIKETYPE, contactManifold);
 }
@@ -207,9 +203,6 @@ void GameLogic::handleCollisionOfBikeAndNonmovingObject(
 	if (bike->player()->hasGameView())
 		playCollisionSound(impulse);
 
-
-	if (bike->player()->isRemote())
-		return; //let the remote player handle the collsions himself
 
 	bike->registerCollision(impulse);
 
@@ -402,22 +395,13 @@ void GameLogic::showFencesInRadarForPlayer(int id)
 	}
 }
 
-Player* GameLogic::getPlayerWithID(int bikeID)
-{
-	for (auto player : m_troenGame->players())
-	{
-		if (player->getNetworkID() == bikeID)
-			return player.get();
-	}
-	return NULL;
-}
 
 void GameLogic::checkForFallenPlayers()
 {
 	for (auto player : m_troenGame->m_players)
 	{
 		BikeController* bike = player->bikeController().get();
-		if (bike->isFalling() && !bike->player()->isRemote())
+		if (bike->isFalling())
 		{
 			handlePlayerFall(bike);
 		}

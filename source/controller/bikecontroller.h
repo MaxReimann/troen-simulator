@@ -76,7 +76,6 @@ namespace troen
 		
 
 		std::shared_ptr<BikeModel> getModel();
-		std::shared_ptr<input::RemotePlayer> getRemote() const { return m_remote; }
 		float getDistanceToObstacle(double angle);
 		bool isFalling();
 
@@ -102,11 +101,9 @@ namespace troen
 		void initializeGamepadPS4(osg::ref_ptr<input::BikeInputState> bikeInputState);
 #ifdef WIN32
 		void initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeInputState);
-		void initializeRemote(osg::ref_ptr<input::BikeInputState> bikeInputState);
 #endif
 
 
-		void updateNetworkFence(btTransform transform);
 		long double getTimeFactor();
 		//
 		// communication links
@@ -117,7 +114,6 @@ namespace troen
 		input::PollingDevice* m_pollingThread;
 
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;
-		std::shared_ptr<input::RemotePlayer> m_remote;
 		
 
 

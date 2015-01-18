@@ -23,7 +23,6 @@
 
 #include "../resourcepool.h"
 #include "../sound/audiomanager.h"
-#include "../input/remoteplayer.h"
 #include "../model/bikemotionstate.h"
 
 #include "../util/filteredrayresultcallback.h"

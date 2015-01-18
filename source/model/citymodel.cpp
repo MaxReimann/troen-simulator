@@ -1,6 +1,7 @@
 #include "citymodel.h"
 //std
 #include <string>
+#include <assert.h>
 #include <iostream>
 #include <fstream>
 //qt

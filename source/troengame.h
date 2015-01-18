@@ -11,7 +11,6 @@
 #include <osgViewer/ViewerEventHandlers>
 // troen
 //order is important, has to be imported before windows.h
-#include "network/networkmanager.h"
 #include "forwarddeclarations.h"
 #include "constants.h"
 #include "gameeventhandler.h"
@@ -104,10 +103,6 @@ namespace troen
 		void reloadLevel();
 
 
-		std::shared_ptr<networking::ClientManager> getClientManager() { return m_clientManager; }
-		std::shared_ptr<networking::ServerManager> getServerManager() { return m_serverManager; }
-		std::shared_ptr<networking::NetworkManager> getNetworkManager();
-
 		SplineDeformationRendering* getBendedViews() {
 			return m_deformationRendering;
 		}
@@ -122,10 +117,6 @@ namespace troen
 
 	public slots:
 		void prepareAndStartGame(const GameConfig& config);
-		bool synchronizeGameStart(GameConfig config);
-		bool isNetworking();
-		std::string setupClient(QString playerName, std::string connectAddr = "127.0.0.1");
-		std::string setupServer(std::vector<QString> playerNames);
 
 	private:
 		TroenGameBuilder *m_builder;
@@ -167,8 +158,6 @@ namespace troen
 		std::shared_ptr<PhysicsWorld>				m_physicsWorld;
 		std::shared_ptr<GameLogic>					m_gameLogic;
 		std::shared_ptr<sound::AudioManager>		m_audioManager;
-		std::shared_ptr<networking::ServerManager>  m_serverManager;
-		std::shared_ptr<networking::ClientManager>  m_clientManager;
 		std::shared_ptr<tracking::TrackBike>		m_bikeTracker;
 
 		ResourcePool m_resourcePool;
