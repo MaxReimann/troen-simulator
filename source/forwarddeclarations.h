@@ -80,14 +80,12 @@ namespace troen
 	class RouteModel;
 	class AbstractModel;
 	class PhysicsWorld;
-	class ItemModel;
 
 	class BikeController;
 	class LevelController;
 	class RouteController;
 	class AbstractController;
 	class HUDController;
-	class ItemController;
 
 
 	class BikeView;
@@ -96,7 +94,6 @@ namespace troen
 	class RouteView;
 	class AbstractView;
 	class HUDView;
-	class ItemView;
 	class SkyDome;
 	class PostProcessing;
 	class NodeFollowCameraManipulator;

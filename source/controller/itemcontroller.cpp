@@ -41,7 +41,6 @@ void ItemController::triggerOn(BikeController* bikeController, GameLogic* gamelo
 	switch (m_type)
 	{
 	case troen::ItemController::TURBOSTRIP:
-		bikeController->activateTurbo();
 		remove();
 		break;
 	case troen::ItemController::HEALTHUP:

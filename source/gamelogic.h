@@ -68,9 +68,6 @@ namespace troen
 			BikeController* bike1,
 			BikeController* bike2,
 			btPersistentManifold* contactManifold);
-		void handleCollisionOfBikeAndItem(
-			BikeController* bike,
-			ItemController* item);
 		// death handling
 		void handlePlayerDeath(BikeController* bike);
 		void handlePlayerDeathNonFence(BikeController* deadBike);

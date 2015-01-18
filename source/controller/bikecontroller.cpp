@@ -89,11 +89,6 @@ void BikeController::registerCollision(const btScalar impulse)
 	m_player->increaseHealth(-1 * impulse);
 }
 
-void BikeController::rememberFenceCollision(RouteController* fence)
-{
-	m_lastFenceCollision.first = g_gameTime;
-	m_lastFenceCollision.second = fence;
-}
 
 BikeController::~BikeController()
 {
@@ -138,12 +133,6 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 #endif
 	case input::BikeInputState::GAMEPADPS4:
 		initializeGamepadPS4(bikeInputState);
-		break;
-	case input::BikeInputState::AI:
-		initializeAI(bikeInputState);
-		break;
-	case input::BikeInputState::REMOTE_PLAYER:
-		initializeRemote(bikeInputState);
 		break;
 	default:
 		break;
@@ -214,17 +203,6 @@ void BikeController::initializeGamepadPS4(osg::ref_ptr<input::BikeInputState> bi
 	m_pollingThread->start();
 }
 
-void BikeController::initializeAI(osg::ref_ptr<input::BikeInputState> bikeInputState)
-{
-	input::AI* ai = new input::AI(bikeInputState, this);
-	m_pollingThread = ai;
-	m_pollingThread->start();
-}
-
-void BikeController::initializeRemote(osg::ref_ptr<input::BikeInputState> bikeInputState)
-{
-	m_remote = std::make_shared<input::RemotePlayer>(bikeInputState);
-}
 
 void BikeController::setInputState(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
@@ -300,14 +278,6 @@ float BikeController::computeFovyDelta(float speed, float currentFovy)
 	const float fovyDampening = 20.f;
 	float fovyDelta = (newFovy - currentFovy) / fovyDampening * timeFactor;
 	return clamp(-FOVY_DELTA_MAX, FOVY_DELTA_MAX, fovyDelta);
-}
-void BikeController::activateTurbo()
-{
-	std::shared_ptr<BikeModel> bikeModel = std::static_pointer_cast<BikeModel>(m_model);
-
-	float turboFactor = bikeModel->getTurboFactor();
-	if (turboFactor <= 0)
-		m_turboInitiated = true;
 }
 
 void BikeController::setState(BIKESTATE newState, double respawnTime /*=-1*/)
@@ -400,11 +370,8 @@ void BikeController::updateView(const btTransform &worldTrans)
 	m_bikeView->m_pat->setAttitude(attitude);
 	m_bikeView->m_pat->setPosition(osg::Vec3(position.x(), position.y(), position.z()));
 
-	// update fence accordingly
-	if (m_player->getTroenGame()->isNetworking())
-		updateNetworkFence(worldTrans);
-	else
-		m_player->routeController()->update(position, rot);
+
+	m_player->routeController()->update(position, rot);
 
 }
 
@@ -416,24 +383,6 @@ osg::ref_ptr<osg::Group> BikeController::getViewNode()
 	return group;
 };
 
-void BikeController::updateNetworkFence(btTransform transform)
-{
-	if (!m_player->isRemote())
-	{
-		m_player->routeController()->update(transform.getOrigin(),transform.getRotation());
-		m_player->getTroenGame()->getNetworkManager()->updateFencePart(transform, m_player->getNetworkID());
-	}
-
-	else
-	{
-		btTransform trans;
-		// read in every new fence part
-		while (m_remote->tryGetFencePiece(trans))
-		{
-			m_player->routeController()->update(trans.getOrigin(), trans.getRotation());
-		}
-	}
-}
 
 void BikeController::addUniformsToNode(osg::ref_ptr<osg::Group> group)
 {

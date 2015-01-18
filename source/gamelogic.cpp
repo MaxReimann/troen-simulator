@@ -17,7 +17,6 @@
 #include "controller/levelcontroller.h"
 #include "controller/bikecontroller.h"
 #include "controller/routecontroller.h"
-#include "controller/itemcontroller.h"
 #include "sound/audiomanager.h"
 #include "model/objectinfo.h"
 #include "model/bikemodel.h"
@@ -167,11 +166,6 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 				contactManifold);
 			break;
 
-		case ITEMTYPE:
-			handleCollisionOfBikeAndItem(
-				dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
-				dynamic_cast<ItemController *>(collisionBodyControllers[otherIndex]));
-			break;
 		case ZONETYPE:
 			handleEndZoneCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
 			break;
@@ -202,15 +196,6 @@ void GameLogic::handleCollisionOfTwoBikes(
 	handleCollisionOfBikeAndNonmovingObject(bike1, bike2, BIKETYPE, contactManifold);
 }
 
-void GameLogic::handleCollisionOfBikeAndItem(
-	BikeController* bike,
-	ItemController* item)
-{
-	if (item)
-	{
-		item->triggerOn(bike,this);
-	}
-}
 
 void GameLogic::handleCollisionOfBikeAndNonmovingObject(
 	BikeController* bike,

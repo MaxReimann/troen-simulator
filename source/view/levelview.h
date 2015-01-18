@@ -10,7 +10,6 @@
 #include "../constants.h"
 #include "abstractview.h"
 #include "../model/levelmodel.h"
-#include "../controller/itemcontroller.h"
 
 namespace troen
 {
@@ -22,8 +21,6 @@ namespace troen
 		virtual void reload(std::string levelName);
 
 		virtual osg::ref_ptr<osg::Group> getFloor();
-		void addItemBox(osg::ref_ptr<osg::MatrixTransform>& matrixTransform);
-		void removeItemBox(osg::ref_ptr<osg::MatrixTransform>& matrixTransform);
 		virtual void initSpecifics(std::shared_ptr<AbstractModel> model);
 
 		void setBendingFactor(float bendingFactor);
@@ -44,7 +41,6 @@ namespace troen
 
 		osg::Uniform *m_bendedUniform;
 		osg::Uniform *m_bendingActiveUniform;
-		osg::Group *m_itemGroup;
 		std::string m_levelName;
 	};
 }

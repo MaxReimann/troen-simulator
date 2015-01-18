@@ -147,7 +147,6 @@ void TroenGame::startGameLoop()
 					player->update(g_gameTime);
 				}
 				m_physicsWorld->stepSimulation(g_gameTime);
-				m_levelController->update();
 			}
 
 

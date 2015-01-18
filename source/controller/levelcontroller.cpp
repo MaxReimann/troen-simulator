@@ -13,7 +13,6 @@
 
 #include "../view/cityview.h"
 
-#include "itemcontroller.h"
 #include "../troengame.h"
 #include "../model/objectinfo.h"
 
@@ -29,7 +28,6 @@ LevelController::LevelController(TroenGame* troenGame, std::string levelName) : 
 	initSpecifics();
 
 	m_troenGame = troenGame;
-	m_currentItemCount = 0;
 
 	initializeSpawnPoints();
 }
@@ -149,31 +147,8 @@ void LevelController::addRigidBodiesToWorld()
 	}
 }
 
-void LevelController::addItemBox()
-{
-	float x = randf(0, LEVEL_SIZE) - LEVEL_SIZE / 2;
-	float y = randf(0, LEVEL_SIZE) - LEVEL_SIZE / 2;
-	btVector3 position(x, y, +0.5);
 
-	// the item controller will remove itself
-	new ItemController(position, m_world, m_troenGame, m_levelView.get());
 
-	m_currentItemCount++;
-}
-
-void LevelController::update()
-{
-	if (m_currentItemCount >= m_targetItemCount) {
-		return;
-		m_targetItemCount = 0;
-	}
-
-	// this method is called in each frame, so the amount of items will be refreshed relatively quickly
-	// creating all at once would cause a lag
-
-	//! No items for Simulator 
-	//addItemBox();
-}
 
 void LevelController::setBendingFactor(float bendingFactor)
 {

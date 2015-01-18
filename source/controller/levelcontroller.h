@@ -4,7 +4,6 @@
 // troen
 #include "abstractcontroller.h"
 #include "../forwarddeclarations.h"
-#include "itemcontroller.h"
 
 namespace troen
 {
@@ -21,8 +20,6 @@ namespace troen
 
 		btTransform getSpawnPointForBikeWithIndex(const int index);
 		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
-		void addItemBox();
-		void update();
 
 		void setBendingFactor(float bendingFactor);
 		void setBendingActive(bool active);
@@ -47,8 +44,6 @@ namespace troen
 		std::shared_ptr<CityModel> getAsCityModel();
 
 		std::string m_levelName;
-		int m_currentItemCount;
-		int m_targetItemCount = 100;
 		levelModelType m_levelType;
 	};
 

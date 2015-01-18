@@ -54,8 +54,6 @@ namespace troen
 		void setState(const BIKESTATE newState, const double respawnTime = -1);
 		void moveBikeToPosition(btTransform position);
 		void registerCollision(const btScalar impulse);
-		void rememberFenceCollision(RouteController* fence);
-		void activateTurbo();
 		void updateUniforms();
 		void reset();
 		void respawnAt(btTransform respawnPoint);
@@ -72,7 +70,6 @@ namespace troen
 		float speed()			{ return m_speed; };
 		BIKESTATE state()		{ return m_state; };
 		double respawnTime()	{ return m_respawnTime; };
-		std::pair<float, RouteController*> lastFenceCollision() { return m_lastFenceCollision; };
 
 		bool turboInitiated()	{ return m_turboInitiated; };
 		bool hasKeyboardHandler() { return m_keyboardHandler != nullptr; };

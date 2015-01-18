@@ -3,7 +3,6 @@
 #include <btBulletDynamicsCommon.h>
 #include "LinearMath/btHashMap.h"
 //troen
-#include "../controller/itemcontroller.h"
 #include "objectinfo.h"
 #include "../constants.h"
 #include "../controller/abstractcontroller.h"

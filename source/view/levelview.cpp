@@ -92,9 +92,6 @@ void LevelView::initSpecifics(std::shared_ptr<AbstractModel> model)
 	m_node->addChild(constructFloors(levelSize));
 	m_node->addChild(constructObstacles(levelSize, m_levelName));
 
-	m_itemGroup = new osg::Group();
-	m_itemGroup->setName("itemGroup");
-	m_node->addChild(m_itemGroup);
 }
 
 void LevelView::reload(std::string levelName)
@@ -295,16 +292,6 @@ void LevelView::setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string fil
 		else
 			stateset->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
 	}
-}
-
-void LevelView::addItemBox(osg::ref_ptr<osg::MatrixTransform>& matrixTransform)
-{
-	m_itemGroup->addChild(matrixTransform);
-}
-
-void troen::LevelView::removeItemBox(osg::ref_ptr<osg::MatrixTransform>& matrixTransform)
-{
-	m_itemGroup->removeChild(matrixTransform);
 }
 
 

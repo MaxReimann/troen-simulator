@@ -95,26 +95,6 @@ float BikeModel::getTurboFactor()
 	return m_turboFactor;
 }
 
-void BikeModel::updateTurboFactor(float newVelocity, float time)
-{
-	m_turboFactor = fmax(0.f, m_turboFactor);
-
-	if (m_turboFactor <= 0 && (m_bikeController->turboInitiated() || m_bikeInputState->getTurboPressed())) {
-		m_turboFactor = 1.f;
-		m_timeOfLastTurboInitiation = time;
-	}
-	else if (m_turboFactor > 0){
-		if (m_oldVelocity - newVelocity > THRESHOLD_FOR_ABRUPT_VELOCITY_CHANGE) {
-			// deactivate turbo phase if the bike speed was decreased abruptly (e.g. collision)
-			m_turboFactor = -1.f;
-		}
-		else {
-			m_turboFactor = 1 - (time - m_timeOfLastTurboInitiation) / TURBO_PHASE_LENGTH;
-			m_turboFactor = fmax(0.f, m_turboFactor);
-		}
-	}
-
-}
 
 long double BikeModel::getTimeSinceLastUpdate()
 {
@@ -218,7 +198,6 @@ float BikeModel::updateState(long double time)
 
 	float speed = calculateAcceleratedSpeed(velocityXY, timeFactor);
 
-	updateTurboFactor(speed, time);
 	updateAngularVelocity(speed);
 
 	speed = m_oldVelocity = calculateAttenuatedSpeed(speed);

@@ -27,7 +27,6 @@
 #include "../constants.h"
 #include "../controller/abstractcontroller.h"
 #include "../controller/levelcontroller.h"
-#include "../controller/itemcontroller.h"
 #include "../model/bikemodel.h"
 #include "../model/physicsworld.h"
 #include "../util/chronotimer.h"

@@ -179,7 +179,7 @@ Reflection::Reflection(osg::ref_ptr<osg::Group> levelView, osg::ref_ptr<osgViewe
 bool Reflection::addSceneNode(osg::ref_ptr<osg::Group> sceneNode)
 {
 	reflectionObjectsGroup = new osg::Group();
-	char *reflectionNames[] = { "wallsGroup", "obstaclesGroup", "bikeGroup","fenceGroup", "itemGroup"};
+	char *reflectionNames[] = { "wallsGroup", "obstaclesGroup", "bikeGroup","fenceGroup"};
 
 	for (auto name : reflectionNames )
 	{
