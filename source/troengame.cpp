@@ -25,7 +25,6 @@
 
 #include "BendedViews/src/SplineDeformationRendering.h"
 #include "view/postprocessing.h"
-#include "view/reflection.h"
 
 #include "util/chronotimer.h"
 #include "util/gldebugdrawer.h"
@@ -306,7 +305,6 @@ void TroenGame::resize(int width, int height, int windowType){
 void TroenGame::reloadLevel()
 {
 	m_levelController->reload();
-	m_builder->composeReflections();
 }
 
 

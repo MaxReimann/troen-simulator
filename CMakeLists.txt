@@ -240,8 +240,6 @@ set(sources
 	source/view/playermarker.h
 	source/view/playermarker.cpp
 	source/view/easemotion.h
-	source/view/reflection.h
-	source/view/reflection.cpp
 
 
 	source/navigation/navigationwindow.cpp

@@ -22,7 +22,6 @@
 
 #include "view/shaders.h"
 #include "view/postprocessing.h"
-#include "view/reflection.h"
 #include "BendedViews/src/SplineDeformationRendering.h"
 
 #include "tracking/trackbike.h"
@@ -203,8 +202,6 @@ bool TroenGameBuilder::composeSceneGraph()
 		}
 	}
 
-	// sceneNode has to be added to reflection after adding all (non hud) objects
-	composeReflections();
 
 	// hud & radar
 	{
@@ -239,18 +236,6 @@ bool TroenGameBuilder::composeSceneGraph()
 	return true;
 }
 
-bool TroenGameBuilder::composeReflections()
-{
-	if (t->m_gameConfig->useReflection)
-	{
-		for (auto player : t->m_playersWithView)
-		{
-			player->setupReflections(t, t->m_sceneNode);
-		}
-	}
-
-	return true;
-}
 
 osg::ref_ptr<osg::Group> TroenGameBuilder::composePostprocessing()
 {

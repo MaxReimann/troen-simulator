@@ -170,10 +170,6 @@ MainWindow::MainWindow(QWidget * parent)
 	vBoxLayout->addWidget(m_debugViewCheckBox, 0, Qt::AlignLeft);
 	m_debugViewCheckBox->setChecked(false);
 
-	//reflectionCheckBox
-	m_reflectionCheckBox = new QCheckBox("&Reflection");
-	vBoxLayout->addWidget(m_reflectionCheckBox, 0, Qt::AlignLeft);
-	m_reflectionCheckBox->setChecked(true);
 
 
 
@@ -321,7 +317,6 @@ GameConfig MainWindow::getGameConfig()
 	config.usePostProcessing = m_postProcessingCheckBox->isChecked();
 	config.useDebugView = m_debugViewCheckBox->isChecked();
 	config.testPerformance = m_testPerformanceCheckBox->isChecked();
-	config.useReflection = m_reflectionCheckBox->isChecked();
 	config.difficulty = m_difficultyComboBox->currentIndex();
 	config.studySetup = windowSetupChoices[m_studySetupComboBox->currentIndex()];
 	config.participantNumber = m_participantNumberSpinBox->value();
@@ -397,7 +392,6 @@ void MainWindow::loadSettings()
 	m_postProcessingCheckBox->setChecked(settings.value("postProcessing").toBool());
 	m_testPerformanceCheckBox->setChecked(settings.value("vSyncOff").toBool());
 	m_debugViewCheckBox->setChecked(settings.value("debugView").toBool());
-	m_reflectionCheckBox->setChecked(settings.value("reflection").toBool());
 	m_levelComboBox->setCurrentIndex(settings.value("level").toInt());
 	m_participantNumberSpinBox->setValue(settings.value("participants").toInt());
 	m_difficultyComboBox->setCurrentIndex(settings.value("difficulty").toInt());
@@ -437,7 +431,6 @@ void MainWindow::saveSettings()
 	settings.setValue("postProcessing", QString::number(m_postProcessingCheckBox->isChecked()));
 	settings.setValue("vSyncOff", QString::number(m_testPerformanceCheckBox->isChecked()));
 	settings.setValue("debugView", QString::number(m_debugViewCheckBox->isChecked()));
-	settings.setValue("reflection", QString::number(m_reflectionCheckBox->isChecked()));
 	settings.setValue("level", QString::number(m_levelComboBox->currentIndex()));
 	settings.setValue("participants", QString::number(m_participantNumberSpinBox->value()));
 	settings.setValue("studySetup", QString::number(m_studySetupComboBox->currentIndex()));

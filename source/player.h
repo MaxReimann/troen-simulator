@@ -57,7 +57,6 @@ namespace troen
 		osg::ref_ptr<SampleOSGViewer> viewer()				{ return m_viewer; };
 		osg::ref_ptr<osgViewer::View> gameView()			{ return m_gameView; };
 		osg::ref_ptr<osg::Group> playerNode()				{ return m_playerNode; };
-		std::shared_ptr<Reflection> reflection()			{ return m_reflection; };
 		std::shared_ptr<NavigationWindow> navigationWindow(){ return m_navigationWindow; };
 		osg::ref_ptr<SampleOSGViewer> navigationViewer();
 
@@ -79,7 +78,6 @@ namespace troen
 		float increasePoints(const float diff);
 		void update(int g_gameTime);
 		void setBendingUniform(troen::windowType window, bool value);
-		void setupReflections(TroenGame* game, osg::ref_ptr<osg::Group>& sceneNode);
 		bool isDead();
 		std::shared_ptr<std::vector<osg::Camera*>> cameras(){ return m_cameras; };
 		void setCameraSpecificUniforms();
@@ -111,7 +109,6 @@ namespace troen
 		osg::ref_ptr<SampleOSGViewer>	m_viewer;
 		osg::ref_ptr<osgViewer::View>	m_gameView;
 		osg::ref_ptr<osg::Group>		m_playerNode;
-		std::shared_ptr<Reflection>		m_reflection;
 		std::shared_ptr<NavigationWindow> m_navigationWindow;
 		std::vector<Route>				m_routes;
 

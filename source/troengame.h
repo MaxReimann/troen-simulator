@@ -36,7 +36,6 @@ namespace troen
 		bool usePostProcessing;
 		bool useDebugView;
 		bool testPerformance;
-		bool useReflection;
 		bool ownView[MAX_BIKES];
 		std::string levelName;
 		//user study
