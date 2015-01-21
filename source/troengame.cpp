@@ -317,3 +317,8 @@ BikeModel* TroenGame::activeBikeModel()
 {
 	return m_players[0]->bikeController()->getModel().get();
 }
+
+std::shared_ptr<CityModel> TroenGame::cityModel()
+{
+	return m_levelController->getAsCityModel();
+}

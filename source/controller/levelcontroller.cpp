@@ -108,11 +108,16 @@ void LevelController::addBoundaries(std::string path)
 	m_levelModel->addObstaclesFromFile("", path);
 }
 
-void LevelController::removeTemporaryBoundaries()
+void LevelController::removeTemporaries(bool walls, bool boundaries)
 {
-	getAsCityModel()->clearTemporaryWalls();
+	if (walls)
+		getAsCityModel()->clearTemporaryWalls();
+	if (boundaries)
+		removeBoundaries();
+}
 
-
+void LevelController::removeBoundaries()
+{
 	auto bodies = getRigidBodies();
 	auto bodyIter = std::begin(bodies);
 	while (bodyIter != std::end(bodies))
@@ -127,7 +132,6 @@ void LevelController::removeTemporaryBoundaries()
 			++bodyIter;
 	}
 }
-
 
 void LevelController::removeRigidBodiesFromWorld()
 {

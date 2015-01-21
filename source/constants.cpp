@@ -23,7 +23,7 @@ namespace troen
 	const int NUM_MULTISAMPLES(8);
 
 	// LOGIC
-	const double RESPAWN_DURATION(3000);
+	const double RESPAWN_DURATION(4000);
 	const double GAME_START_COUNTDOWN_DURATION(3000);
 
 	//PHYSIS

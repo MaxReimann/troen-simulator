@@ -231,7 +231,7 @@ void GameLogic::handlePlayerDeath(
 
 void GameLogic::handleEndZoneCollision(BikeController* bike)
 {
-	m_troenGame->getBikeTracker()->exportTaskStats(g_gameTime);
+	m_troenGame->bikeTracker()->exportTaskStats(g_gameTime);
 	std::cout << "in endzone" << std::endl;
 
 

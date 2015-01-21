@@ -244,7 +244,7 @@ bool Player::hasNextTrack()
 void Player::setOnNextTrack()
 {
 		m_routeController->removeAllFences();
-		m_troenGame->levelController()->removeTemporaryBoundaries();
+		m_troenGame->levelController()->removeTemporaries(true,true);
 		
 		m_currentRoute++;
 		m_routeController->createTrack(m_routes[m_currentRoute]);

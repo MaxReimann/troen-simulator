@@ -9,6 +9,7 @@
 
 #include "../controller/routecontroller.h"
 #include "../controller/hudcontroller.h"
+#include "../controller/levelcontroller.h"
 
 #include "../model/physicsworld.h"
 #include "../model/bikemodel.h"
@@ -26,6 +27,7 @@
 #include "../model/bikemotionstate.h"
 
 #include "../util/filteredrayresultcallback.h"
+#include "../troengame.h"
 
 
 using namespace troen;
@@ -307,6 +309,7 @@ void BikeController::updateModel(const long double gameTime)
 
 		if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
 		{
+			m_player->getTroenGame()->levelController()->removeTemporaries(true, false);
 			reset();
 			updateFov(0);
 			m_state = RESPAWN_PART_2;
@@ -323,14 +326,15 @@ void BikeController::updateModel(const long double gameTime)
 	}
 	case RESPAWN_NEWTRACK:
 	{
-		 m_bikeModel->freeze();
 		 updateFov(0);
 		 // fades fence out
+		 m_bikeModel->dampOut();
 		
 		 m_player->routeController()->updateFadeOutFactor(1 - (gameTime - m_respawnTime) / (RESPAWN_DURATION * 2.f / 3.f));
 
 		 if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
 		 {
+			 m_bikeModel->clearDamping();
 			 m_player->setOnNextTrack();
 			 m_player->routeController()->updateFadeOutFactor(1);
 			 m_state = RESPAWN_PART_2;

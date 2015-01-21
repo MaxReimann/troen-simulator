@@ -331,4 +331,15 @@ void BikeModel::freeze()
 {
 	m_bikeRigidBody->setAngularVelocity(btVector3(0, 0, 0));
 	m_bikeRigidBody->setLinearVelocity(btVector3(0, 0, 0));
+
+
+}
+
+void BikeModel::dampOut()
+{
+	m_bikeRigidBody->setLinearVelocity(m_bikeRigidBody->getLinearVelocity() / 1.08f);
+}
+void BikeModel::clearDamping()
+{
+	m_bikeRigidBody->setDamping(0, 0);
 }

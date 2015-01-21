@@ -74,6 +74,7 @@ namespace troen
 		{
 			return m_levelController;
 		};
+		std::shared_ptr<CityModel> cityModel();
 		std::shared_ptr<PhysicsWorld> physicsWorld()
 		{
 			return m_physicsWorld;
@@ -81,12 +82,13 @@ namespace troen
 		std::vector<std::shared_ptr<Player>> players()
 			{ return m_players; };
 
-		std::shared_ptr<tracking::TrackBike> getBikeTracker() 
+		std::shared_ptr<tracking::TrackBike> bikeTracker() 
 		{
 			return m_bikeTracker;
 		}
 		//convenience
 		BikeModel* activeBikeModel();
+
 		osg::ref_ptr<SkyDome> skyDome()
 			{ return m_skyDome; };
 		ResourcePool* resourcePool(){ return &m_resourcePool; };

@@ -53,6 +53,8 @@ namespace troen
 		btTransform getTransform();
 		btVector3 BikeModel::getDirection();
 		std::shared_ptr<btRigidBody> getRigidBody();
+		void dampOut();
+		void clearDamping();
 	private:
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;
 		float m_oldVelocity;
