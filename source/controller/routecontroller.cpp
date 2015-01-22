@@ -56,6 +56,12 @@ void RouteController::createTrack(Route route)
 
 	addEndZone();
 
+	if (m_world.use_count()>0)
+	{
+		std::cout << "adding rigidbobdies" << std::endl;
+		m_routeModel->addRigidBodiesToWorld();
+	}
+
 }
 
 

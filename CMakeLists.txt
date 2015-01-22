@@ -249,6 +249,8 @@ set(sources
 
 	source/util/chronotimer.h
 	source/util/chronotimer.cpp
+	source/util/countdowntimer.h
+	source/util/countdowntimer.cpp
 	source/util/gldebugdrawer.h
 	source/util/gldebugdrawer.cpp
 	source/util/scriptwatcher.h

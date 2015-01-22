@@ -12,16 +12,6 @@
 
 namespace
 {
-	const std::vector<std::string> killMessages
-	{
-	"PLAYER_X\njust hit your fence hard",
-	"You just fenced\nPLAYER_X"
-	};
-	const std::vector<std::string> selfKillMessages
-	{
-		"That was your own fence ...",
-		"You just hit your own fence ..."
-	};
 	const std::vector<std::string> diedMessages
 	{
 		"PLAYER_X\njust hit a wall",
@@ -29,6 +19,7 @@ namespace
 	};
 	const std::string diedOnFenceMessage("PLAYER_X\njust crashed into PLAYER_Y's fence");
 	const std::string diedOnFallMessage("PLAYER_X\njust fell into the abyss");
+	const std::string allRoutesCompleteMessage("Congrats, you completed all routes!");
 }
 
 using namespace troen;
@@ -97,14 +88,6 @@ void HUDController::update(
 		hudview->setCountdownText(-1);
 	}
 
-	//
-	// ingame messages
-	//
-// 	while (!m_ingameMessages.empty() && m_ingameMessages.front()->endTime < currentGameTime)
-// 	{
-// 		m_ingameMessages.pop_front();
-// 	}
-// 	hudview->updateIngameMessageTexts(m_ingameMessages);
 }
 
 void HUDController::setTrackNode(osg::Node* trackNode)
@@ -112,38 +95,6 @@ void HUDController::setTrackNode(osg::Node* trackNode)
     m_HUDView->setTrackNode(trackNode);
 }
 
-
-void HUDController::addKillMessage(Player* player)
-{
-	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
-
-	std::uniform_int_distribution<int> distribution(0, killMessages.size() - 1);
-	int n = distribution(m_randomGenerator);
-
-	std::string text = killMessages[n];
-	std::regex reg("PLAYER_X");
-	text = std::regex_replace(text, reg, player->name());
-
-	message->text = text;
-	message->color = osg::Vec4(player->color(), 1);
-	message->endTime = g_gameTime + RESPAWN_DURATION;
-
-	m_ingameMessages.push_back(message);
-}
-
-void HUDController::addSelfKillMessage()
-{
-	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
-
-	std::uniform_int_distribution<int> distribution(0, selfKillMessages.size() - 1);
-	int n = distribution(m_randomGenerator);
-
-	message->text = selfKillMessages[n];
-	message->color = osg::Vec4(m_player.lock()->color(),1);
-	message->endTime = g_gameTime + RESPAWN_DURATION;
-
-	m_ingameMessages.push_back(message);
-}
 
 void HUDController::addDiedMessage(Player* player)
 {
@@ -163,37 +114,20 @@ void HUDController::addDiedMessage(Player* player)
 	m_ingameMessages.push_back(message);
 }
 
-void HUDController::addDiedOnFenceMessage(Player* bikePlayer, Player* fencePlayer)
+void HUDController::addAllRoutesFinishedMessage(Player* player)
 {
 	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
 
-	std::string text = diedOnFenceMessage;
-	std::regex regx("PLAYER_X");
-	text = std::regex_replace(text, regx, bikePlayer->name());
-	std::regex regy("PLAYER_Y");
-	text = std::regex_replace(text, regy, fencePlayer->name());
+	std::string text = allRoutesCompleteMessage;
 
 	message->text = text;
-	message->color = osg::Vec4(bikePlayer->color(), 1);
+	message->color = osg::Vec4(player->color(), 1);
 	message->endTime = g_gameTime + RESPAWN_DURATION;
 
 	m_ingameMessages.push_back(message);
 }
 
-void HUDController::addDiedOnFallMessage(Player* deadPlayer)
-{
-	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
 
-	std::string text = diedOnFallMessage;
-	std::regex regx("PLAYER_X");
-	text = std::regex_replace(text, regx, deadPlayer->name());
-
-	message->text = text;
-	message->color = osg::Vec4(deadPlayer->color(), 1);
-	message->endTime = g_gameTime + RESPAWN_DURATION;
-
-	m_ingameMessages.push_back(message);
-}
 
 void HUDController::toggleVisibility()
 {

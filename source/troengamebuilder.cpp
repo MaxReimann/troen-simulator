@@ -27,6 +27,7 @@
 #include "tracking/trackbike.h"
 
 #include "util/chronotimer.h"
+#include "util/countdowntimer.h"
 #include "util/gldebugdrawer.h"
 #include "sound/audiomanager.h"
 #include "input/gamepadps4.h"
@@ -62,6 +63,7 @@ bool TroenGameBuilder::build()
 	std::cout << "[TroenGame::build] timer & shaders ..." << std::endl;
 	t->m_gameloopTimer = std::make_shared<util::ChronoTimer>(false, true);
 	t->m_gameTimer = std::make_shared<util::ChronoTimer>(false, true);
+	t->m_countdownTimers = std::make_shared<util::CountdownTimer>();
 	shaders::reloadShaders();
 
 	////////////////////////////////////////////////////////////////////////////////

@@ -26,8 +26,8 @@ namespace troen
 			TrackBike(std::shared_ptr<BikeController> controller, float frequency, int participantNumber, bool exportCSV);
 			~TrackBike();
 			void update(long double gameTime);
-			void writeLine(CurrentBikeState& state);
-			void writeCSV();
+			void writeTrajectoryLine(CurrentBikeState& state);
+			void writeTrajectoryCSV();
 			void exportTaskStats(long time);
 			void recordCrash();
 			void recordWrongTurn();

@@ -19,6 +19,7 @@
 
 
 
+
 #define MAX_BIKES 6
 namespace troen
 {
@@ -85,6 +86,11 @@ namespace troen
 		std::shared_ptr<tracking::TrackBike> bikeTracker() 
 		{
 			return m_bikeTracker;
+		}
+
+		std::shared_ptr<util::CountdownTimer> countdownTimer()
+		{
+			return m_countdownTimers;
 		}
 		//convenience
 		BikeModel* activeBikeModel();
@@ -160,6 +166,7 @@ namespace troen
 		std::shared_ptr<GameLogic>					m_gameLogic;
 		std::shared_ptr<sound::AudioManager>		m_audioManager;
 		std::shared_ptr<tracking::TrackBike>		m_bikeTracker;
+		std::shared_ptr<util::CountdownTimer>		m_countdownTimers;
 
 		ResourcePool m_resourcePool;
 

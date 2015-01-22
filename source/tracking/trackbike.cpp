@@ -58,7 +58,7 @@ void TrackBike::update(long double gameTime)
 
 
 
-void TrackBike::writeLine(CurrentBikeState& state)
+void TrackBike::writeTrajectoryLine(CurrentBikeState& state)
 {
 	//get rotation around x axis from quat
 	btMatrix3x3 m; 
@@ -75,14 +75,14 @@ void TrackBike::writeLine(CurrentBikeState& state)
 	(*m_fileStream) << state.velocity << "\n";
 
 }
-void TrackBike::writeCSV()
+void TrackBike::writeTrajectoryCSV()
 {
 	if (m_exportCSV)
 	{
 		for (CurrentBikeState state : m_trackedStates)
 		{
 			if (state.time > 0.0)
-				writeLine(state);
+				writeTrajectoryLine(state);
 		}
 		m_fileStream->flush();
 		m_file->close();
@@ -92,7 +92,7 @@ void TrackBike::writeCSV()
 
 TrackBike::~TrackBike()
 {
-	writeCSV();
+	writeTrajectoryCSV();
 }
 
 void TrackBike::exportTaskStats(long time)

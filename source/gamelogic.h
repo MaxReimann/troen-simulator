@@ -12,7 +12,7 @@
 
 namespace troen
 {
-
+	void endGame(void *);
 	/*! The GameLogic class manages the events within the game such as collision/separation events, deaths of players etc.*/
 	class GameLogic
 	{
@@ -68,7 +68,6 @@ namespace troen
 		// death handling
 		void handlePlayerDeath(BikeController* bike);
 		void handlePlayerDeathNonFence(BikeController* deadBike);
-		void handlePlayerFall(BikeController* deadBike);
 		void handleEndZoneCollision(BikeController* bike);
 		// helper
 		float impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike);
@@ -97,6 +96,7 @@ namespace troen
 		void stepGameOver(
 			const long double gameloopTime,
 			const long double gameTime);
+
 		bool m_limitedFenceMode;
 	};
 }

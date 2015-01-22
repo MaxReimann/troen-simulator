@@ -28,12 +28,14 @@
 
 #include "util/chronotimer.h"
 #include "util/gldebugdrawer.h"
+#include "util/countdowntimer.h"
 #include "sound/audiomanager.h"
 
 #include "tracking/trackbike.h"
 
 #include <thread>
 #include <mutex>
+
 
 
 using namespace troen;
@@ -85,6 +87,7 @@ void TroenGame::startGameLoop()
 	m_gameloopTimer->start();
 	m_gameTimer->start();
 	m_gameTimer->pause();
+	g_gameRunning = true;
 
 
 
@@ -107,10 +110,11 @@ void TroenGame::startGameLoop()
 
 
 	// terminates when first viewer is closed
-	while (!m_players[0]->viewer()->done())
+	while (!m_players[0]->viewer()->done()&&g_gameRunning)
 	{
 		g_gameLoopTime = m_gameloopTimer->elapsed();
 		g_gameTime = m_gameTimer->elapsed();
+		
 
 		QCoreApplication::processEvents();
 
@@ -141,7 +145,7 @@ void TroenGame::startGameLoop()
 			}
 
 			m_bikeTracker->update(g_gameTime);
-
+			m_countdownTimers->update();
 
 			m_audioManager->Update(g_gameLoopTime / 1000);
 			m_audioManager->setMotorSpeed(m_players[0]->bikeController()->speed());

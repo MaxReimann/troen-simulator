@@ -72,8 +72,6 @@ void BikeController::respawnAt(btTransform respawnPoint)
 {
 	if (m_pollingThread != nullptr)
 		m_pollingThread->setVibration(false);
-
-	m_player->setHealth(BIKE_DEFAULT_HEALTH);
 	
 	m_initialTransform = respawnPoint;
 	moveBikeToPosition(respawnPoint);
@@ -327,17 +325,23 @@ void BikeController::updateModel(const long double gameTime)
 	case RESPAWN_NEWTRACK:
 	{
 		 updateFov(0);
-		 // fades fence out
 		 m_bikeModel->dampOut();
 		
+		 // fades fence out
 		 m_player->routeController()->updateFadeOutFactor(1 - (gameTime - m_respawnTime) / (RESPAWN_DURATION * 2.f / 3.f));
 
 		 if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
 		 {
 			 m_bikeModel->clearDamping();
-			 m_player->setOnNextTrack();
 			 m_player->routeController()->updateFadeOutFactor(1);
-			 m_state = RESPAWN_PART_2;
+			 
+			 if (m_player->hasNextTrack())
+			 {
+				m_state = RESPAWN_PART_2;
+				m_player->setOnNextTrack();
+			 }
+			 else 
+				 m_state = WAITING;
 		 }
 		 break;
 

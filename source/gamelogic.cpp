@@ -21,6 +21,8 @@
 #include "model/objectinfo.h"
 #include "model/bikemodel.h"
 #include "tracking/trackbike.h"
+#include "util/countdowntimer.h"
+
 
 
 using namespace troen;
@@ -145,6 +147,9 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 		int otherIndex = bikeIndex == 0 ? 1 : 0;
 		switch (collisionTypes[otherIndex])
 		{
+		case ZONETYPE:
+			handleEndZoneCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
+			break;
 		case LEVELWALLTYPE:
 		case LEVELOBSTACLETYPE:
 			handleCollisionOfBikeAndNonmovingObject(
@@ -164,9 +169,7 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 				contactManifold);
 			break;
 
-		case ZONETYPE:
-			handleEndZoneCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
-			break;
+
 
 		case LEVELGROUNDTYPE:
 			break;
@@ -232,19 +235,17 @@ void GameLogic::handlePlayerDeath(
 void GameLogic::handleEndZoneCollision(BikeController* bike)
 {
 	m_troenGame->bikeTracker()->exportTaskStats(g_gameTime);
+	bike->player()->routeController()->removeAllFencesFromModel();
 	std::cout << "in endzone" << std::endl;
 
 
+	bike->setState(BikeController::BIKESTATE::RESPAWN_NEWTRACK, g_gameTime);
 
-	if (bike->player()->hasNextTrack())
+	if (!bike->player()->hasNextTrack())
 	{
-		bike->player()->routeController()->removeAllFencesFromModel();
-		bike->setState(BikeController::BIKESTATE::RESPAWN_NEWTRACK, g_gameTime);
-
-	}
-	else
-	{
-		std::cout << "finished all routes" << std::endl;
+		m_troenGame->bikeTracker()->writeTrajectoryCSV();
+		bike->player()->hudController()->addAllRoutesFinishedMessage(bike->player());
+		m_troenGame->countdownTimer()->addTimer(4000, endGame);
 	}
 
 
@@ -269,24 +270,6 @@ void GameLogic::handlePlayerDeathNonFence(BikeController* deadBike)
 	}
 }
 
-void GameLogic::handlePlayerFall(BikeController* deadBike)
-{
-	handlePlayerDeath(deadBike);
-
-	Player* deadPlayer = deadBike->player();
-
-	for (auto player : m_troenGame->m_players)
-	{
-		if (player.get() != deadPlayer)
-		{
-			player->increaseKillCount();
-			if (player->hasGameView())
-			{
-				player->hudController()->addDiedOnFallMessage(deadPlayer);
-			}
-		}
-	}
-}
 
 btScalar GameLogic::impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike)
 {
@@ -326,6 +309,13 @@ void GameLogic::removeAllFences()
 	{
 		player->routeController()->removeAllFences();
 	}
+}
+
+void troen::endGame(void *)
+{
+	std::cout << "exiting now" << std::endl;
+	//stop game loop in next iteration
+	g_gameRunning = false;
 }
 
 
@@ -396,6 +386,7 @@ void GameLogic::showFencesInRadarForPlayer(int id)
 }
 
 
+
 void GameLogic::checkForFallenPlayers()
 {
 	for (auto player : m_troenGame->m_players)
@@ -403,7 +394,7 @@ void GameLogic::checkForFallenPlayers()
 		BikeController* bike = player->bikeController().get();
 		if (bike->isFalling())
 		{
-			handlePlayerFall(bike);
+			std::cout << "player is falling, this should not happen.." << std::endl;
 		}
 	}
 }

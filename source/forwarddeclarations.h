@@ -106,6 +106,7 @@ namespace troen
 	{
 		class ChronoTimer;
 		class GLDebugDrawer;
+		class CountdownTimer;
 	}
 	namespace input
 	{

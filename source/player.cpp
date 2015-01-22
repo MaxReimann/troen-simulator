@@ -245,6 +245,8 @@ void Player::setOnNextTrack()
 {
 		m_routeController->removeAllFences();
 		m_troenGame->levelController()->removeTemporaries(true,true);
+
+		setHealth(BIKE_DEFAULT_HEALTH);
 		
 		m_currentRoute++;
 		m_routeController->createTrack(m_routes[m_currentRoute]);

@@ -38,11 +38,8 @@ namespace troen
 		//
 		// ingame messages
 		//
-		void addKillMessage(Player* player);
-		void addSelfKillMessage();
 		void addDiedMessage(Player* player);
-		void addDiedOnFenceMessage(Player* bikePlayer, Player* fencePlayer);
-		void addDiedOnFallMessage(Player* deadPlayer);
+		void addAllRoutesFinishedMessage(Player* player);
 		void toggleVisibility();
 	private:
 		std::shared_ptr<HUDView> m_HUDView;

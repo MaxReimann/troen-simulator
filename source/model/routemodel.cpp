@@ -18,9 +18,13 @@ RouteModel::RouteModel(RouteController* routeController)
 void RouteModel::attachWorld(std::shared_ptr<PhysicsWorld>& world)
 {
 	m_world = world;
+	addRigidBodiesToWorld();
+}
+
+void RouteModel::addRigidBodiesToWorld()
+{
 	for (auto boundary : m_rigidBodyDeque)
 		m_world.lock()->addRigidBody(boundary.get(), COLGROUP_FENCE, COLMASK_FENCE);
-
 }
 
 void RouteModel::addFencePart(btVector3 a, btVector3 b)
@@ -121,7 +125,5 @@ void RouteModel::addEndZoneCylinder(btVector3 origin, double radius, double heig
 	m_collisionShapeDeque.push_back(zoneShape);
 	m_motionStateDeque.push_back(zoneMotionState);
 	m_rigidBodyDeque.push_back(zoneRigidBody);
-
-	//m_world.lock()->addRigidBody(zoneRigidBody.get(), COLGROUP_FENCE, COLMASK_FENCE);
 
 }
