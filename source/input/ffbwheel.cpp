@@ -7,15 +7,10 @@
 // other
 #include <WinBase.h>
 #include <numeric>
-#include <fstream>
-
 
 DWORD(WINAPI* Custom_XInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
 DWORD(WINAPI* Custom_XInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 VOID(WINAPI* Custom_XInputEnable)(BOOL enable);
-
-
-
 
 using namespace troen::input;
 
@@ -96,7 +91,7 @@ void FFBWheel::run()
 	{
 		if (!m_isConnected)
 			checkConnection();
-	
+
 		if (m_isConnected)
 		{
 			ZeroMemory(&m_state, sizeof(XINPUT_STATE));
@@ -112,45 +107,22 @@ void FFBWheel::run()
 
 			float normLX = fmaxf(-1, (float)m_state.Gamepad.sThumbLX / 32767);
 			m_leftStickX = (abs(normLX) < m_deadzoneX ? 0 : (abs(normLX) - m_deadzoneX) * (normLX / abs(normLX)));
-			
+
 			float normLY = fmaxf(-1, (float)m_state.Gamepad.sThumbLY / 32767);
 			m_brake = (abs(normLY) < m_deadzoneY ? 0 : (abs(normLY) - m_deadzoneY) * (normLY / abs(normLY)));
-			
+
 			float normRY = fmaxf(-1, (float)m_state.Gamepad.sThumbRY / 32767);
 			m_throttle = (abs(normRY) < m_deadzoneY ? 0 : (abs(normRY) - m_deadzoneY) * (normRY / abs(normRY)));
 
 			if (m_deadzoneX > 0) m_leftStickX *= 1 / (1 - m_deadzoneX);
 			if (m_deadzoneY > 0) m_throttle *= 1 / (1 - m_deadzoneY);
 
-			//float normRX = fmaxf(-1, (float)m_state.Gamepad.sThumbRX / 32767);
-			//float normRY = fmaxf(-1, (float)m_state.Gamepad.sThumbRY / 32767);
-
-			//m_rightStickX = (abs(normRX) < m_deadzoneX ? 0 : (abs(normRX) - m_deadzoneX) * (normRX / abs(normRX)));
-			//m_rightStickY = (abs(normRY) < m_deadzoneY ? 0 : (abs(normRY) - m_deadzoneY) * (normRY / abs(normRY)));
-
-			//if (m_deadzoneX > 0) m_rightStickX *= 1 / (1 - m_deadzoneX);
-			//if (m_deadzoneY > 0) m_rightStickY *= 1 / (1 - m_deadzoneY);
-
-			//m_throttle = (float)m_state.Gamepad.sThumbRY / 32767.f;
-
 			float handbrakePressed = isPressed(XINPUT_GAMEPAD_X);
 			bool turboPressed = isPressed(XINPUT_GAMEPAD_A);
 
-			//float viewingAngle;
-			//if (m_rightStickX != 0.0 || m_rightStickY != 0.0) {
-			//	float relativeAngle = atan(m_rightStickX / m_rightStickY);// *abs(m_rightStickX);
-			//	viewingAngle = (m_rightStickY < 0.f ? m_rightStickX < 0 ? -PI + relativeAngle : PI + relativeAngle : relativeAngle);
-			//}
-			//else {
-			//	viewingAngle = 0.f;
-			//}
-
 			m_bikeInputState->setAcceleration(m_throttle - m_brake);
-			//simulator change
-			//m_bikeInputState->setAngle(-m_leftStickX - m_leftStickX * handbrakePressed * BIKE_HANDBRAKE_FACTOR);
 			m_bikeInputState->setAngle(-m_leftStickX);
 			m_bikeInputState->setTurboPressed(turboPressed);
-			//m_bikeInputState->setViewingAngle(-viewingAngle);
 
 			vibrate();
 		}
@@ -208,10 +180,8 @@ void FFBWheel::GetProcAddress(const char* funcname, T* ppfunc)
 
 
 
-int  FFBWheel::loadCustomXInput()
+int FFBWheel::loadCustomXInput()
 {
-
-
 	std::cout << "loading custom xinput dll" << std::endl;
 #ifdef _DEBUG
 	hGetProcIDDLL = LoadLibrary(fullPath("data\\FFB_Wheel\\Debug\\XInput9_1_0.dll").c_str());
@@ -221,14 +191,13 @@ int  FFBWheel::loadCustomXInput()
 
 	if (!hGetProcIDDLL)
 	{
-			printf("Loading DLL failed (%d)\n", GetLastError());
-			return EXIT_FAILURE;
+		printf("Loading DLL failed (%d)\n", GetLastError());
+		return EXIT_FAILURE;
 	}
 
 	GetProcAddress("XInputGetState", &Custom_XInputGetState);
 	GetProcAddress("XInputSetState", &Custom_XInputSetState);
 	GetProcAddress("XInputEnable", &Custom_XInputEnable);
-
 
 	std::cout << " loading dll succeeded" << std::endl;
 

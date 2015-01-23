@@ -17,7 +17,11 @@ namespace troen
 {
 namespace input
 {
-	/*! The Gamepad class is responsible for receiving input from a X-Box 360 controller. Additionally, it can control the vibration of the controller.*/
+	/*! The FFBWheel Class takes input from a forcefeedback wheel. Because xinput only supports the x360 controller, we need to 
+	use the x360ce to emulate the controls. Troen has a strange issue of not loading the supplied x360ce xinput dll, so we load
+	the dll explicitly and call the approriate functions. The values of the controller can be adjusted in the x360ce.ini (with the x360ce tool)
+	TO prevent a invalid read in shutdown issue with the thrustmaster t100, the dll code has been patched to disable shutdown code for the thrustmaster.
+	I dont know, if this will affect other programs or even corrupt memory. It is the only way to prevent the error though*/
 	class FFBWheel : public PollingDevice
 	{
 	public:
