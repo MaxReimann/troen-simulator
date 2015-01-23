@@ -7,6 +7,10 @@
 // other
 #include <WinBase.h>
 #include <numeric>
+#include <fstream>
+
+
+
 
 using namespace troen::input;
 
@@ -51,9 +55,11 @@ bool Gamepad::checkConnection()
 	if (m_controllerId == -1) {
 		for (auto i : *freePorts)
 		{
-			ZeroMemory(&m_state, sizeof(XINPUT_STATE));
+			std::cout << i << std::endl;
+			XINPUT_STATE state;
+			ZeroMemory(&state, sizeof(XINPUT_STATE));
 
-			if (XInputGetState(i, &m_state) == ERROR_SUCCESS) {
+			if (XInputGetState(i, &state) == ERROR_SUCCESS) {
 				m_controllerId = i;
 				m_isConnected = true;
 				// remove element with value i from vector
@@ -159,6 +165,5 @@ bool Gamepad::isPressed(unsigned short button)
 {
 	return (m_state.Gamepad.wButtons & button) != 0;
 }
-
 
 #endif

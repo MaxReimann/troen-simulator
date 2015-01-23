@@ -124,6 +124,7 @@ MainWindow::MainWindow(QWidget * parent)
 		playerComboBox->addItem("Keyboard Arrows");
 		playerComboBox->addItem("Gamepad XBox");
 		playerComboBox->addItem("GAMEPAD PS4");
+		playerComboBox->addItem("Forcefeedback Wheel");
 		playerComboBox->addItem("AI");
 		playerInputLayout->addWidget(playerComboBox);
 		m_playerComboBoxes.push_back(playerComboBox);

@@ -112,6 +112,7 @@ namespace troen
 	{
 		class Keyboard;
 		class Gamepad;
+		class FFBWheel;
 		class BikeInputState;
 		class PollingDevice;
 	}

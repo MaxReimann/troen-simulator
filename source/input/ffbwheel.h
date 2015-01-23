@@ -18,20 +18,22 @@ namespace troen
 namespace input
 {
 	/*! The Gamepad class is responsible for receiving input from a X-Box 360 controller. Additionally, it can control the vibration of the controller.*/
-	class Gamepad : public PollingDevice
+	class FFBWheel : public PollingDevice
 	{
 	public:
-		Gamepad(osg::ref_ptr<BikeInputState> bikeInputState) : PollingDevice(bikeInputState) {
-			m_deadzoneX = 0.2f;
+		FFBWheel(osg::ref_ptr<BikeInputState> bikeInputState) : PollingDevice(bikeInputState) {
+			m_deadzoneX = 0.001f;
 			m_deadzoneY = 0.2f;
 			m_isConnected = false;
 			m_controllerId = -1;
+			loadCustomXInput();
 		};
-		~Gamepad();
+		~FFBWheel();
 		XINPUT_GAMEPAD* getState();
 		bool checkConnection();
 		void run() override;
 		bool isPressed(const unsigned short button);
+		int loadCustomXInput();
 
 		void vibrate();
 		int getPort();
@@ -44,7 +46,11 @@ namespace input
 		XINPUT_STATE m_state;
 		float m_deadzoneX, m_deadzoneY;
 		float m_leftStickX, m_leftStickY, m_rightStickX, m_rightStickY;
-		float m_leftTrigger, m_rightTrigger;
+		float m_brake, m_throttle;
+		HINSTANCE hGetProcIDDLL;
+
+		template<typename T>
+		void GetProcAddress(const char* funcname, T* ppfunc);
 	};
 }
 }

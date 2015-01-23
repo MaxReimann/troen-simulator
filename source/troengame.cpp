@@ -106,7 +106,7 @@ void TroenGame::startGameLoop()
 	// - checkForUserInput and updateModels
 	// - physics + updateViews
 	// - render;
-	
+	std::cout << "moogajldksfh" << std::endl;
 
 
 	// terminates when first viewer is closed

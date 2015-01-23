@@ -21,6 +21,7 @@
 #include "../input/gamepad.h"
 #include "../input/gamepadps4.h"
 #include "../input/pollingdevice.h"
+#include "../input/ffbwheel.h"
 
 #include "../resourcepool.h"
 #include "../sound/audiomanager.h"
@@ -108,6 +109,7 @@ void BikeController::killThread()
 		m_pollingThread->stop();
 		m_pollingThread->wait();
 		m_pollingThread = nullptr;
+		delete m_pollingThread;
 	}
 }
 
@@ -127,6 +129,9 @@ void BikeController::initializeInput(input::BikeInputState::InputDevice inputDev
 #ifdef WIN32
 	case input::BikeInputState::GAMEPAD:
 		initializeGamepad(bikeInputState);
+		break;
+	case input::BikeInputState::FFBWHEEL:
+		initializeFFBWheel(bikeInputState);
 		break;
 #endif
 	case input::BikeInputState::GAMEPADPS4:
@@ -183,6 +188,24 @@ void BikeController::initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeI
 	m_pollingThread = gamepad;
 	m_pollingThread->start();
 }
+
+
+void BikeController::initializeFFBWheel(osg::ref_ptr<input::BikeInputState> bikeInputState)
+{
+	input::FFBWheel* gamepad = new input::FFBWheel(bikeInputState);
+
+	if (gamepad->checkConnection())
+	{
+		std::cout << "[TroenGame::initializeInput] FFBWheel connected on port " << gamepad->getPort() << std::endl;
+	}
+	else
+	{
+		std::cout << "[TroenGame::initializeInput] No FFBWheel connected!" << std::endl;
+	}
+	m_pollingThread = gamepad;
+	m_pollingThread->start();
+}
+
 #endif
 
 void BikeController::initializeGamepadPS4(osg::ref_ptr<input::BikeInputState> bikeInputState)

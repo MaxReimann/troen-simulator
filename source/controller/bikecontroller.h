@@ -101,6 +101,7 @@ namespace troen
 		void initializeGamepadPS4(osg::ref_ptr<input::BikeInputState> bikeInputState);
 #ifdef WIN32
 		void initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeInputState);
+		void initializeFFBWheel(osg::ref_ptr<input::BikeInputState> bikeInputState);
 #endif
 
 

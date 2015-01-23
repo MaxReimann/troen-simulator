@@ -5,13 +5,13 @@ project(troen)
 # PROJECT DESCRIPTION
 #################################################
 
-set(META_PROJECT_NAME        "Troen")
+set(META_PROJECT_NAME        "TroenSimulator")
 set(META_VERSION_MAJOR       "0")
 set(META_VERSION_MINOR       "2")
 set(META_VERSION_PATCH       "0")
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
-set(META_AUTHOR_ORGANIZATION "GameProgramming")
-set(META_AUTHOR_DOMAIN       "https://github.com/philippotto/GP2013")
+set(META_AUTHOR_ORGANIZATION "GeoVisualization")
+set(META_AUTHOR_DOMAIN       "https://github.com/MaxReimann/TroenSimulator")
 
 #################################################
 # OPTIONS
@@ -184,6 +184,8 @@ set(sources
 	source/input/bikeinputstate.cpp
 	source/input/pollingdevice.h
 	source/input/pollingdevice.cpp
+	source/input/ffbwheel.h
+	source/input/ffbwheel.cpp
 
 	source/sound/audiomanager.h
 	source/sound/audiomanager.cpp
