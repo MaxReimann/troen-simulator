@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SettingsFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Games>
+    <Game>
+      <GameId>17ad2cdf-c805-430b-a3bb-a2882a22bffe</GameId>
+      <DiskDriveId>689315d6-6751-5a18-23dc-6e456e15bf2c</DiskDriveId>
+      <FileName>x360ce.exe</FileName>
+      <FileProductName>X360 Controller Emulator</FileProductName>
+      <FileVersion>2.2.3.203</FileVersion>
+      <FullPath>D:\WorkSpace\TroenSimulator\bended-driver\data\FFB_Wheel\Debug\x360ce.exe</FullPath>
+      <CompanyName>TocaEdit</CompanyName>
+      <HookMask>0</HookMask>
+      <XInputMask>0</XInputMask>
+      <Comment>Wrapper library that translates XInput calls to DirectInput calls, for support old, no XInput compatible gamepads.</Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2015-01-23T10:50:35.7815552+01:00</DateCreated>
+      <DateUpdated>2015-01-23T10:50:35.7815552+01:00</DateUpdated>
+      <ProcessorArchitecture>1</ProcessorArchitecture>
+    </Game>
+  </Games>
+  <Programs />
+  <Pads />
+</SettingsFile>
