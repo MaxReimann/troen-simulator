@@ -66,6 +66,7 @@ namespace troen
 
 	// LEVEL
 	const int LEVEL_SIZE(6000);
+	const double METER_PER_MAP_UNIT(2600.0 / (LEVEL_SIZE*2)); //map area is approximately 2600m vertically/horizontally
 
 	// FENCE
 	// determines how accurate the fence will be

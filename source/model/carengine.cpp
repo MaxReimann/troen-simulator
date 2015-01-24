@@ -42,7 +42,7 @@ using namespace troen;
 
 		RPM = 0.;
 
-		Efficiency = 0.7;
+		Efficiency = 0.8;
 
 		Clutch = 0;
 		Throttle = 0;

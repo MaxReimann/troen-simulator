@@ -250,8 +250,10 @@ float BikeModel::updateState(long double time)
 
 	//m_engineForce = m_bikeInputState->getAcceleration() * m_vehicleParameters.maxEngineForce;
 	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForce;
-	m_engine->setThrottle(m_bikeInputState->getAcceleration());
-	std::cout << m_breakingForce << " break" << std::endl;
+	float throttle = m_bikeInputState->getAcceleration() * 2.0;
+
+	//std::cout << "break: " << m_breakingForce << "  acc " << throttle <<std::endl;
+	m_engine->setThrottle(throttle);
 
 	{
 		m_vehicle->setSteeringValue(m_vehicleSteering, 0);
@@ -286,7 +288,7 @@ float BikeModel::updateState(long double time)
 	}
 	//m_vehicle->updateVehicle(timeFactor/10);
 
-	float speed = m_vehicle->getCurrentSpeedKmHour() / 5.0;
+	float speed = m_vehicle->getCurrentSpeedKmHour() * METER_PER_MAP_UNIT;
 	std::cout << "speed" << speed << std::endl;
 
 	return speed;

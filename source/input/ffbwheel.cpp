@@ -115,13 +115,13 @@ void FFBWheel::run()
 			m_WheelX = scale_between(m_WheelX, -1, 1, -BIKE_STEERINGCLAMP, BIKE_STEERINGCLAMP);
 			m_WheelX = -m_WheelX;
 
-			float normLY = fmaxf(-1, (float)m_state.Gamepad.sThumbLY / 32767);
-			m_brake = (abs(normLY) < m_deadzoneY ? 0 : (abs(normLY) - m_deadzoneY) * (normLY / abs(normLY)));
-			m_brake = scale_between(m_brake, -1, 1, 0, 1);
+			float normLY = fminf(fmaxf(-1, (float)m_state.Gamepad.sThumbLY / 32767),1.0);
+			//m_brake = (abs(normLY) < m_deadzoneY ? 0 : (abs(normLY) - m_deadzoneY) * (normLY / abs(normLY)));
+			m_brake = scale_between(normLY, -1, 1, 0, 1);
 
-			float normRY = fmaxf(-1, (float)m_state.Gamepad.sThumbRY / 32767);
-			m_throttle = (abs(normRY) < m_deadzoneY ? 0 : (abs(normRY) - m_deadzoneY) * (normRY / abs(normRY)));
-			m_throttle = scale_between(m_throttle, -1, 1, 0, 1);
+			float normRY = fminf(fmaxf(-1, (float)m_state.Gamepad.sThumbRY / 32767), 1.0);
+			//m_throttle = (abs(normRY) < m_deadzoneY ? 0 : (abs(normRY) - m_deadzoneY) * (normRY / abs(normRY)));
+			m_throttle = scale_between(normRY, -1, 1, 0, 1);
 
 			if (m_deadzoneX > 0) m_WheelX *= 1 / (1 - m_deadzoneX);
 			if (m_deadzoneY > 0) m_throttle *= 1 / (1 - m_deadzoneY);
