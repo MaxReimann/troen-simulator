@@ -23,20 +23,16 @@ using namespace troen;
 HUDView::HUDView(const int i, const std::vector<std::shared_ptr<Player>>& players) :
 AbstractView(),
 m_trackNode(nullptr),
-m_healthText(new osgText::Text()),
 m_speedText(new osgText::Text()),
-m_pointsText(new osgText::Text()),
 m_countdownText(new osgText::Text()),
-m_timeText(new osgText::Text()),
 m_playerColor(osg::Vec4(players[i]->color(),1))
 {
 	m_node->addChild(createHUD(players));
-	m_node->addChild(createRadar(i));
 }
 
 void HUDView::toggleVisibility()
 {
-	m_radarCamera->setNodeMask(~m_radarCamera->getNodeMask());
+	//m_radarCamera->setNodeMask(~m_radarCamera->getNodeMask());
 }
 
 osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<Player>>& players)
@@ -58,7 +54,9 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 	m_savedGeode = new osg::Geode();
 	m_camera->addChild(m_savedGeode);
 
-	m_font = osgText::readFontFile("data/fonts/tr2n.ttf");
+	m_font = osgText::readFontFile("data/fonts/arial.ttf");
+
+	m_fontColor = osg::Vec4(1.0, 1.0, 1.0, 1.0);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -75,62 +73,31 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 
 	initializeText(
 		m_speedText,
-		osg::Vec3(HUD_PROJECTION_SIZE - offset, offset, 0),
-		m_playerColor,
-		osgText::Text::AlignmentType::RIGHT_BOTTOM,
-		DEFAULT_WINDOW_HEIGHT / 15);
+		osg::Vec3(offset, offset, 0),
+		m_fontColor,
+		osgText::Text::AlignmentType::LEFT_BOTTOM,
+		DEFAULT_WINDOW_HEIGHT / 8);
 	setSpeedText(0);
 	m_savedGeode->addDrawable(m_speedText);
 
 	initializeText(
-		m_healthText,
-		osg::Vec3(HUD_PROJECTION_SIZE - offset, 2 * offset, 0),
-		m_playerColor,
-		osgText::Text::AlignmentType::RIGHT_BOTTOM,
-		DEFAULT_WINDOW_HEIGHT / 15);
-	setHealthText(100);
-	m_savedGeode->addDrawable(m_healthText);
-
-	initializeText(
-		m_pointsText,
-		osg::Vec3(offset, HUD_PROJECTION_SIZE - offset, 0.f),
-		m_playerColor,
-		osgText::Text::AlignmentType::LEFT_TOP,
-		DEFAULT_WINDOW_HEIGHT / 15);
-	setPointsText(0);
-	m_savedGeode->addDrawable(m_pointsText);
-
-	initializeText(
 		m_countdownText,
 		osg::Vec3(HUD_PROJECTION_SIZE / 2, HUD_PROJECTION_SIZE / 2, 0.f),
-		m_playerColor,
+		m_fontColor,
 		osgText::Text::AlignmentType::CENTER_CENTER,
 		DEFAULT_WINDOW_HEIGHT / 3);
 	setCountdownText(-1);
 	m_savedGeode->addDrawable(m_countdownText);
 
-	initializeText(
-		m_timeText,
-		osg::Vec3(HUD_PROJECTION_SIZE - offset, HUD_PROJECTION_SIZE - offset, 0.f),
-		m_playerColor,
-		osgText::Text::AlignmentType::RIGHT_TOP,
-		DEFAULT_WINDOW_HEIGHT / 8);
-	setTimeText(-1, -1);
-	m_savedGeode->addDrawable(m_timeText);
+	//initializeText(
+	//	m_timeText,
+	//	osg::Vec3(HUD_PROJECTION_SIZE - offset, HUD_PROJECTION_SIZE - offset, 0.f),
+	//	m_fontColor,
+	//	osgText::Text::AlignmentType::RIGHT_TOP,
+	//	DEFAULT_WINDOW_HEIGHT / 8);
+	//setTimeText(-1, -1);
+	//m_savedGeode->addDrawable(m_timeText);
 
-
-	for (int i = 0; i < players.size(); i++)
-	{
-		m_killCountTexts[i] = new osgText::Text();
-		initializeText(
-			m_killCountTexts[i],
-			osg::Vec3(HUD_PROJECTION_SIZE - offset, HUD_PROJECTION_SIZE - offset * (3 + i), 0.f),
-			osg::Vec4(players[i]->color(), 1),
-			osgText::Text::AlignmentType::RIGHT_TOP,
-			DEFAULT_WINDOW_HEIGHT / 20);
-		setKillCountText(i, players[i]->name(), 0);
-		m_savedGeode->addDrawable(m_killCountTexts[i]);
-	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -181,8 +148,6 @@ void HUDView::resize(const int width,const int height)
 	int offsetY = height / 30;
 
 	int size = normSize;
-	osg::ref_ptr<osg::Viewport> radarViewport = new osg::Viewport(0, 0, height, height);
-	m_radarCamera->setViewport(radarViewport);
 }
 
 void HUDView::resizeHudComponents(const int width, const int height)
@@ -190,28 +155,12 @@ void HUDView::resizeHudComponents(const int width, const int height)
 	m_speedText->setCharacterSize(height / 15);
 	m_speedText->setFontResolution(height / 15, height / 15);
 
-	m_healthText->setCharacterSize(height / 15);
-	m_healthText->setFontResolution(height / 15, height / 15);
-
-	m_pointsText->setCharacterSize(height / 15);
-	m_pointsText->setFontResolution(height / 15, height / 15);
-
 	m_countdownText->setCharacterSize(height / 3);
 	m_countdownText->setFontResolution(height / 3, height / 3);
 
-	m_timeText->setCharacterSize(height / 8);
-	m_timeText->setFontResolution(height / 8, height / 8);
+	//m_timeText->setCharacterSize(height / 8);
+	//m_timeText->setFontResolution(height / 8, height / 8);
 	
-	const int textNum = sizeof(m_killCountTexts) / sizeof(m_killCountTexts[0]);
-	for (size_t i = 0; i < textNum; i++)
-	{
-		if (m_killCountTexts[i].valid())
-		{
-			m_killCountTexts[i]->setCharacterSize(height / 15);
-			m_killCountTexts[i]->setFontResolution(height / 15, height / 15);
-		}
-	}
-
 	for (size_t i = 0; i < 4; i++)
 	{
 		m_ingameMessageTexts[i]->setCharacterSize(height / 20);
@@ -219,69 +168,8 @@ void HUDView::resizeHudComponents(const int width, const int height)
 	}
 }
 
-osg::ref_ptr<osg::Camera> HUDView::createRadar(const int i)
-{
-	m_radarCamera = new osg::Camera;
-	m_radarCamera->setClearColor(osg::Vec4(0.0f, 1.f, 0.0f, .5f));
-	m_radarCamera->setRenderOrder(osg::Camera::POST_RENDER);
-	m_radarCamera->setAllowEventFocus(false);
-	m_radarCamera->setClearMask(GL_DEPTH_BUFFER_BIT);
-	m_radarCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	int offset = DEFAULT_WINDOW_HEIGHT / 20;
-	//bigger map for second window
-	int size = DEFAULT_WINDOW_HEIGHT;
-	m_radarCamera->setViewport(0, 0, size, size);
-
-	m_radarCamera->setViewMatrix(osg::Matrixd::lookAt(osg::Vec3(0.0f, 0.0f, 500.0f), osg::Vec3(0.f, 0.f, 0.f), osg::Y_AXIS));
-	m_radarCamera->setProjectionMatrix(osg::Matrixd::ortho(-3000, 3000, -3000, 3000, 1.f, 600));
-	m_radarCamera->setCullMask(CAMERA_MASK_RADAR | CAMERA_MASK_PLAYER[i]);
-
-	return m_radarCamera;
-}
-
-void HUDView::attachSceneToRadarCamera(osg::Group* scene)
-{
-	m_hudGroup = new osg::Group;
-
-	osg::StateSet* stateset = m_hudGroup->getOrCreateStateSet();
-	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	stateset->setMode(GL_BLEND, osg::StateAttribute::ON);
-	stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-
-	m_hudGroup->addChild(scene);
-	m_radarCamera->addChild(m_hudGroup);
-}
 
 
-
-
-void HUDView::updateRadarCamera()
-{
-        osg::Matrixd* worldCoordinateMatrix = nullptr;
-		getWorldCoordOfNodeVisitor ncv;
-        
-		// fail silently, in case no node is attached
-		if (!m_trackNode)
-		{
-			std::cout << "[HUDView::updateRadarCamera] updating HUDView Radar without node attached" << std::endl;
-			return;
-		}
-
-        dynamic_cast<osg::Group*>(m_trackNode.get())->accept(ncv);
-        worldCoordinateMatrix = ncv.worldCoordinatesMatrix();
-            
-        osg::Vec3d position = worldCoordinateMatrix->getTrans();
-        osg::Quat rotationQuat = worldCoordinateMatrix->getRotate();
-		float z = rotationQuat.z();
-		float w = rotationQuat.w();
-        float mag = sqrt(w*w + z*z);
-        rotationQuat.set(0, 0, z/mag, w/mag);
-            
-        osg::Vec3 up = rotationQuat * osg::Y_AXIS;
-            
-        osg::Matrixd viewMatrix = osg::Matrixd::lookAt(osg::Vec3(position.x(), position.y(), 500.0f), osg::Vec3(position.x(), position.y(), 0.f), up);
-        m_radarCamera->setViewMatrix(viewMatrix);
-}
 
 void HUDView::setTrackNode(osg::Node* trackNode)
 {
@@ -291,21 +179,12 @@ void HUDView::setTrackNode(osg::Node* trackNode)
 
 void HUDView::setSpeedText(float speed)
 {
+	if (speed < 0)
+		speed = 0;
 	std::string speedString = std::to_string((int) speed);
 	m_speedText->setText(speedString + " km/h");
 }
 
-void HUDView::setHealthText(float health)
-{
-	std::string healthString = std::to_string((int)health);
-	m_healthText->setText(healthString + "%");
-}
-
-void HUDView::setPointsText(float points)
-{
-	std::string pointsString = std::to_string((int)points);
-	m_pointsText->setText(pointsString);
-}
 
 void HUDView::setCountdownText(const int countdown)
 {
@@ -325,34 +204,7 @@ void HUDView::setCountdownText(const std::string text)
 	m_countdownText->setText(text);
 }
 
-
-void HUDView::setTimeText(const double gameTime, const int timeLimit)
-{
-	int minutes, seconds;
-	if (gameTime <= 0)
-	{
-		m_timeText->setText("0:00");
-		return;
-	}
-	else if ((gameTime/60/1000) >= timeLimit)
-	{
-		minutes = abs(timeLimit - floor((gameTime) / 1000 / 60));
-		seconds = mod(floor((gameTime) / 1000), 60);
-	}
-	else
-	{
-		minutes = timeLimit - ceil((gameTime) / 1000 / 60);
-		seconds = 59 - mod(floor((gameTime) / 1000), 60);
-	}
-	std::string timeString = std::to_string(minutes) + ":" + std::to_string(seconds);
-	m_timeText->setText(timeString);
-}
-
-void HUDView::setKillCountText(const int i, const std::string& playerName , const int killCount)
-{
-	m_killCountTexts[i]->setText(playerName + ": " + std::to_string(killCount));
-}
-
+//
 void HUDView::updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage>>& messages)
 {
 	for (size_t i = 0; i < 4; i++)
@@ -368,3 +220,4 @@ void HUDView::updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage>
 		}
 	}
 }
+

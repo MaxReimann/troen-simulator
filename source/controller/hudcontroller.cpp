@@ -42,7 +42,7 @@ void HUDController::resize(const int width, const int height)
 
 void HUDController::attachSceneToRadarCamera(osg::Group* scene)
 {
-	m_HUDView->attachSceneToRadarCamera(scene);
+	//m_HUDView->attachSceneToRadarCamera(scene);
 }
 
 void HUDController::update(
@@ -56,14 +56,8 @@ void HUDController::update(
 	std::shared_ptr<Player> player = m_player.lock();
 
 	hudview->setSpeedText(player->bikeController()->speed());
-    hudview->updateRadarCamera();
-	hudview->setTimeText(currentGameTime, timeLimit);
-	hudview->setHealthText(100 * player->health() / BIKE_DEFAULT_HEALTH);
-	hudview->setPointsText(player->points());
-	for (auto player : players)
-	{
-		hudview->setKillCountText(player->id(), player->name(), player->killCount());
-	}
+
+	//hudview->setTimeText(currentGameTime, timeLimit);
 
 	//
 	// Countdown

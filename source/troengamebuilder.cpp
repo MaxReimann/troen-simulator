@@ -209,10 +209,11 @@ bool TroenGameBuilder::composeSceneGraph()
 	{
 
 		osg::Group * node = localPlayer->hudController()->getViewNode();
-		localPlayer->navigationWindow()->addElements(node); //put hud on navigation window, not on main window
+		t->m_rootNode->addChild(node);
+		//localPlayer->navigationWindow()->addElements(node); 
 
-		if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_NORMAL_NAVI_MAP)
-			composeRadarScene();
+		//if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_NORMAL_NAVI_MAP)
+		//	composeRadarScene();
 
 	}
 
