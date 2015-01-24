@@ -9,6 +9,8 @@
 
 #include <reflectionzeug/Object.h>
 #include <scriptzeug/ScriptContext.h>
+#include "carengine.h"
+#include "customfriction.h"
 
 #include "../util/scriptwatcher.h"
 using namespace reflectionzeug;
@@ -152,6 +154,8 @@ namespace troen
 		float m_breakingForce;
 		std::shared_ptr<PhysicsWorld> m_world;
 		VehiclePhysicSettings m_vehicleParameters;
+		std::shared_ptr<CarEngine> m_engine;
+		CustomFrictionConstraint *mfrictionContraint;
 	};
 
 

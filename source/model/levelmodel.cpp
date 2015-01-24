@@ -174,7 +174,7 @@ void LevelModel::addFloor(float yPosition)
 
 	heightFieldShape->setUseDiamondSubdivision(true);
 
-	btVector3 localScaling(200, 200, 1);
+	btVector3 localScaling(100, 100, 1);
 	heightFieldShape->setLocalScaling(localScaling);
 
 	btTransform trans;

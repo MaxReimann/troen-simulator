@@ -24,6 +24,7 @@
 #include "../resourcepool.h"
 #include "../util/basicshapes.h"
 #include "hudview.h"
+#include "LinearMath/btQuaternion.h"
 
 using namespace troen;
 
@@ -115,7 +116,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_wheelGroup = new osg::Group();
 	m_pat->addChild(m_wheelGroup);
 
-	wheels = std::vector<osg::ref_ptr<osg::MatrixTransform>>();
+	wheels = std::vector<osg::ref_ptr<osg::PositionAttitudeTransform>>();
 
 	m_pat->addChild(matrixTransform);
 #endif
@@ -258,17 +259,19 @@ void BikeView::addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo)
 	osg::ref_ptr<osg::Geometry> geom =  BasicShapes::cylinderTriStrips(0.5, 10, pointOne, pointTwo);
 	osg::ref_ptr<osg::Geode> wheelGeode = new osg::Geode();
 	wheelGeode->addDrawable(geom);
-	osg::ref_ptr<osg::MatrixTransform> wheelTransform = new osg::MatrixTransform;
+	osg::ref_ptr<osg::PositionAttitudeTransform> wheelTransform = new osg::PositionAttitudeTransform;
+	wheelTransform->setPivotPoint((pointOne + pointTwo) / 2);
+	wheelTransform->setPosition((pointOne + pointTwo) / 2);
 	wheelTransform->addChild(wheelGeode);
 	wheels.push_back(wheelTransform);
 	m_wheelGroup->addChild(wheelTransform);
 }
 
 
-void BikeView::setWheelRotation(int index, btTransform worldTransform)
-{
 
-	osg::Matrixd mat =  wheels[index]->getMatrix();
-	mat.setRotate(btToOSGQuat((worldTransform.getRotation())));
-	wheels[index]->setMatrix(mat);
+
+void BikeView::setWheelRotation(int index, btTransform t)
+{
+	//wheels[index]->setPosition(btToOSGVec3((t.getOrigin())));
+	wheels[index]->setAttitude(btToOSGQuat((t.getRotation())));
 }

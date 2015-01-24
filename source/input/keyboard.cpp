@@ -102,13 +102,17 @@ void Keyboard::run()
 		// save angle to enable smooth direction changes
 		if (m_leftPressed)
 			m_bikeInputState->steerLeft(1.0);
+		else
+			m_bikeInputState->m_steerLeftPressed = false;
 
 		if (m_rightPressed)
 			m_bikeInputState->steerRight(1.0);
+		else
+			m_bikeInputState->m_steerRightPressed = false;
 		
 
-		float acceleration = m_upPressed ? 1000.0 : 0.0;
-		float brake = m_downPressed ? 100.0 : 0.0;
+		float acceleration = m_upPressed ? 1.0 : 0.0;
+		float brake = m_downPressed ? 1.0 : 0.0;
 
 		m_bikeInputState->setAcceleration(acceleration);
 		m_bikeInputState->setBrakeForce(brake);

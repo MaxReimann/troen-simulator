@@ -3,6 +3,7 @@
 #include "pollingdevice.h"
 #include "../constants.h"
 #include "LocklessTypes.h"
+#include "../globals.h"
 
 
 using namespace troen::input;
@@ -37,18 +38,26 @@ float BikeInputState::getAcceleration()
 	return m_acceleration < 0 ? m_acceleration * BIKE_DECELERATION_FACTOR : m_acceleration;
 }
 
+
+void BikeInputState::setSteering(float steer)
+{
+	m_vehicleSteering = steer;
+}
 void BikeInputState::steerLeft(float factor)
 {
-	m_vehicleSteering += BIKE_STEERING_INCREMENT;
+	m_vehicleSteering += BIKE_STEERINGCLAMP * g_timeSinceLastUpdate / 1000;
 	if (m_vehicleSteering > BIKE_STEERINGCLAMP)
 		m_vehicleSteering = BIKE_STEERINGCLAMP;
+	m_steerLeftPressed = true;
 }
 
 void BikeInputState::steerRight(float factor)
 {
-	m_vehicleSteering += BIKE_STEERING_INCREMENT;
+	m_vehicleSteering -= BIKE_STEERINGCLAMP * g_timeSinceLastUpdate / 1000.0;
 	if (m_vehicleSteering < -BIKE_STEERINGCLAMP)
 		m_vehicleSteering = -BIKE_STEERINGCLAMP;
+	m_steerRightPressed = true;
+
 }
 
 

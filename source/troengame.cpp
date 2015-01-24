@@ -88,7 +88,8 @@ void TroenGame::startGameLoop()
 	m_gameTimer->start();
 	m_gameTimer->pause();
 	g_gameRunning = true;
-
+	g_timeSinceLastUpdate = 0;
+	long double lastUpdateTime = m_gameloopTimer->elapsed();
 
 
 	// GAME LOOP VARIABLES
@@ -130,6 +131,8 @@ void TroenGame::startGameLoop()
 		// is it time to render the next frame?
 		if (m_gameConfig->testPerformance || g_gameLoopTime >= nextTime)
 		{
+			g_timeSinceLastUpdate = g_gameLoopTime - lastUpdateTime;
+			lastUpdateTime = g_gameLoopTime;
 			// assign the time for the next update
 			nextTime += minMillisecondsBetweenFrames;
 

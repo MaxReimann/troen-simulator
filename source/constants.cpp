@@ -45,8 +45,8 @@ namespace troen
 	const float BIKE_TURN_FACTOR_MAX(15);
 	const float BIKE_ANGULAR_DAMPENING_TERM(0.001f);
 	const float BIKE_VIEWING_ANGLE_DAMPENING_TERM(0.1f);
-	const float BIKE_STEERING_INCREMENT(0.04f);
-	const float BIKE_STEERINGCLAMP(0.3f);
+	const float BIKE_STEERING_INCREMENT(0.02f);
+	const float BIKE_STEERINGCLAMP(0.2f);
 
 	const float TURBO_PHASE_LENGTH(2000);
 

@@ -127,6 +127,7 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	m_vehicleRayCaster = new btDefaultVehicleRaycaster(discreteWorld);
 	m_vehicle =  new btRaycastVehicle(m_tuning, m_carChassis.get(), m_vehicleRayCaster);
 	discreteWorld->addAction(m_vehicle);
+	m_engine = std::make_shared<CarEngine>(m_vehicle);
 
 
 
@@ -165,8 +166,6 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 		wheel.m_frictionSlip = wheelFriction;
 		wheel.m_rollInfluence = rollInfluence;
 		wheel.m_maxSuspensionForce = 50000.f;
-
-		m_world->addDrawShape(m_vehicle->getWheelInfo(i).m_worldTransform, m_wheelShape, wheelColor);
 	}
 	world->drawVehicle = m_vehicle;
 
@@ -241,38 +240,55 @@ float BikeModel::updateState(long double time)
 {
 	m_timeSinceLastUpdate = time - m_lastUpdateTime;
 	m_lastUpdateTime = time;
-	float timeFactor = m_timeSinceLastUpdate / 16.6f;
+	float timeFactor = m_timeSinceLastUpdate / 1000.0;
+
 
 	// call this exactly once per frame
 	m_vehicleSteering = m_bikeInputState->getSteering();
-	m_engineForce = m_bikeInputState->getAcceleration();
-	m_breakingForce = m_bikeInputState->getBrakeForce();
+	if (!m_bikeInputState->m_steerLeftPressed && !m_bikeInputState->m_steerRightPressed)
+	{
+		if (m_vehicleSteering < BIKE_STEERING_INCREMENT && m_vehicleSteering > -BIKE_STEERING_INCREMENT)
+			m_vehicleSteering = 0;
+		else if (m_vehicleSteering > 0)
+			m_vehicleSteering -= BIKE_STEERING_INCREMENT;
+		else if (m_vehicleSteering < 0)
+			m_vehicleSteering += BIKE_STEERING_INCREMENT;
+	}
+	m_bikeInputState->setSteering(m_vehicleSteering);
 
+	//m_engineForce = m_bikeInputState->getAcceleration() * m_vehicleParameters.maxEngineForce;
+	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForcef;
+	m_engine->setThrottle(m_bikeInputState->getAcceleration());
 
+	std::cout << "steering" << m_vehicleSteering << std::endl;
 	{
 		m_vehicle->setSteeringValue(m_vehicleSteering, 0);
 		m_vehicle->setSteeringValue(m_vehicleSteering, 1);
 
-		m_vehicle->applyEngineForce(m_engineForce, 2);
-		m_vehicle->setBrake(0, 2);
-		m_vehicle->applyEngineForce(m_engineForce, 3);
-		m_vehicle->setBrake(0, 3);
+		//m_vehicle->applyEngineForce(m_engineForce, 2);
+		m_vehicle->setBrake(m_breakingForce, 2);
+		//m_vehicle->applyEngineForce(m_engineForce, 3);
+		m_vehicle->setBrake(m_breakingForce, 3);
 	}
+
+	m_engine->update(timeFactor);
+
 
 
 	for (int i = 0; i < m_vehicle->getNumWheels(); i++)
 	{
 		//synchronize the wheels with the (interpolated) chassis worldtransform
-		//m_vehicle->updateWheelTransform(i, true);
-
-		btTransform wheeltrans = m_vehicle->getWheelTransformWS(i);
-		//m_bikeController->getView()->setWheelRotation(i, wheeltrans);
+		m_vehicle->updateWheelTransform(i, true);
 
 
-		//std::cout << m_vehicle->getWheelInfo(i).m_worldTransform.getOrigin().getZ() << std::endl;
-		//synchronize the wheels with the (interpolated) chassis worldtransform
-		m_world->getDrawShapes().at(i).trans = m_vehicle->getWheelInfo(i).m_worldTransform;
-		
+		btTransform localTrans = m_carChassis->getWorldTransform().inverse() * m_vehicle->getWheelInfo(i).m_worldTransform;
+		//localTrans.setOrigin(m_carChassis->getCenterOfMassPosition() + localTrans.getOrigin());
+		//float xRot = m_vehicle->getWheelInfo(i).m_rotation;
+		//btMatrix3x3 m(localTrans.getRotation());
+		//btScalar yaw, pitch, roll;
+		//m.getEulerYPR(yaw, pitch, roll);
+
+		m_bikeController->getView()->setWheelRotation(i, localTrans);
 	}
 	//m_vehicle->updateVehicle(timeFactor/10);
 
