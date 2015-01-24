@@ -232,10 +232,8 @@ void PhysicsWorld::addRigidBodies(const std::vector<std::shared_ptr<btRigidBody>
 
 void PhysicsWorld::addRigidBody(btRigidBody *body, const short group /*=0*/, const short mask /*=0*/)
 {
-	if (group != 0)
-		m_world->addRigidBody(body);
-	else
-		m_world->addRigidBody(body, group, mask);
+	//dont use groups and masks as this wont work with raycast vehicle
+	m_world->addRigidBody(body);
 }
 
 void PhysicsWorld::removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies)
@@ -394,7 +392,7 @@ void PhysicsWorld::checkForCollisionEvents()
 
 void tickCallback(btDynamicsWorld *world, btScalar timeStep) {
 	PhysicsWorld *w = static_cast<PhysicsWorld *>(world->getWorldUserInfo());
-	//w->checkForCollisionEvents();
+	w->checkForCollisionEvents();
 
 }
 

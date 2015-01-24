@@ -24,7 +24,7 @@ namespace troen
 	public:
 
 		int forwardAxis = 1;
-		double	maxBreakingForcef = 00.0;
+		double	maxBreakingForce = 00.0;
 		double	maxEngineForce = 00.0;//this should be engine/velocity dependent
 		double	wheelRadius = 00.0;
 		double	wheelWidth = 00.0;
@@ -42,8 +42,8 @@ namespace troen
 		double MaxEngineForce() const { return maxEngineForce; }
 		void setMaxEngineForce(const double & val) { maxEngineForce = val; }
 
-		double MaxBreakingForcef() const { return maxBreakingForcef; }
-		void setMaxBreakingForcef(const double & val) { maxBreakingForcef = val; }
+		double MaxBreakingForce() const { return maxBreakingForce; }
+		void setMaxBreakingForce(const double & val) { maxBreakingForce = val; }
 		double WheelRadius() const { return wheelRadius; }
 		void setWheelRadius(const double & val) { wheelRadius = val; }
 		double WheelWidth() const { return wheelWidth; }

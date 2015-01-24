@@ -81,8 +81,8 @@ namespace troen
 	// CAMERA
 	const osg::Vec3 CAMERA_POSITION_OFFSET(0, 0, 0);
 	const float CAMERA_ROTATION_OFFSET(0);
-	const osg::Vec3 CAMERA_EYE_POSITION(0.f,/*-BIKE_DIMENSIONS.y()*5.5f*/-1,0);
-	const float CAMERA_TILT_FACTOR(1.f);
+	const osg::Vec3 CAMERA_EYE_POSITION(0.f,/*-BIKE_DIMENSIONS.y()*5.5f*/-2,0);
+	const float CAMERA_TILT_FACTOR(4.f);
 	const int HUD_PROJECTION_SIZE(1000);
 
 

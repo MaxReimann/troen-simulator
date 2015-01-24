@@ -249,17 +249,19 @@ float BikeModel::updateState(long double time)
 	m_bikeInputState->setSteering(m_vehicleSteering);
 
 	//m_engineForce = m_bikeInputState->getAcceleration() * m_vehicleParameters.maxEngineForce;
-	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForcef;
+	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForce;
 	m_engine->setThrottle(m_bikeInputState->getAcceleration());
+	std::cout << m_breakingForce << " break" << std::endl;
 
-	std::cout << "steering" << m_vehicleSteering << std::endl;
 	{
 		m_vehicle->setSteeringValue(m_vehicleSteering, 0);
 		m_vehicle->setSteeringValue(m_vehicleSteering, 1);
 
 		//m_vehicle->applyEngineForce(m_engineForce, 2);
-		m_vehicle->setBrake(m_breakingForce, 2);
+		m_vehicle->setBrake(m_breakingForce, 0);
+		m_vehicle->setBrake(m_breakingForce, 1);
 		//m_vehicle->applyEngineForce(m_engineForce, 3);
+		m_vehicle->setBrake(m_breakingForce, 2);
 		m_vehicle->setBrake(m_breakingForce, 3);
 	}
 
@@ -284,7 +286,8 @@ float BikeModel::updateState(long double time)
 	}
 	//m_vehicle->updateVehicle(timeFactor/10);
 
-	float speed = m_vehicle->getCurrentSpeedKmHour();
+	float speed = m_vehicle->getCurrentSpeedKmHour() / 5.0;
+	std::cout << "speed" << speed << std::endl;
 
 	return speed;
 }
@@ -422,7 +425,7 @@ VehiclePhysicSettings::VehiclePhysicSettings() : reflectionzeug::Object("vehicle
 	typedef VehiclePhysicSettings VPS;
 
 	addProperty<double>("maxEngineForce", *this, &VPS::MaxEngineForce, &VPS::setMaxEngineForce);
-	addProperty<double>("maxBreakingForcef", *this, &VPS::MaxBreakingForcef, &VPS::setMaxBreakingForcef);
+	addProperty<double>("maxBreakingForce", *this, &VPS::MaxBreakingForce, &VPS::setMaxBreakingForce);
 	addProperty<double>("wheelRadius", *this, &VPS::WheelRadius, &VPS::setWheelRadius);
 	addProperty<double>("wheelWidth", *this, &VPS::WheelWidth, &VPS::setWheelWidth);
 	addProperty<double>("wheelFriction", *this, &VPS::WheelFriction, &VPS::setWheelFriction);
