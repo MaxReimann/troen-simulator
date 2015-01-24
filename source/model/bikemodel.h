@@ -7,12 +7,81 @@
 #include "../forwarddeclarations.h"
 #include "abstractmodel.h"
 
+#include <reflectionzeug/Object.h>
+#include <scriptzeug/ScriptContext.h>
+
+#include "../util/scriptwatcher.h"
+using namespace reflectionzeug;
+
 namespace troen
 {
 
+
+	class VehiclePhysicSettings : public reflectionzeug::Object
+	{
+	public:
+
+		int forwardAxis = 1;
+		double	maxBreakingForcef = 00.0;
+		double	maxEngineForce = 00.0;//this should be engine/velocity dependent
+		double	wheelRadius = 00.0;
+		double	wheelWidth = 00.0;
+		double	wheelFriction = 00.0;//BT_LARGE_double;
+		double	suspensionStiffness = 00.0;
+		double	suspensionDamping = 00.0;
+		double	suspensionCompression = 00.0;
+		double	rollInfluence = 00.0;//1.0f;
+		double suspensionRestLength = 00.0;
+		double cubeHalfExtents = 0.0;
+		bool *changesPending;
+
+
+		double MaxEngineForce() const { return maxEngineForce; }
+		void setMaxEngineForce(const double & val) { maxEngineForce = val; }
+
+		double MaxBreakingForcef() const { return maxBreakingForcef; }
+		void setMaxBreakingForcef(const double & val) { maxBreakingForcef = val; }
+		double WheelRadius() const { return wheelRadius; }
+		void setWheelRadius(const double & val) { wheelRadius = val; }
+		double WheelWidth() const { return wheelWidth; }
+		void setWheelWidth(const double & val) { wheelWidth = val; }
+		double WheelFriction() const { return wheelFriction; }
+		void setWheelFriction(const double & val) { wheelFriction = val; }
+		double SuspensionStiffness() const { return suspensionStiffness; }
+		void setSuspensionStiffness(const double & val) { suspensionStiffness = val; }
+		double SuspensionDamping() const { return suspensionDamping; }
+		void setSuspensionDamping(const double & val) { suspensionDamping = val; }
+		double SuspensionCompression() const { return suspensionCompression; }
+		void setSuspensionCompression(const double & val) { suspensionCompression = val; }
+		double RollInfluence() const { return rollInfluence; }
+		void setRollInfluence(const double & val) { rollInfluence = val; }
+		double SuspensionRestLength() const { return suspensionRestLength; }
+		void setSuspensionRestLength(const double & val) { suspensionRestLength = val; }
+		int ForwardAxis() const { return forwardAxis; }
+		void setForwardAxis(const int &val) { forwardAxis = val; }
+		double CubeHalfExtents() const { return cubeHalfExtents; }
+		void setCubeHalfExtents(const double & val) { cubeHalfExtents = val; }
+
+
+		void log(std::string message) {
+			std::cout << "script log:   " << message << std::endl;
+		}
+
+
+
+		void loadVehicleParameters();
+		VehiclePhysicSettings();
+
+	private:
+		scriptzeug::ScriptContext m_scriptContext;
+		ScriptWatcher m_scriptWatcher;
+
+	};
+
 	class BikeModel : public AbstractModel
 	{
-		friend BikeController;
+		friend class BikeController;
+		friend class BikeInputState;
 	public:
 		BikeModel(
 			btTransform initialTransform,
@@ -55,11 +124,19 @@ namespace troen
 		std::shared_ptr<btRigidBody> getRigidBody();
 		void dampOut();
 		void clearDamping();
+		void constructVehicleBody(std::shared_ptr<PhysicsWorld> world);
+		void resetBody(btDynamicsWorld *world);
+		double getBrakeForce();
+		void removeRaycastVehicle();
+	protected:
+		float m_steeringClamp;
+		float m_steeringIncrement;
+		float m_vehicleSteering;
+
 	private:
 		osg::ref_ptr<input::BikeInputState> m_bikeInputState;
 		float m_oldVelocity;
 		float m_rotation;
-		float m_steering;
 		float m_turboFactor;
 		float m_timeOfLastTurboInitiation;
 		long double m_lastUpdateTime;
@@ -67,7 +144,19 @@ namespace troen
 		long double m_timeSinceLastUpdate;
 		float m_currentSteeringTilt;
 		float m_currentWheelyTilt;
-		std::shared_ptr<btRigidBody> m_bikeRigidBody;
+		std::shared_ptr<btRigidBody> m_carChassis;
+		int m_forwardAxis;
 
+		btRaycastVehicle::btVehicleTuning	m_tuning;
+		btVehicleRaycaster*	m_vehicleRayCaster;
+		btRaycastVehicle*	m_vehicle;
+		btCollisionShape*	m_wheelShape;
+		float m_engineForce;
+		float m_breakingForce;
+		std::shared_ptr<PhysicsWorld> m_world;
+		VehiclePhysicSettings m_vehicleParameters;
 	};
+
+
+
 }

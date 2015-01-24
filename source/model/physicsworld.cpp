@@ -35,6 +35,7 @@ m_gameLogic(gameLogic)
 		m_debug = new util::GLDebugDrawer();
 		m_debug->setDebugMode(btIDebugDraw::DBG_MAX_DEBUG_DRAW_MODE);
 		m_world->setDebugDrawer(m_debug);
+		m_drawShapes = std::vector<DrawShape>();
 	}
 }
 
@@ -69,15 +70,6 @@ std::array<std::array<int, 100>, 100>* PhysicsWorld::discretizeWorld()
 		//shape->get
 
 	}
-
-
-
-
-
-
-
-
-
 
 	// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	btVector3 from, to, direction;
@@ -228,13 +220,13 @@ void PhysicsWorld::addRigidBodies(const std::vector<std::shared_ptr<btRigidBody>
 {
 	for (auto body : bodies)
 	{
-		m_world->addRigidBody(body.get(), group, mask);
+		m_world->addRigidBody(body.get());
 	}
 }
 
 void PhysicsWorld::addRigidBody(btRigidBody *body, const short group /*=0*/, const short mask /*=0*/)
 {
-	m_world->addRigidBody(body, group, mask);
+	m_world->addRigidBody(body);
 }
 
 void PhysicsWorld::removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies)
@@ -270,6 +262,10 @@ void PhysicsWorld::removeCollisionObject(btCollisionObject* obj)
 	m_world->removeCollisionObject(obj);
 }
 
+void PhysicsWorld::addDrawShape(btTransform trans, btCollisionShape *shape, btVector3 color)
+{
+	m_drawShapes.push_back({ trans, shape, color });
+}
 
 
 void PhysicsWorld::addCollisionObject(btCollisionObject* obj)
@@ -298,8 +294,6 @@ void PhysicsWorld::stepSimulation(long double currentTime)
 	// stepSimulation(timeStep, maxSubSteps, fixedTimeStep)
 
 
-
-
 	getMutex()->lock();
 	m_world->stepSimulation(timeSinceLastSimulation/1000.f, 8);
 	getMutex()->unlock();
@@ -307,6 +301,13 @@ void PhysicsWorld::stepSimulation(long double currentTime)
 	if (m_useDebugView)
 	{
 		m_world->debugDrawWorld();
+
+		for (auto s : m_drawShapes)
+			m_world->debugDrawObject(s.trans, s.shape, s.color);
+
+		if (drawVehicle)
+			drawVehicle->debugDraw(m_debug);
+
 		m_debug->EndDraw();
 	}
 

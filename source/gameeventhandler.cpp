@@ -7,6 +7,7 @@
 #include "view/shaders.h"
 #include "BendedViews/src/SplineDeformationRendering.h"
 #include "controller/levelcontroller.h"
+#include "player.h"
 
 using namespace troen;
 
@@ -62,6 +63,11 @@ void GameEventHandler::attachGameLogic(std::shared_ptr<GameLogic>& gamelogic)
 	 case osgGA::GUIEventAdapter::KEY_Delete:
 		 m_gameLogic.lock()->restartLevel();
 		 break;
+	 case osgGA::GUIEventAdapter::KEY_U:
+	 {
+			m_troenGame->players()[0]->bikeController()->reloadVehicle();
+			break;
+	 }
 	 case osgGA::GUIEventAdapter::KEY_1:	 
 		m_troenGame->getBendedViews()->setPreset(0);
 		break;

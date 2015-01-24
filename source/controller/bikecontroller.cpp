@@ -79,6 +79,16 @@ void BikeController::respawnAt(btTransform respawnPoint)
 }
 
 
+void BikeController::reloadVehicle()
+{
+	m_bikeModel->removeRaycastVehicle();
+	m_bikeModel->constructVehicleBody(m_world);
+	btTransform trans;
+	trans.setOrigin(m_initialTransform.getOrigin() + btVector3(0.0, 0.0, 20.0));
+	trans.setRotation(m_initialTransform.getRotation());
+	respawnAt(trans);
+}
+
 
 void BikeController::registerCollision(const btScalar impulse)
 {
@@ -436,7 +446,8 @@ void BikeController::addUniformsToNode(osg::ref_ptr<osg::Group> group)
 void BikeController::attachWorld(std::shared_ptr<PhysicsWorld> world)
 {
 	m_world = world;
-	world->addRigidBodies(getRigidBodies(), COLGROUP_BIKE, COLMASK_BIKE);
+	world->addRigidBodies(getRigidBodies());
+	m_bikeModel->constructVehicleBody(world);
 }
 
 long double BikeController::getTimeFactor()
@@ -476,6 +487,13 @@ std::shared_ptr<BikeModel>  BikeController::getModel()
 {
 	return std::static_pointer_cast<BikeModel>(m_model);
 }
+
+
+std::shared_ptr<BikeView>  BikeController::getView()
+{
+	return std::static_pointer_cast<BikeView>(m_view);
+}
+
 
 float BikeController::getDistanceToObstacle(double angle) {
 	// angle specifies the deviation from the current direction the bike is heading

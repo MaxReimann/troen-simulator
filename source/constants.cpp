@@ -27,10 +27,10 @@ namespace troen
 	const double GAME_START_COUNTDOWN_DURATION(3000);
 
 	//PHYSIS
-	const btVector3 DEFAULT_GRAVITY(0,0,-180);
+	const btVector3 DEFAULT_GRAVITY(0,0,-10);
 
 	// BIKE
-	const btVector3 BIKE_DIMENSIONS(2, 4, 2);
+	const btVector3 BIKE_DIMENSIONS(4, 6, 2);
 	const float BIKE_VIEW_SCALE_FACTOR(1.f / 5.f * BIKE_DIMENSIONS.y());
 	const osg::Vec3f BIKE_VIEW_SCALE_FACTORS(BIKE_VIEW_SCALE_FACTOR, BIKE_VIEW_SCALE_FACTOR, BIKE_VIEW_SCALE_FACTOR);
 	const osg::Vec3f BIKE_VIEW_TRANSLATE_VALUES(0,0,-BIKE_DIMENSIONS.z() * 4.9f / 12.5);
@@ -45,6 +45,8 @@ namespace troen
 	const float BIKE_TURN_FACTOR_MAX(15);
 	const float BIKE_ANGULAR_DAMPENING_TERM(0.001f);
 	const float BIKE_VIEWING_ANGLE_DAMPENING_TERM(0.1f);
+	const float BIKE_STEERING_INCREMENT(0.04f);
+	const float BIKE_STEERINGCLAMP(0.3f);
 
 	const float TURBO_PHASE_LENGTH(2000);
 

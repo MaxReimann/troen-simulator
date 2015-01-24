@@ -22,6 +22,8 @@
 #include "../model/bikemodel.h"
 #include "playermarker.h"
 #include "../resourcepool.h"
+#include "../util/basicshapes.h"
+#include "hudview.h"
 
 using namespace troen;
 
@@ -32,18 +34,18 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_node = new osg::Group();
 	m_pat = new osg::PositionAttitudeTransform();
 
+#ifdef NISCHT
 	osg::Matrixd initialTransform;
 	osg::Quat rotationQuat(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
 	initialTransform.makeRotate(rotationQuat);
 
-#ifndef true
 	initialTransform *= initialTransform.scale(BIKE_VIEW_SCALE_FACTORS);
 	initialTransform *= initialTransform.translate(BIKE_VIEW_TRANSLATE_VALUES);
 
 	osg::MatrixTransform* matrixTransform = new osg::MatrixTransform(initialTransform);
 	matrixTransform->setNodeMask(CAMERA_MASK_MAIN);
-
 	m_pat->addChild(matrixTransform);
+
 	
 	m_MovieCycle_Body = createCyclePart(ResourcePool::MG_MovieCycle_Body_MI,
 		ResourcePool::MG_MovieCycle_Body_SPEC,
@@ -94,10 +96,33 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Engine);
 	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Player_Baton);
 	matrixTransform->addChild(m_MovieCycle_Body);
+#else
+
+	osg::Matrixd initialTransform;
+	initialTransform *= initialTransform.scale(btToOSGVec3(BIKE_DIMENSIONS));
+	initialTransform *= initialTransform.translate(osg::Vec3(0, 0, BIKE_DIMENSIONS.getZ() / 2));
+	
+	osg::Box* unitCube = new osg::Box(osg::Vec3(0, 0, 0), 1.0f);
+	osg::ShapeDrawable* unitCubeDrawable = new osg::ShapeDrawable(unitCube);
+	// Declare a instance of the geode class: 
+	osg::Geode* chassisGeode = new osg::Geode();
+	chassisGeode->addDrawable(unitCubeDrawable);
+	
+	
+
+	osg::MatrixTransform* matrixTransform = new osg::MatrixTransform(initialTransform);
+	matrixTransform->addChild(chassisGeode);
+	m_wheelGroup = new osg::Group();
+	m_pat->addChild(m_wheelGroup);
+
+	wheels = std::vector<osg::ref_ptr<osg::MatrixTransform>>();
+
+	m_pat->addChild(matrixTransform);
+#endif
+
 	m_pat->setName("bikeGroup");
 
 
-#endif
 	// create box for radar
 	osg::Vec4 color4 = osg::Vec4(m_playerColor, 1.0);
 	osg::ref_ptr<osg::ShapeDrawable> mark_shape = new osg::ShapeDrawable;
@@ -226,4 +251,31 @@ void BikeView::createPlayerMarker(osg::Vec3 color)
 	//PlayerMarker *marker = new PlayerMarker(color)
 	m_playermarkerNode = PlayerMarker(color).getNode();
 	m_pat->addChild(m_playermarkerNode);
+}
+
+void BikeView::addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo)
+{
+	osg::ref_ptr<osg::Geometry> geom =  BasicShapes::cylinderTriStrips(0.5, 10, pointOne, pointTwo);
+	osg::ref_ptr<osg::Geode> wheelGeode = new osg::Geode();
+	wheelGeode->addDrawable(geom);
+	osg::ref_ptr<osg::MatrixTransform> wheelTransform = new osg::MatrixTransform;
+	wheelTransform->addChild(wheelGeode);
+	wheels.push_back(wheelTransform);
+	m_wheelGroup->addChild(wheelTransform);
+}
+
+
+void BikeView::setWheelTransform(int index, btTransform worldTransform)
+{
+	osg::Matrixd mat;
+	mat.identity();
+	mat.setTrans(btToOSGVec3((worldTransform.getOrigin())));
+	mat.setRotate(btToOSGQuat((worldTransform.getRotation())));
+
+	getWorldCoordOfNodeVisitor gWVis;
+
+	m_pat->accept(gWVis);
+	osg::Matrixd invMat = osg::Matrixd::inverse(*gWVis.worldCoordinatesMatrix());
+
+	wheels.at(index)->setMatrix( invMat * mat);
 }

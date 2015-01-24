@@ -9,10 +9,19 @@
 // troen
 #include "../forwarddeclarations.h"
 
+#include "btBulletDynamicsCommon.h"
+
 // typedefs for collision events
 typedef std::vector<std::shared_ptr<troen::AbstractController>> ControllerVector;
 typedef std::pair<const btRigidBody*, const btRigidBody*> CollisionPair;
 typedef std::set<CollisionPair> CollisionPairSet;
+
+struct DrawShape
+{
+	btTransform trans;
+	btCollisionShape *shape;
+	btVector3 color;
+};
 
 namespace troen
 {
@@ -39,6 +48,8 @@ namespace troen
 		void addCollisionObject(btCollisionObject* obj);
 		void removeCollisionObject(btCollisionObject* obj);
 
+		std::vector<DrawShape> getDrawShapes() { return m_drawShapes; }
+
 		void checkForCollisionEvents();
 		std::array<std::array<int, 100>, 100>* discretizeWorld();
 
@@ -53,6 +64,9 @@ namespace troen
 
 		std::mutex* getMutex() { return &m_physicsMutex; };
 		void registerCustomCallback(void *p2Object, pt2Function func);
+		void addDrawShape(btTransform trans, btCollisionShape *shape, btVector3 color);
+
+		btRaycastVehicle *drawVehicle = nullptr;
 	private:
 		btDiscreteDynamicsWorld*			m_world;
 		btSequentialImpulseConstraintSolver*m_solver;
@@ -74,5 +88,7 @@ namespace troen
 
 		std::mutex m_physicsMutex;
 		std::vector<std::pair<void*,pt2Function>> m_customCallbacks;
+		std::vector<DrawShape> m_drawShapes;
+
 	};
 }

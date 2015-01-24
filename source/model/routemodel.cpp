@@ -24,7 +24,7 @@ void RouteModel::attachWorld(std::shared_ptr<PhysicsWorld>& world)
 void RouteModel::addRigidBodiesToWorld()
 {
 	for (auto boundary : m_rigidBodyDeque)
-		m_world.lock()->addRigidBody(boundary.get(), COLGROUP_FENCE, COLMASK_FENCE);
+		m_world.lock()->addRigidBody(boundary.get());
 }
 
 void RouteModel::addFencePart(btVector3 a, btVector3 b)
@@ -68,7 +68,7 @@ void RouteModel::addFencePart(btVector3 a, btVector3 b)
 	m_motionStateDeque.push_back(fenceMotionState);
 	m_rigidBodyDeque.push_back(fenceRigidBody);
 
-	m_world.lock()->addRigidBody(fenceRigidBody.get(),COLGROUP_FENCE, COLMASK_FENCE);
+	m_world.lock()->addRigidBody(fenceRigidBody.get());
 
 	enforceFencePartsLimit();
 }

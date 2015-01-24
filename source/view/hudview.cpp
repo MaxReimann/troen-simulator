@@ -253,36 +253,7 @@ void HUDView::attachSceneToRadarCamera(osg::Group* scene)
 }
 
 
-// helper class to retrieve the position of a node in world coordinates
-// could potentially be in it's own header file
-class getWorldCoordOfNodeVisitor : public osg::NodeVisitor
-{
-public:
-    getWorldCoordOfNodeVisitor():
-    osg::NodeVisitor(NodeVisitor::TRAVERSE_PARENTS), done(false)
-    {
-        wcMatrix= new osg::Matrixd();
-    }
-    virtual void apply(osg::Node &node)
-    {
-        if (!done)
-        {
-            if ( 0 == node.getNumParents() ) // no parents
-            {
-                wcMatrix->set( osg::computeLocalToWorld(this->getNodePath()));
-                done = true;
-            }
-            traverse(node);
-        }
-    }
-    osg::Matrixd* worldCoordinatesMatrix()
-    {
-        return wcMatrix;
-    }
-private:
-    bool done;
-    osg::Matrix* wcMatrix;
-};
+
 
 void HUDView::updateRadarCamera()
 {

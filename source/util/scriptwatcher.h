@@ -39,17 +39,34 @@ public:
 
 	~ScriptWatcher(){}
 
-	void watchAndLoad(const QString& filePath, scriptzeug::ScriptContext* scriptContext)
+	void watchAndLoad(const QString& filePath, scriptzeug::ScriptContext* scriptContext, bool *changed)
 	{
+		m_changedFlag = changed;
 		m_scriptContext = scriptContext;
 		m_watchedFilePath = filePath;
 		onFolderChanged("");
 	};
+	std::string getContent()
+	{
+		QFile f(m_watchedFilePath);
+		if (f.open(QFile::ReadOnly | QFile::Text))
+		{
+			QTextStream in(&f);
+			content = in.readAll();
+			f.close();
+		}
+		return content.toStdString();
+	}
 
 private:
 
+	QString content;
 	QString m_watchedFilePath;
 	scriptzeug::ScriptContext* m_scriptContext;
+	bool *m_changedFlag;
+
+	
+
 
 	public slots :
 		void onFolderChanged(const QString& str)
@@ -61,9 +78,10 @@ private:
 			if (f.open(QFile::ReadOnly | QFile::Text))
 			{
 				QTextStream in(&f);
-				QString content = in.readAll();
+				content = in.readAll();
 
 				m_scriptContext->evaluate(content.toStdString());
+				*m_changedFlag = true;
 
 				f.close();
 			}

@@ -41,6 +41,11 @@ namespace input
 		bool isNewPosition();
 		void setReceivementTimestamp(RakNet::Time time);
 		RakNet::Time getReceivementTime();
+		void steerLeft(float factor);
+		void steerRight(float factor);
+		float getSteering();
+		void setBrakeForce(float brakeforce);
+		double getBrakeForce();
 	private:
 		float m_acceleration;
 		float m_angle;
@@ -52,6 +57,8 @@ namespace input
 		float m_angularVelocity;
 		bool m_isNewPosition;
 		RakNet::Time m_receivementTime;
+		float m_vehicleSteering;
+		double m_brakeforce;
 	};
 }
 }

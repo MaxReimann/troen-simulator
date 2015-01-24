@@ -76,8 +76,10 @@ namespace troen
 		
 
 		std::shared_ptr<BikeModel> getModel();
+		std::shared_ptr<BikeView> getView();
 		float getDistanceToObstacle(double angle);
 		bool isFalling();
+		void reloadVehicle();
 
 	private:
 		std::shared_ptr<BikeView> m_bikeView;

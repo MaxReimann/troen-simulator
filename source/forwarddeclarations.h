@@ -100,7 +100,7 @@ namespace troen
 	class ResourcePool;
 	class SplineDeformationRendering;
 	class NavigationWindow;
-
+	class VehiclePhysicSettings;
 
 	namespace util
 	{

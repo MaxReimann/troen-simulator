@@ -101,25 +101,17 @@ void Keyboard::run()
 	{
 		// save angle to enable smooth direction changes
 		if (m_leftPressed)
-			m_angle = mi(1.0, m_angle + 0.05);
-		else if (m_angle > 0)
-			m_angle = 0;
+			m_bikeInputState->steerLeft(1.0);
+
 		if (m_rightPressed)
-			m_angle = ma(-1.0, m_angle - 0.05);
-		else if (m_angle < 0)
-			m_angle = 0;
+			m_bikeInputState->steerRight(1.0);
 		
-		float leftAngle = m_leftPressed ? m_angle + m_handbrakePressed * BIKE_HANDBRAKE_FACTOR : 0.0;
-		float rightAngle = m_rightPressed ? m_angle - m_handbrakePressed * BIKE_HANDBRAKE_FACTOR : 0.0;
-		//! simulator: no drifting
-		//m_bikeInputState->setAngle(leftAngle + rightAngle);
-		m_bikeInputState->setAngle(m_angle);
 
-		//!simulator change
-		//m_bikeInputState->setTurboPressed(m_turboPressed);
+		float acceleration = m_upPressed ? 1000.0 : 0.0;
+		float brake = m_downPressed ? 100.0 : 0.0;
 
-		float acceleration = m_upPressed ? 1.0 : 0.0 - m_downPressed ? -1.0 : 0.0;
 		m_bikeInputState->setAcceleration(acceleration);
+		m_bikeInputState->setBrakeForce(brake);
 
 		this->msleep(POLLING_DELAY_MS);
 	}

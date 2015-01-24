@@ -281,7 +281,7 @@ void CityModel::physicsUpdate(btPersistentManifold *manifold)
 		bodyWrap->body->setUserPointer(info);
 
 
-		m_world->addRigidBody(bodyWrap->body.get(), COLGROUP_LEVEL, COLMASK_LEVEL);
+		m_world->addRigidBody(bodyWrap->body.get());
 		m_lastBodies.push_back(bodyWrap);
 	}
 	else if (!collision)

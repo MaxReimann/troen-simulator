@@ -10,12 +10,14 @@ using namespace troen::input;
 BikeInputState::BikeInputState()
 {
 	m_acceleration = 0.0;
+	m_brakeforce = 0.0;
 	m_angle = 0.0;
 	m_turboPressed = false;
 	m_viewingAngle = 0.0;
 	//only used for network
 	m_position = btVector3(0.0, 0.0, 0.0);
 	m_isNewPosition = true;
+	m_vehicleSteering = 0;
 
 }
 
@@ -24,11 +26,31 @@ float BikeInputState::getAngle()
 	return m_angle * BIKE_ROTATION_VALUE;
 }
 
+float BikeInputState::getSteering()
+{
+	return m_vehicleSteering;
+}
+
 float BikeInputState::getAcceleration()
 {
 	// deceleration is stronger than acceleration
 	return m_acceleration < 0 ? m_acceleration * BIKE_DECELERATION_FACTOR : m_acceleration;
 }
+
+void BikeInputState::steerLeft(float factor)
+{
+	m_vehicleSteering += BIKE_STEERING_INCREMENT;
+	if (m_vehicleSteering > BIKE_STEERINGCLAMP)
+		m_vehicleSteering = BIKE_STEERINGCLAMP;
+}
+
+void BikeInputState::steerRight(float factor)
+{
+	m_vehicleSteering += BIKE_STEERING_INCREMENT;
+	if (m_vehicleSteering < -BIKE_STEERINGCLAMP)
+		m_vehicleSteering = -BIKE_STEERINGCLAMP;
+}
+
 
 void BikeInputState::setAngle(float angle)
 {
@@ -40,6 +62,17 @@ void BikeInputState::setAcceleration(float acceleration)
 {
 	m_acceleration = acceleration;
 }
+
+void BikeInputState::setBrakeForce(float brakeforce)
+{
+	m_brakeforce = brakeforce;
+}
+
+double BikeInputState::getBrakeForce()
+{
+	return m_brakeforce;
+}
+
 
 bool BikeInputState::getTurboPressed()
 {

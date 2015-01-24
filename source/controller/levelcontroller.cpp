@@ -142,7 +142,7 @@ void LevelController::removeRigidBodiesFromWorld()
 
 void LevelController::addRigidBodiesToWorld()
 {
-	m_world.lock()->addRigidBodies(getRigidBodies(), COLGROUP_LEVEL, COLMASK_LEVEL);
+	m_world.lock()->addRigidBodies(getRigidBodies());
 
 	if (m_levelType == BERLIN)
 	{
