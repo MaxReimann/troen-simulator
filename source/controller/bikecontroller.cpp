@@ -254,11 +254,11 @@ void BikeController::attachTrackingCamera(
 
 void BikeController::attachTrackingCamera(osg::ref_ptr<NodeFollowCameraManipulator>& manipulator)
 {
-	osg::ref_ptr<osg::Group> viewNode = m_bikeView->getNode();
-	osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*> (viewNode->getChild(0));
+	osg::ref_ptr<osg::Geode> lookat = m_bikeView->getLookatGeode();
+	//osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*> (viewNode->getChild(0));
 
 	// set the actual node as the track node, not the pat
-	manipulator->setTrackNode(pat->getChild(0));
+	manipulator->setTrackNode(lookat);
 
 	// set the bikeInputState
 	manipulator->setBikeInputState(m_bikeInputState);

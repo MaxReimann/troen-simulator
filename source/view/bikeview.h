@@ -38,11 +38,14 @@ namespace troen
 		void createPlayerMarker(const osg::Vec3 color);
 		void addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo);
 		void setWheelRotation(int index, btTransform t);
+		osg::ref_ptr<osg::Geode> getLookatGeode() { return m_lookatGeode; }
 	private:
 		osg::Vec3 m_playerColor;
 		osg::ref_ptr<osg::Node> m_playermarkerNode;
 		ResourcePool* m_resourcePool;
 		osg::ref_ptr<osg::Group> m_wheelGroup;
 		std::vector<osg::ref_ptr<osg::PositionAttitudeTransform>> wheels;
+		osg::ref_ptr<osg::MatrixTransform> m_lookatPoint;
+		osg::ref_ptr<osg::Geode>  m_lookatGeode;
 	};
 }

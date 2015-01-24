@@ -204,6 +204,10 @@ set(sources
 	source/model/objectinfo.h
 	source/model/citymodel.cpp
 	source/model/citymodel.h
+	source/model/carengine.cpp
+	source/model/carengine.h
+	source/model/heightfield128x128.cpp
+	source/model/customfriction.h
 
 	source/controller/bikecontroller.h
 	source/controller/bikecontroller.cpp
