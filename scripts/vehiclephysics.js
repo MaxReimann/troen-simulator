@@ -4,8 +4,8 @@ vehicle.maxBreakingForce = 100.0; // 100.0;
 vehicle.wheelRadius = 0.5; // 0.5;
 vehicle.wheelWidth = 0.4; // 0.4;
 vehicle.wheelFriction = 1000;//BT_LARGE_ // = 1000;//BT_LARGE_
-vehicle.suspensionStiffness = 50.0; // 20.0;
-vehicle.suspensionDamping = 0.5; // 2.3;
+vehicle.suspensionStiffness = 100.0; // 20.0;
+vehicle.suspensionDamping = 2.0; // 2.3;
 vehicle.suspensionCompression = 0.5; // 4.4;
 vehicle.rollInfluence = 0.1;//1.0; //1.0;
 vehicle.suspensionRestLength = 0.6; // 0.6;

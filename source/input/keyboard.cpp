@@ -102,13 +102,19 @@ void Keyboard::run()
 		// save angle to enable smooth direction changes
 		if (m_leftPressed)
 			m_bikeInputState->steerLeft(1.0);
-		else
-			m_bikeInputState->m_steerLeftPressed = false;
 
 		if (m_rightPressed)
 			m_bikeInputState->steerRight(1.0);
-		else
-			m_bikeInputState->m_steerRightPressed = false;
+
+		if (!m_leftPressed && !m_rightPressed)
+		{
+			if (m_bikeInputState->m_vehicleSteering < BIKE_STEERING_INCREMENT && m_bikeInputState->m_vehicleSteering > -BIKE_STEERING_INCREMENT)
+				m_bikeInputState->m_vehicleSteering = 0;
+			else if (m_bikeInputState->m_vehicleSteering > 0)
+				m_bikeInputState->m_vehicleSteering -= BIKE_STEERING_INCREMENT;
+			else if (m_bikeInputState->m_vehicleSteering < 0)
+				m_bikeInputState->m_vehicleSteering += BIKE_STEERING_INCREMENT;
+		}
 		
 
 		float acceleration = m_upPressed ? 1.0 : 0.0;

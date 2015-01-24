@@ -245,15 +245,7 @@ float BikeModel::updateState(long double time)
 
 	// call this exactly once per frame
 	m_vehicleSteering = m_bikeInputState->getSteering();
-	if (!m_bikeInputState->m_steerLeftPressed && !m_bikeInputState->m_steerRightPressed)
-	{
-		if (m_vehicleSteering < BIKE_STEERING_INCREMENT && m_vehicleSteering > -BIKE_STEERING_INCREMENT)
-			m_vehicleSteering = 0;
-		else if (m_vehicleSteering > 0)
-			m_vehicleSteering -= BIKE_STEERING_INCREMENT;
-		else if (m_vehicleSteering < 0)
-			m_vehicleSteering += BIKE_STEERING_INCREMENT;
-	}
+
 	m_bikeInputState->setSteering(m_vehicleSteering);
 
 	//m_engineForce = m_bikeInputState->getAcceleration() * m_vehicleParameters.maxEngineForce;

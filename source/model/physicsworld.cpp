@@ -226,13 +226,16 @@ void PhysicsWorld::addRigidBodies(const std::vector<std::shared_ptr<btRigidBody>
 {
 	for (auto body : bodies)
 	{
-		m_world->addRigidBody(body.get());
+		addRigidBody(body.get(), group, mask);
 	}
 }
 
 void PhysicsWorld::addRigidBody(btRigidBody *body, const short group /*=0*/, const short mask /*=0*/)
 {
-	m_world->addRigidBody(body);
+	if (group != 0)
+		m_world->addRigidBody(body);
+	else
+		m_world->addRigidBody(body, group, mask);
 }
 
 void PhysicsWorld::removeRigidBodies(const std::vector<std::shared_ptr<btRigidBody>>& bodies)

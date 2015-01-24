@@ -446,7 +446,7 @@ void BikeController::addUniformsToNode(osg::ref_ptr<osg::Group> group)
 void BikeController::attachWorld(std::shared_ptr<PhysicsWorld> world)
 {
 	m_world = world;
-	m_world->addRigidBodies(getRigidBodies());
+	m_world->addRigidBodies(getRigidBodies(), COLGROUP_BIKE, COLMASK_BIKE);
 	m_bikeModel->constructVehicleBody(world);
 }
 

@@ -82,6 +82,11 @@ bool FFBWheel::checkConnection()
 	return m_isConnected;
 }
 
+double scale_between(double number, double	from_min, double from_max, double to_min, double to_max)
+{
+	return ((to_max - to_min) * (number - from_min)) / (from_max - from_min) + to_min;
+}
+
 // Returns false if the controller has been disconnected
 void FFBWheel::run()
 {
@@ -106,23 +111,32 @@ void FFBWheel::run()
 			}
 
 			float normLX = fmaxf(-1, (float)m_state.Gamepad.sThumbLX / 32767);
-			m_leftStickX = (abs(normLX) < m_deadzoneX ? 0 : (abs(normLX) - m_deadzoneX) * (normLX / abs(normLX)));
+			m_WheelX = (abs(normLX) < m_deadzoneX ? 0 : (abs(normLX) - m_deadzoneX) * (normLX / abs(normLX)));
+			m_WheelX = scale_between(m_WheelX, -1, 1, -BIKE_STEERINGCLAMP, BIKE_STEERINGCLAMP);
+			m_WheelX = -m_WheelX;
 
 			float normLY = fmaxf(-1, (float)m_state.Gamepad.sThumbLY / 32767);
 			m_brake = (abs(normLY) < m_deadzoneY ? 0 : (abs(normLY) - m_deadzoneY) * (normLY / abs(normLY)));
+			m_brake = scale_between(m_brake, -1, 1, 0, 1);
 
 			float normRY = fmaxf(-1, (float)m_state.Gamepad.sThumbRY / 32767);
 			m_throttle = (abs(normRY) < m_deadzoneY ? 0 : (abs(normRY) - m_deadzoneY) * (normRY / abs(normRY)));
+			m_throttle = scale_between(m_throttle, -1, 1, 0, 1);
 
-			if (m_deadzoneX > 0) m_leftStickX *= 1 / (1 - m_deadzoneX);
+			if (m_deadzoneX > 0) m_WheelX *= 1 / (1 - m_deadzoneX);
 			if (m_deadzoneY > 0) m_throttle *= 1 / (1 - m_deadzoneY);
 
 			float handbrakePressed = isPressed(XINPUT_GAMEPAD_X);
 			bool turboPressed = isPressed(XINPUT_GAMEPAD_A);
+			
+			
+			m_bikeInputState->m_vehicleSteering = m_WheelX;
 
-			m_bikeInputState->setAcceleration(m_throttle - m_brake);
-			m_bikeInputState->setAngle(-m_leftStickX);
-			m_bikeInputState->setTurboPressed(turboPressed);
+			m_bikeInputState->setAcceleration(m_throttle);
+			m_bikeInputState->setBrakeForce(m_brake);
+			//m_bikeInputState->setAcceleration(m_throttle - m_brake);
+			//m_bikeInputState->setAngle(-m_leftStickX);
+			//m_bikeInputState->setTurboPressed(turboPressed);
 
 			vibrate();
 		}

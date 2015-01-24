@@ -48,7 +48,6 @@ void BikeInputState::steerLeft(float factor)
 	m_vehicleSteering += BIKE_STEERINGCLAMP * g_timeSinceLastUpdate / 1000;
 	if (m_vehicleSteering > BIKE_STEERINGCLAMP)
 		m_vehicleSteering = BIKE_STEERINGCLAMP;
-	m_steerLeftPressed = true;
 }
 
 void BikeInputState::steerRight(float factor)
@@ -56,7 +55,6 @@ void BikeInputState::steerRight(float factor)
 	m_vehicleSteering -= BIKE_STEERINGCLAMP * g_timeSinceLastUpdate / 1000.0;
 	if (m_vehicleSteering < -BIKE_STEERINGCLAMP)
 		m_vehicleSteering = -BIKE_STEERINGCLAMP;
-	m_steerRightPressed = true;
 
 }
 

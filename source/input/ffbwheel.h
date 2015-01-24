@@ -49,7 +49,7 @@ namespace input
 		int m_controllerId, m_isConnected;
 		XINPUT_STATE m_state;
 		float m_deadzoneX, m_deadzoneY;
-		float m_leftStickX, m_leftStickY, m_rightStickX, m_rightStickY;
+		float m_WheelX, m_leftStickY, m_rightStickX, m_rightStickY;
 		float m_brake, m_throttle;
 		HINSTANCE hGetProcIDDLL;
 

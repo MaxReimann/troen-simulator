@@ -119,15 +119,16 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	wheels = std::vector<osg::ref_ptr<osg::PositionAttitudeTransform>>();
 	
 	osg::Matrixd lookAtTransform;
-	lookAtTransform *= lookAtTransform.translate(osg::Vec3(0, BIKE_DIMENSIONS.y() / 2, BIKE_DIMENSIONS.z()));
+	lookAtTransform *= lookAtTransform.translate(osg::Vec3(0, BIKE_DIMENSIONS.y() / 2, BIKE_DIMENSIONS.z() + 2));
 	m_lookatPoint = new osg::MatrixTransform(lookAtTransform);
 	m_lookatGeode = new osg::Geode();
 	m_lookatGeode->setName("lookatGeode");
 	m_lookatPoint->addChild(m_lookatGeode);
-	osg::ref_ptr<osg::ShapeDrawable> lbox = new osg::ShapeDrawable;
-	lbox->setShape(new osg::Box(osg::Vec3(0, 0, 0), 0.1, 0.1, 0.1));
-	
-	m_lookatGeode->addDrawable(lbox);
+
+	//osg::ref_ptr<osg::ShapeDrawable> lbox = new osg::ShapeDrawable;
+	//lbox->setShape(new osg::Box(osg::Vec3(0, 0, 0), 0.1, 0.1, 0.1));
+	//m_lookatGeode->addDrawable(lbox);
+
 	m_pat->addChild(m_lookatPoint);
 
 	m_pat->addChild(matrixTransform);
