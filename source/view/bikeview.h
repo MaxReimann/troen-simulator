@@ -36,7 +36,7 @@ namespace troen
 		void update();
 		void createPlayerMarker(const osg::Vec3 color);
 		void addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo);
-		void setWheelTransform(int index, btTransform worldTransform);
+		void setWheelRotation(int index, btTransform worldTransform);
 	private:
 		osg::Vec3 m_playerColor;
 		osg::ref_ptr<osg::Node> m_playermarkerNode;

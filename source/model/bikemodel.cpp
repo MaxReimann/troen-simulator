@@ -65,17 +65,11 @@ m_currentWheelyTilt(0)
 	//localTrans effectively shifts the center of mass with respect to the chassis
 	localTrans.setOrigin(btVector3(0, 0, 1));
 	compoundShape->addChildShape(localTrans, chassisShape.get());
-
-	compoundShape->setUserIndex(7717);
-	chassisShape->setUserIndex(123456);
-
-
 	btVector3 bikeInertia(0, 0, 0);
 	compoundShape->calculateLocalInertia(BIKE_MASS, bikeInertia);
-	chassisShape->calculateLocalInertia(BIKE_MASS, bikeInertia);
+
 
 	btRigidBody::btRigidBodyConstructionInfo m_carRigidBodyCI(BIKE_MASS, bikeMotionState.get(), compoundShape.get(), bikeInertia);
-	m_carRigidBodyCI.m_friction = 0.f;
 
 	m_carChassis = std::make_shared<btRigidBody>(m_carRigidBodyCI);
 	m_rigidBodies.push_back(m_carChassis);
@@ -84,7 +78,7 @@ m_currentWheelyTilt(0)
 	//m_carChassis->setCcdSweptSphereRadius(BIKE_DIMENSIONS.x() * .5f - BIKE_DIMENSIONS.x() * 0.01);
 	// this seems to be necessary so that we can move the object via setVelocity()
 	m_carChassis->setActivationState(DISABLE_DEACTIVATION);
-	m_carChassis->setAngularFactor(btVector3(0, 0, 1));
+	//m_carChassis->setAngularFactor(btVector3(0, 0, 1));
 
 
 	// for collision event handling
@@ -119,21 +113,23 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	double rollInfluence = m_vehicleParameters.rollInfluence;
 	double suspensionRestLength = m_vehicleParameters.suspensionRestLength;
 	double CUBE_HALF_EXTENTS = m_vehicleParameters.cubeHalfExtents;
+	double connectionHeight = m_vehicleParameters.connectionHeight;
 
 	btTransform tr;
 	tr.setIdentity();
 	tr.setOrigin(btVector3(0, 0.f, 0));
 
+	
 
-	//m_carChassis->setDamping(0.2,0.2);
+	//m_carChassis->setDamping(0.0,0.0);
 	m_wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
 
 	m_vehicleRayCaster = new btDefaultVehicleRaycaster(discreteWorld);
 	m_vehicle =  new btRaycastVehicle(m_tuning, m_carChassis.get(), m_vehicleRayCaster);
-	//resetBody(discreteWorld);
+	discreteWorld->addAction(m_vehicle);
 
 
-	float connectionHeight = 1.2f;
+
 
 	//choose coordinate system
 	m_vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex);
@@ -141,22 +137,22 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	bool isFrontWheel = true;
 	btVector3 connectionPointCS0(CUBE_HALF_EXTENTS - (0.3*wheelWidth), 2 * CUBE_HALF_EXTENTS - wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3(connectionPointCS0), btToOSGVec3((connectionPointCS0 + wheelAxleCS)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
 	
 	connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3*wheelWidth), 2 * CUBE_HALF_EXTENTS - wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3(connectionPointCS0), btToOSGVec3((connectionPointCS0 + wheelAxleCS)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
 
 	
 	
 	isFrontWheel = false;
 	connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3*wheelWidth), -2 * CUBE_HALF_EXTENTS + wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3(connectionPointCS0), btToOSGVec3((connectionPointCS0 + wheelAxleCS)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
 	
 	connectionPointCS0 = btVector3(CUBE_HALF_EXTENTS - (0.3*wheelWidth), -2 * CUBE_HALF_EXTENTS + wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3(connectionPointCS0), btToOSGVec3((connectionPointCS0 + wheelAxleCS)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
 
 	
 	btVector3 wheelColor(1, 0, 0);
@@ -168,20 +164,19 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 		wheel.m_wheelsDampingCompression = suspensionCompression;
 		wheel.m_frictionSlip = wheelFriction;
 		wheel.m_rollInfluence = rollInfluence;
-		wheel.m_maxSuspensionForce = 5000000.f;
-
-		m_vehicle->updateWheelTransform(i, true);
+		wheel.m_maxSuspensionForce = 50000.f;
 
 		m_world->addDrawShape(m_vehicle->getWheelInfo(i).m_worldTransform, m_wheelShape, wheelColor);
 	}
-	std::cout << m_vehicle->getWheelInfo(0).m_worldTransform.getOrigin().getZ() << std::endl;
 	world->drawVehicle = m_vehicle;
 
-	discreteWorld->addAction(m_vehicle);
+	resetBody(discreteWorld);
+	
 }
 
 void BikeModel::removeRaycastVehicle()
 {
+	m_world->getDrawShapes().clear();
 	m_world->getDiscreteWorld()->removeVehicle(m_vehicle);
 	delete m_vehicle;
 }
@@ -193,7 +188,7 @@ void BikeModel::resetBody(btDynamicsWorld *world)
 	//m_carChassis->setCenterOfMassTransform(btTransform::getIdentity());
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
-	//world->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(m_carChassis->getBroadphaseHandle(), world->getDispatcher());
+	world->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(m_carChassis->getBroadphaseHandle(), world->getDispatcher());
 	if (m_vehicle)
 	{
 		m_vehicle->resetSuspension();
@@ -242,65 +237,6 @@ long double BikeModel::getTimeSinceLastUpdate()
 }
 
 
-float BikeModel::calculatePossibleTurboBoost()
-{
-	// TODO: merge turboInitiation and turboPressed (Philipp)
-	float turboSpeed = 0;
-	// only initiate turbo, if no other turbo is active
-	if (getTurboFactor() == 0 && (m_bikeController->turboInitiated() || m_bikeInputState->getTurboPressed()))
-	{
-		turboSpeed = BIKE_VELOCITY_MAX / 2;
-	}
-	return turboSpeed;
-}
-
-void BikeModel::updateAngularVelocity(float speed)
-{
-	// rotate:
-	// turnFactor
-	// -> stronger steering for low velocities
-	// -> weaker steering at high velocities
-	float turnFactor = clamp(0.1, 1, 2 * BIKE_VELOCITY_MIN / speed);
-	float turningRad = PI / 180 * m_vehicleSteering * (BIKE_TURN_FACTOR_MAX * turnFactor);
-
-	m_carChassis->setAngularVelocity(btVector3(0, 0, turningRad));
-}
-
-float BikeModel::calculateAttenuatedSpeed(float speed)
-{
-	if (speed > BIKE_VELOCITY_MAX)
-	{
-		const float timeToSlowDown = 2000;
-		// decrease speed so that the user will reach the maximum speed within timeToSlowDown milli seconds
-		// this is done so that the turbo won't be resetted instantly
-		speed -= (speed - BIKE_VELOCITY_MAX) * m_timeSinceLastUpdate / timeToSlowDown;
-		if (speed > BIKE_TURBO_VELOCITY_MAX)
-		{
-			speed = BIKE_TURBO_VELOCITY_MAX;
-		}
-	}
-
-	if (speed < BIKE_VELOCITY_MIN)
-	{
-	 	speed = BIKE_VELOCITY_MIN;
-	}
-
-	return speed;
-}
-
-float BikeModel::calculateAcceleratedSpeed(btVector3 velocityXY, float timeFactor)
-{
-	// accelerate
-	float speed;
-	float speedFactor = max(0, 1 - velocityXY.length() / BIKE_VELOCITY_MAX);
-	float accInterpolation = m_bikeInputState->getAcceleration() * interpolate(speedFactor, InterpolateInvSquared);
-
-	speed  = velocityXY.length();
-	speed += timeFactor * (accInterpolation * BIKE_ACCELERATION_FACTOR_MAX - BIKE_VELOCITY_DAMPENING_TERM);
-
-	return speed;
-}
-
 float BikeModel::updateState(long double time)
 {
 	m_timeSinceLastUpdate = time - m_lastUpdateTime;
@@ -312,84 +248,37 @@ float BikeModel::updateState(long double time)
 	m_engineForce = m_bikeInputState->getAcceleration();
 	m_breakingForce = m_bikeInputState->getBrakeForce();
 
-	// project velocity to XY and save Z
-	btVector3 velocityXY = m_carChassis->getLinearVelocity();
-	btScalar zComponent = velocityXY.getZ();
-	velocityXY.setZ(0);
-
-
-	float speed = calculateAcceleratedSpeed(velocityXY, timeFactor);
-
-	//updateAngularVelocity(speed);
-
-	speed = m_oldVelocity = calculateAttenuatedSpeed(speed);
-
-	//adaptVelocityToRealDirection(velocityXY, speed, timeFactor);
-
-	//velocityXY.setZ(zComponent);
-	//m_carChassis->setLinearVelocity(velocityXY);
-
-
 
 	{
 		m_vehicle->setSteeringValue(m_vehicleSteering, 0);
 		m_vehicle->setSteeringValue(m_vehicleSteering, 1);
 
 		m_vehicle->applyEngineForce(m_engineForce, 2);
-		m_vehicle->setBrake(m_breakingForce, 2);
+		m_vehicle->setBrake(0, 2);
 		m_vehicle->applyEngineForce(m_engineForce, 3);
-		m_vehicle->setBrake(m_breakingForce, 3);
+		m_vehicle->setBrake(0, 3);
 	}
-	m_vehicle->applyEngineForce(1000, 2);
 
 
 	for (int i = 0; i < m_vehicle->getNumWheels(); i++)
 	{
 		//synchronize the wheels with the (interpolated) chassis worldtransform
-		m_vehicle->updateWheelTransform(i, true);
+		//m_vehicle->updateWheelTransform(i, true);
 
 		btTransform wheeltrans = m_vehicle->getWheelTransformWS(i);
-		//m_bikeController->getView()->setWheelTransform(i, wheeltrans);
+		//m_bikeController->getView()->setWheelRotation(i, wheeltrans);
 
 
-		std::cout << m_vehicle->getWheelInfo(i).m_worldTransform.getOrigin().getZ() << std::endl;
+		//std::cout << m_vehicle->getWheelInfo(i).m_worldTransform.getOrigin().getZ() << std::endl;
 		//synchronize the wheels with the (interpolated) chassis worldtransform
 		m_world->getDrawShapes().at(i).trans = m_vehicle->getWheelInfo(i).m_worldTransform;
 		
 	}
-	m_vehicle->updateVehicle(timeFactor/10);
+	//m_vehicle->updateVehicle(timeFactor/10);
 
-	speed = m_vehicle->getCurrentSpeedKmHour();
+	float speed = m_vehicle->getCurrentSpeedKmHour();
 
 	return speed;
-}
-
-btVector3 BikeModel::adaptVelocityToRealDirection(btVector3 &velocityXY, float speed, float timeFactor)
-{
-	// adapt velocity vector to real direction
-	// let the bike drift, if the friction is low
-	float bikeFriction = calculateBikeFriction(velocityXY.angle(getDirection()), timeFactor);
-	velocityXY = (1 - bikeFriction) * velocityXY + bikeFriction * getDirection() * speed;
-	if (velocityXY.length() > 0)
-	{
-		velocityXY = velocityXY.normalized() * speed;
-	}
-
-	return velocityXY;
-}
-
-float BikeModel::calculateBikeFriction(const btScalar currentAngle, float timeFactor)
-{
-	// if the handbrake is pulled, reduce friction to allow drifting
-	float bikeFriction = abs(m_vehicleSteering) > BIKE_ROTATION_VALUE
-		? 0.03 * timeFactor
-		: fmin((1.f + timeFactor * 0.13f) * 1.0, 1.0);
-
-	// restrict the drifting angle and increase friction if it gets too big
-	if (abs(currentAngle) > PI_4) {
-		bikeFriction = 0.1 * timeFactor;
-	}
-	return bikeFriction;
 }
 
 
@@ -537,6 +426,7 @@ VehiclePhysicSettings::VehiclePhysicSettings() : reflectionzeug::Object("vehicle
 	addProperty<double>("suspensionCompression", *this, &VPS::SuspensionCompression, &VPS::setSuspensionCompression);
 	addProperty<double>("cubeHalfExtents", *this, &VPS::CubeHalfExtents, &VPS::setCubeHalfExtents);
 	//addProperty<int>("forwardAxis", *this, &VPS::ForwardAxis, &VPS::setForwardAxis);
+	addProperty<double>("connectionHeight", *this, &VPS::ConnectionHeight, &VPS::setConnectionHeight);
 
 	addFunction("log", this, &VPS::log);
 

@@ -33,6 +33,7 @@ namespace troen
 		double	rollInfluence = 00.0;//1.0f;
 		double suspensionRestLength = 00.0;
 		double cubeHalfExtents = 0.0;
+		double connectionHeight = 0.0;
 		bool *changesPending;
 
 
@@ -61,6 +62,8 @@ namespace troen
 		void setForwardAxis(const int &val) { forwardAxis = val; }
 		double CubeHalfExtents() const { return cubeHalfExtents; }
 		void setCubeHalfExtents(const double & val) { cubeHalfExtents = val; }
+		double ConnectionHeight() const { return connectionHeight; }
+		void setConnectionHeight(const double & val) { connectionHeight = val; }
 
 
 		void log(std::string message) {
@@ -93,12 +96,6 @@ namespace troen
 
 		long double getTimeSinceLastUpdate();
 		float updateState(const long double time);
-		void updateAngularVelocity(float speed);
-		float calculatePossibleTurboBoost();
-		float calculateAttenuatedSpeed(float speed);
-		float calculateAcceleratedSpeed(btVector3 velocityXY, float timeFactor);
-		float calculateBikeFriction(const btScalar currentAngle, float timeFactor);
-		btVector3 adaptVelocityToRealDirection(btVector3 &velocityXY, float speed, float timeFactor);
 		void resetState();
 		void freeze();
 

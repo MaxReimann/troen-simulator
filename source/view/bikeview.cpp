@@ -100,7 +100,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 
 	osg::Matrixd initialTransform;
 	initialTransform *= initialTransform.scale(btToOSGVec3(BIKE_DIMENSIONS));
-	initialTransform *= initialTransform.translate(osg::Vec3(0, 0, BIKE_DIMENSIONS.getZ() / 2));
+	initialTransform *= initialTransform.translate(osg::Vec3(0, 0, BIKE_DIMENSIONS.getZ()));
 	
 	osg::Box* unitCube = new osg::Box(osg::Vec3(0, 0, 0), 1.0f);
 	osg::ShapeDrawable* unitCubeDrawable = new osg::ShapeDrawable(unitCube);
@@ -265,17 +265,10 @@ void BikeView::addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo)
 }
 
 
-void BikeView::setWheelTransform(int index, btTransform worldTransform)
+void BikeView::setWheelRotation(int index, btTransform worldTransform)
 {
-	osg::Matrixd mat;
-	mat.identity();
-	mat.setTrans(btToOSGVec3((worldTransform.getOrigin())));
+
+	osg::Matrixd mat =  wheels[index]->getMatrix();
 	mat.setRotate(btToOSGQuat((worldTransform.getRotation())));
-
-	getWorldCoordOfNodeVisitor gWVis;
-
-	m_pat->accept(gWVis);
-	osg::Matrixd invMat = osg::Matrixd::inverse(*gWVis.worldCoordinatesMatrix());
-
-	wheels.at(index)->setMatrix( invMat * mat);
+	wheels[index]->setMatrix(mat);
 }

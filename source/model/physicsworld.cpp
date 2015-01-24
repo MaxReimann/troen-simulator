@@ -198,11 +198,17 @@ PhysicsWorld::~PhysicsWorld()
 
 void PhysicsWorld::initializeWorld()
 {
+	btVector3 worldMin(-15000, -15000, -1000);
+	btVector3 worldMax(15000, 15000, 1000);
+	//m_overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
+	
+	
 	// can be used to used to filter manually potential collision partners
 	m_broadphase = new btDbvtBroadphase();
 
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
+
 
 	// potential bottleneck
 	m_solver = new btSequentialImpulseConstraintSolver;
@@ -385,7 +391,7 @@ void PhysicsWorld::checkForCollisionEvents()
 
 void tickCallback(btDynamicsWorld *world, btScalar timeStep) {
 	PhysicsWorld *w = static_cast<PhysicsWorld *>(world->getWorldUserInfo());
-	w->checkForCollisionEvents();
+	//w->checkForCollisionEvents();
 
 }
 

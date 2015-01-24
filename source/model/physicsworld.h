@@ -73,6 +73,7 @@ namespace troen
 		btDefaultCollisionConfiguration*	m_collisionConfiguration;
 		btCollisionDispatcher*				m_dispatcher;
 		btBroadphaseInterface*				m_broadphase;
+		btBroadphaseInterface*				m_overlappingPairCache;
 
 		// collision events
 		CollisionPairSet m_pairsLastUpdate;

@@ -84,7 +84,7 @@ void BikeController::reloadVehicle()
 	m_bikeModel->removeRaycastVehicle();
 	m_bikeModel->constructVehicleBody(m_world);
 	btTransform trans;
-	trans.setOrigin(m_initialTransform.getOrigin() + btVector3(0.0, 0.0, 20.0));
+	trans.setOrigin(m_initialTransform.getOrigin() + btVector3(0.0, 0.0, 2.0));
 	trans.setRotation(m_initialTransform.getRotation());
 	respawnAt(trans);
 }
@@ -446,7 +446,7 @@ void BikeController::addUniformsToNode(osg::ref_ptr<osg::Group> group)
 void BikeController::attachWorld(std::shared_ptr<PhysicsWorld> world)
 {
 	m_world = world;
-	world->addRigidBodies(getRigidBodies());
+	m_world->addRigidBodies(getRigidBodies());
 	m_bikeModel->constructVehicleBody(world);
 }
 

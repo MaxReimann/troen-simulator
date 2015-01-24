@@ -7,12 +7,14 @@
 #include "../constants.h"
 #include "../controller/abstractcontroller.h"
 #include "../controller/levelcontroller.h"
-
+//#include <btHeightfieldTerrainShape.h>
+#include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 
 using namespace troen;
+extern char MyHeightfield[];
 
 LevelModel::LevelModel(const LevelController* levelController, std::string levelName)
 {
@@ -153,11 +155,48 @@ void LevelModel::addFloor(float yPosition)
 {
 	btPoint size = getLevelSize();
 	m_floors.push_back({
-		btVector3(0, 0, yPosition),
+		btVector3(0, 0, yPosition-10),
 		btVector3(size.first, size.second, 20)
 	});
 
 	addBoxes(m_floors, LEVELGROUNDTYPE);
+
+
+	btScalar maxHeight = 100;
+
+	bool useFloatDatam = false;
+	bool flipQuadEdges = false;
+
+	std::shared_ptr<btHeightfieldTerrainShape> heightFieldShape = std::make_shared<btHeightfieldTerrainShape>(128, 128, MyHeightfield, maxHeight, 2, useFloatDatam, flipQuadEdges);;
+	btVector3 mmin, mmax;
+	heightFieldShape->getAabb(btTransform::getIdentity(), mmin, mmax);
+
+
+	heightFieldShape->setUseDiamondSubdivision(true);
+
+	btVector3 localScaling(200, 200, 1);
+	heightFieldShape->setLocalScaling(localScaling);
+
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(btVector3(0, 0, 50));
+	std::shared_ptr<btDefaultMotionState> groundMotionState
+		= std::make_shared<btDefaultMotionState>(trans);
+
+	btRigidBody::btRigidBodyConstructionInfo
+		groundRigidBodyCI(btScalar(0), groundMotionState.get(), heightFieldShape.get(), btVector3(0, 0, 0));
+
+	std::shared_ptr<btRigidBody> groundRigidBody = std::make_shared<btRigidBody>(groundRigidBodyCI);
+
+	//create ground object
+
+	ObjectInfo*  info = new ObjectInfo(const_cast<LevelController*>(m_levelController), LEVELGROUNDTYPE);
+
+	groundRigidBody->setUserPointer(info);
+
+	m_collisionShapes.push_back(heightFieldShape);
+	m_motionStates.push_back(groundMotionState);
+	m_rigidBodies.push_back(groundRigidBody);
 }
 
 void LevelModel::addBoxes(std::vector<BoxModel> &boxes, COLLISIONTYPE type)
