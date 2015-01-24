@@ -52,6 +52,7 @@ void GameLogic::step(const long double gameloopTime, const long double gameTime)
 		break;
 	case GAME_RUNNING:
 		stepGameRunning(gameloopTime, gameTime);
+		checkForTossedPlayers();
 		checkForFallenPlayers();
 		break;
 	case GAME_OVER:
@@ -161,19 +162,10 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 
 		case FENCETYPE:
 			break;
-
-		case BIKETYPE:
-			handleCollisionOfTwoBikes(
-				dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
-				dynamic_cast<BikeController*>(collisionBodyControllers[otherIndex]),
-				contactManifold);
-			break;
-
-
-
 		case LEVELGROUNDTYPE:
 			break;
 		case NAVIGATION_BOUNDARY:
+			handleNavigationBoundaryCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
 			break;
 		default:
 			break;
@@ -181,19 +173,6 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 	}
 }
 
-
-void GameLogic::handleCollisionOfTwoBikes(
-	BikeController* bike1,
-	BikeController* bike2,
-	btPersistentManifold* contactManifold)
-{
-	std::cout << "[GameLogic::handleCollisionOfTwoBikes]" << std::endl;
-	// TODO
-	// set different thredsholds of collisions between bikes
-	// they dont have as much impact ?
-
-	handleCollisionOfBikeAndNonmovingObject(bike1, bike2, BIKETYPE, contactManifold);
-}
 
 
 void GameLogic::handleCollisionOfBikeAndNonmovingObject(
@@ -208,18 +187,13 @@ void GameLogic::handleCollisionOfBikeAndNonmovingObject(
 
 
 	bike->registerCollision(impulse);
-
-
+	m_timeOfWallCollision = g_gameLoopTime;
 	//
 	// player death
 	//
 	if (bike->player()->isDead())
 	{
 		handlePlayerDeath(bike);
-		handlePlayerDeathNonFence(bike);
-		
-
-
 	}
 }
 
@@ -227,6 +201,8 @@ void GameLogic::handlePlayerDeath(
 	BikeController* bike)
 {
 	bike->player()->increaseDeathCount();
+	bike->player()->hudController()->addCrashedMessage();
+	m_troenGame->bikeTracker()->recordCrash();
 	//handled in bikecontroller::updateModel
 	bike->setState(BikeController::BIKESTATE::RESPAWN, g_gameTime);
 }
@@ -244,30 +220,18 @@ void GameLogic::handleEndZoneCollision(BikeController* bike)
 	if (!bike->player()->hasNextTrack())
 	{
 		m_troenGame->bikeTracker()->writeTrajectoryCSV();
-		bike->player()->hudController()->addAllRoutesFinishedMessage(bike->player());
+		bike->player()->hudController()->addAllRoutesFinishedMessage();
 		m_troenGame->countdownTimer()->addTimer(4000, endGame);
 	}
 
-
 }
 
-
-void GameLogic::handlePlayerDeathNonFence(BikeController* deadBike)
+void GameLogic::handleNavigationBoundaryCollision(BikeController* bike)
 {
-
-	Player* deadPlayer = deadBike->player();
-
-	for (auto player : m_troenGame->m_players)
-	{
-		if (player.get() != deadPlayer)
-		{
-			player->increaseKillCount();
-			if (player->hasGameView())
-			{
-				player->hudController()->addDiedMessage(deadPlayer);
-			}
-		}
-	}
+	m_troenGame->bikeTracker()->recordWrongTurn();
+	bike->getModel()->moveBikeToLastPoint();
+	bike->player()->hudController()->addNavigationErrorMessage();
+	bike->setState(BikeController::BIKESTATE::RESPAWN, g_gameTime);
 }
 
 
@@ -288,7 +252,7 @@ btScalar GameLogic::impulseFromContactManifold(btPersistentManifold* contactMani
 		// let the player die instantly if he hits a wall head-on frontal
 		btVector3 bikeDirection = bike->getModel()->getDirection();
 		btVector3 crossProduct = bikeDirection.normalized().cross(pt.m_normalWorldOnB);
-		if (crossProduct.length() < 0.2 && impulse > 5)
+		if (crossProduct.length() < 0.4)
 		{
 			impulse = BIKE_FENCE_IMPACT_THRESHOLD_HIGH * 5;
 		}
@@ -382,6 +346,26 @@ void GameLogic::showFencesInRadarForPlayer(int id)
 	for (auto player : m_troenGame->m_players)
 	{
 		player->routeController()->showFencesInRadarForPlayer(id);
+	}
+}
+
+void GameLogic::checkForTossedPlayers()
+{
+	for (auto player : m_troenGame->m_players)
+	{
+		//must have collided with wall in last two seconds, to count this
+		if (player->bikeController()->state() == BikeController::DRIVING && g_gameLoopTime - m_timeOfWallCollision < 2000) 
+		{
+			BikeController* bike = player->bikeController().get();
+			btVector3 ypr = bike->getModel()->getEulerYPR();
+			if (abs(ypr.getZ()) > PI_2)
+			{
+				std::cout << "vehicle crashed and rolled to its death" << std::endl;
+				player->increaseHealth(-1 * 1000); //die
+				handlePlayerDeath(bike);
+			}
+
+		}
 	}
 }
 

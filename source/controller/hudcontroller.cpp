@@ -17,8 +17,8 @@ namespace
 		"PLAYER_X\njust hit a wall",
 		"PLAYER_X\njust crashed!"
 	};
-	const std::string diedOnFenceMessage("PLAYER_X\njust crashed into PLAYER_Y's fence");
-	const std::string diedOnFallMessage("PLAYER_X\njust fell into the abyss");
+	const std::string diedOnNaviBoundary("Sorry, wrong turn! Resetting to route..");
+	const std::string diedOnWall("You crashed. Resetting to route..");
 	const std::string allRoutesCompleteMessage("Congrats, you completed all routes!");
 }
 
@@ -33,6 +33,8 @@ m_player(players[id])
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	m_randomGenerator.seed(seed);
+
+	m_ingameMessages = std::deque<std::shared_ptr<IngameMessage>>();
 }
 
 void HUDController::resize(const int width, const int height)
@@ -82,6 +84,15 @@ void HUDController::update(
 		hudview->setCountdownText(-1);
 	}
 
+	//
+	// ingame messages
+	//
+	while (!m_ingameMessages.empty() && m_ingameMessages.front()->endTime < currentGameTime)
+	{
+		m_ingameMessages.pop_front();
+	}
+	hudview->updateIngameMessageTexts(m_ingameMessages);
+
 }
 
 void HUDController::setTrackNode(osg::Node* trackNode)
@@ -90,32 +101,38 @@ void HUDController::setTrackNode(osg::Node* trackNode)
 }
 
 
-void HUDController::addDiedMessage(Player* player)
+void HUDController::addNavigationErrorMessage()
 {
 	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
 
-	std::uniform_int_distribution<int> distribution(0, diedMessages.size() - 1);
-	int n = distribution(m_randomGenerator);
-
-	std::string text = diedMessages[n];
-	std::regex reg("PLAYER_X");
-	text = std::regex_replace(text, reg, player->name());
-
-	message->text = text;
-	message->color = osg::Vec4(player->color(), 1);
+	message->text = diedOnNaviBoundary;
+	message->color = osg::Vec4(1.0, 1.0, 1.0, 1.0);
 	message->endTime = g_gameTime + RESPAWN_DURATION;
 
 	m_ingameMessages.push_back(message);
 }
 
-void HUDController::addAllRoutesFinishedMessage(Player* player)
+void HUDController::addAllRoutesFinishedMessage()
 {
 	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
 
 	std::string text = allRoutesCompleteMessage;
 
 	message->text = text;
-	message->color = osg::Vec4(player->color(), 1);
+	message->color = osg::Vec4(1.0,1.0,1.0,1.0);
+	message->endTime = g_gameTime + RESPAWN_DURATION;
+
+	m_ingameMessages.push_back(message);
+}
+
+void HUDController::addCrashedMessage()
+{
+	std::shared_ptr<IngameMessage> message = std::make_shared<IngameMessage>();
+
+	std::string text = diedOnWall;
+
+	message->text = text;
+	message->color = osg::Vec4(1.0, 1.0, 1.0, 1.0);
 	message->endTime = g_gameTime + RESPAWN_DURATION;
 
 	m_ingameMessages.push_back(message);

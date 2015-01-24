@@ -84,7 +84,7 @@ void BikeController::reloadVehicle()
 	m_bikeModel->removeRaycastVehicle();
 	m_bikeModel->constructVehicleBody(m_world);
 	btTransform trans;
-	trans.setOrigin(m_initialTransform.getOrigin() + btVector3(0.0, 0.0, 2.0));
+	trans.setOrigin(m_initialTransform.getOrigin() + btVector3(0.0, 0.0, 1.0));
 	trans.setRotation(m_initialTransform.getRotation());
 	respawnAt(trans);
 }

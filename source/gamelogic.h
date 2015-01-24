@@ -61,20 +61,18 @@ namespace troen
 			AbstractController* object,
 			const int objectType,
 			btPersistentManifold* contactManifold);
-		void handleCollisionOfTwoBikes(
-			BikeController* bike1,
-			BikeController* bike2,
-			btPersistentManifold* contactManifold);
 		// death handling
 		void handlePlayerDeath(BikeController* bike);
 		void handlePlayerDeathNonFence(BikeController* deadBike);
 		void handleEndZoneCollision(BikeController* bike);
+		void handleNavigationBoundaryCollision(BikeController* bike);
 		// helper
 		float impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike);
 		void playCollisionSound(float impulse);
 		Player* getPlayerWithID(int bikeID);
 
 		void checkForFallenPlayers();
+		void checkForTossedPlayers();
 
 		//
 		// communication links
@@ -96,7 +94,7 @@ namespace troen
 		void stepGameOver(
 			const long double gameloopTime,
 			const long double gameTime);
-
 		bool m_limitedFenceMode;
+		long double m_timeOfWallCollision;
 	};
 }

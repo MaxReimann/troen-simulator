@@ -66,7 +66,7 @@ namespace troen {
 				// Set constraint error (target relative velocity = 0.0)
 				info->m_constraintError[row_index] = 0.0f;
 
-				info->cfm[row_index] = WHEEL_FRICTION_CFM; // Set constraint force mixing
+				info->cfm[row_index] = (btScalar) WHEEL_FRICTION_CFM; // Set constraint force mixing
 
 				// Set maximum friction force according to Coulomb's law
 				// Substitute Pacejka here
@@ -103,7 +103,7 @@ namespace troen {
 				// Set constraint error (target relative velocity = 0.0)
 				info->m_constraintError[row_index] = wheel_velocity;
 
-				info->cfm[row_index] = WHEEL_FRICTION_CFM; // Set constraint force mixing
+				info->cfm[row_index] = (btScalar) WHEEL_FRICTION_CFM; // Set constraint force mixing
 
 				// Set maximum friction force
 				btScalar max_friction = wheel_info.m_wheelsSuspensionForce * wheel_info.m_frictionSlip / info->fps;

@@ -109,8 +109,9 @@ namespace troen
 		osg::Vec3d getPositionOSG();
 		btVector3 getPositionBt();
 		btQuaternion getRotationQuat();
+		btTransform getLastTransform();
 
-		void moveBikeToPosition(const btTransform position);
+		void moveBikeToPosition(btTransform position);
 		float getTurboFactor();
 		void updateTurboFactor(const float newVelocity, const float time);
 		float getInputAcceleration();
@@ -127,6 +128,8 @@ namespace troen
 		void resetBody(btDynamicsWorld *world);
 		double getBrakeForce();
 		void removeRaycastVehicle();
+		btVector3 getEulerYPR();
+		void moveBikeToLastPoint();
 	protected:
 		float m_steeringClamp;
 		float m_steeringIncrement;
@@ -156,6 +159,7 @@ namespace troen
 		VehiclePhysicSettings m_vehicleParameters;
 		std::shared_ptr<CarEngine> m_engine;
 		CustomFrictionConstraint *mfrictionContraint;
+		btTransform m_lastTransform;
 	};
 
 

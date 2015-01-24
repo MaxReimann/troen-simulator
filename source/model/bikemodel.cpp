@@ -242,6 +242,10 @@ float BikeModel::updateState(long double time)
 	m_lastUpdateTime = time;
 	float timeFactor = m_timeSinceLastUpdate / 1000.0;
 
+	btVector3 positionSmoothed = m_carChassis->getWorldTransform().getOrigin() * 0.3 + m_lastTransform.getOrigin() * 0.7;
+	btQuaternion rotationSmoothed = m_carChassis->getWorldTransform().getRotation() * 0.3 + m_lastTransform.getRotation() * 0.7;
+	m_lastTransform.setOrigin(positionSmoothed);
+	m_lastTransform.setRotation(rotationSmoothed);
 
 	// call this exactly once per frame
 	m_vehicleSteering = m_bikeInputState->getSteering();
@@ -289,7 +293,7 @@ float BikeModel::updateState(long double time)
 	//m_vehicle->updateVehicle(timeFactor/10);
 
 	float speed = m_vehicle->getCurrentSpeedKmHour() * METER_PER_MAP_UNIT;
-	std::cout << "speed" << speed << std::endl;
+	//std::cout << "speed" << speed << std::endl;
 
 	return speed;
 }
@@ -363,6 +367,16 @@ btVector3 BikeModel::getPositionBt()
 	return trans.getOrigin();
 }
 
+btVector3 BikeModel::getEulerYPR()
+{
+	btQuaternion rot = m_carChassis->getWorldTransform().getRotation();
+	float yaw, pitch, roll;
+	btMatrix3x3 mat(rot);
+	mat.getEulerYPR(yaw, pitch, roll);
+	
+	return btVector3(yaw, pitch, roll);
+}
+
 
 btQuaternion BikeModel::getRotationQuat()
 {
@@ -394,10 +408,14 @@ btVector3 BikeModel::getDirection()
 	const btVector3 front = btVector3(0, -1, 0);
 	return front.rotate(axis, angle);
 }
-
+void BikeModel::moveBikeToLastPoint()
+{
+	moveBikeToPosition(m_lastTransform);
+}
 
 void BikeModel::moveBikeToPosition(btTransform position)
 {
+	m_vehicle->resetSuspension();
 	m_carChassis->setWorldTransform(position);
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
@@ -407,7 +425,6 @@ void BikeModel::freeze()
 {
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
-
 
 }
 
@@ -419,6 +436,11 @@ void BikeModel::dampOut()
 void BikeModel::clearDamping()
 {
 	m_carChassis->setDamping(0, 0);
+}
+
+btTransform BikeModel::getLastTransform()
+{
+	return m_lastTransform;
 }
 
 
