@@ -13,6 +13,7 @@ namespace troen {
 			m_userIndex = userIndex;
 		};
 
+
 		AbstractController* getUserPointer() {
 			return m_userPointer;
 		}

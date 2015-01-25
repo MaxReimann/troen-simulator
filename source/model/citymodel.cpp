@@ -184,7 +184,7 @@ void CityModel::debugUpdate(int x_pix, int y_pix)
 	}
 }
 
-void CityModel::physicsUpdate(btPersistentManifold *manifold)
+void CityModel::physicsUpdate()
 {
 	osg::Vec2 pos = toVec2(m_levelController->m_troenGame->activeBikeModel()->getPositionBt());
 	osg::Vec2 direction = toVec2(m_levelController->m_troenGame->activeBikeModel()->getDirection());
@@ -320,12 +320,12 @@ osg::Vec2 CityModel::pixelToWorld(osg::Vec2 pixel)
 }
 
 // static wrapper-function to be able to callback the member function
-void CityModel::callbackWrapper(void* pObject, btPersistentManifold *manifold)
+void CityModel::callbackWrapper(void* pObject)
 {
 	CityModel* mySelf = (CityModel*)pObject;
 
 	// call member
-	mySelf->physicsUpdate(manifold);
+	mySelf->physicsUpdate();
 }
 
 osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vector<osg::Vec2> &checks, osg::Vec2 &resultVector)

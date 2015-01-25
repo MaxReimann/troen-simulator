@@ -2,7 +2,7 @@
 #include "..\controller\bikecontroller.h"
 #include "..\model\bikemodel.h"
 #include "qdir.h"
-
+#include "..\player.h"
 
 using namespace troen::tracking;
 
@@ -29,7 +29,7 @@ m_controller(controller), m_frequency(frequency), m_participantNumber(participan
 		if (m_file->open(QFile::WriteOnly | QFile::Truncate))
 		{
 			m_fileStream = new QTextStream(m_file);
-			(*m_fileStream) << "time" << "\t" << "x" << "\t" << "y" << "\t" << "z" << "\t" << "yaw" << "\t" << "velocity" << "\n";
+			(*m_fileStream) << "time" << "\t" << "x" << "\t" << "y" << "\t" << "z" << "\t" << "yaw" << "\t" << "velocity" << "\t" << "speedLimit" << "\n";
 		}
 	}
 
@@ -51,6 +51,7 @@ void TrackBike::update(long double gameTime)
 		bikeState.rotation = m_controller->getModel()->getRotationQuat();
 		bikeState.time = gameTime;
 		bikeState.velocity = m_controller->getModel()->getVelocity();
+		bikeState.speedLimit = m_controller->player()->currentSpeedLimit();
 
 		m_trackedStates.push_back(bikeState);
 	}
@@ -72,7 +73,8 @@ void TrackBike::writeTrajectoryLine(CurrentBikeState& state)
 	(*m_fileStream) << q << "\t";
 	(*m_fileStream) << state.position.x() << "\t" << state.position.y() << "\t" << state.position.z() << "\t";
 	(*m_fileStream) << (float) yaw << "\t";
-	(*m_fileStream) << state.velocity << "\n";
+	(*m_fileStream) << state.velocity << "\t";
+	(*m_fileStream) << state.speedLimit << "\n";
 
 }
 void TrackBike::writeTrajectoryCSV()

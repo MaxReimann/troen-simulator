@@ -9,6 +9,8 @@
 
 // http://stackoverflow.com/questions/3681140/how-do-i-avoid-both-global-variables-and-magic-numbers
 
+
+
 namespace troen
 {
 	// GENERAL

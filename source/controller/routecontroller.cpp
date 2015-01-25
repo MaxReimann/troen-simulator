@@ -62,6 +62,16 @@ void RouteController::createTrack(Route route)
 		m_routeModel->addRigidBodiesToWorld();
 	}
 
+	osg::Vec3 p = m_subdividedPoints[100];
+	btTransform t;
+	t.setIdentity(); t.setOrigin(osgToBtVec3(p));
+
+	addSpeedZone(t);
+}
+
+Speedzone RouteController::findSpeedZone(btGhostObject *obj)
+{
+	return m_routeModel->findSpeedZone(obj);
 }
 
 
@@ -220,6 +230,12 @@ void RouteController::addEndZone()
 	m_routeModel->addEndZoneCylinder(osgToBtVec3((origin + osg::Vec3(0, 0, height / 2.0))), radius, height);
 }
 
+
+void RouteController::addSpeedZone(btTransform position)
+{
+
+	m_routeModel->addSpeedZone(position, 50);
+}
 
 btTransform RouteController::getLastWayPoint()
 {

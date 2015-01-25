@@ -11,6 +11,12 @@
 
 namespace troen
 {
+	struct Speedzone
+	{
+		int speedZoneIndex;
+		int maxSpeed;
+	};
+
 	class RouteController : public AbstractController
 	{
 	public:
@@ -40,6 +46,8 @@ namespace troen
 		btTransform getFirstWayPoint();
 		btTransform getLastWayPoint();
 		void createTrack(Route route);
+		void addSpeedZone(btTransform position);
+		Speedzone findSpeedZone(btGhostObject *obj);
 
 	private:
 		std::shared_ptr<RouteView> m_routeView;

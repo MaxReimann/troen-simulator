@@ -22,6 +22,7 @@
 #include "model/bikemodel.h"
 #include "tracking/trackbike.h"
 #include "util/countdowntimer.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 
 
@@ -148,7 +149,7 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 		int otherIndex = bikeIndex == 0 ? 1 : 0;
 		switch (collisionTypes[otherIndex])
 		{
-		case ZONETYPE:
+		case ENDZONETYPE:
 			handleEndZoneCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
 			break;
 		case LEVELWALLTYPE:
@@ -174,6 +175,41 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 }
 
 
+void GameLogic::triggerEvent(btCollisionObject *obj1, btCollisionObject *obj2)
+{
+
+	ObjectInfo* objectInfos[2];
+	objectInfos[0] = static_cast<ObjectInfo *>(obj1->getUserPointer());
+	objectInfos[1] = static_cast<ObjectInfo *>(obj2->getUserPointer());
+
+	std::array<COLLISIONTYPE, 2> collisionTypes;
+	collisionTypes[0] = static_cast<COLLISIONTYPE>(objectInfos[0]->getUserIndex());
+	collisionTypes[1] = static_cast<COLLISIONTYPE>(objectInfos[1]->getUserIndex());
+
+	AbstractController* collisionBodyControllers[2];
+	collisionBodyControllers[0] = objectInfos[0]->getUserPointer();
+	collisionBodyControllers[1] = objectInfos[1]->getUserPointer();
+	// handle colision events object specific
+	auto bikeIterator = std::find(collisionTypes.cbegin(), collisionTypes.cend(), BIKETYPE);
+
+	if (bikeIterator != collisionTypes.cend())
+	{
+		int bikeIndex = bikeIterator - collisionTypes.cbegin();
+		int otherIndex = bikeIndex == 0 ? 1 : 0;
+		switch (collisionTypes[otherIndex])
+		{
+		case SPEEDZONETYPE:
+			handleSpeedZone(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
+				dynamic_cast<RouteController*>(collisionBodyControllers[otherIndex]),
+				dynamic_cast<btGhostObject*>(otherIndex == 0 ? obj1 : obj2));
+			break;
+		default:
+			std::cout << "unknown zone" << std::endl;
+			break;
+		}
+	}
+
+}
 
 void GameLogic::handleCollisionOfBikeAndNonmovingObject(
 	BikeController* bike,
@@ -234,6 +270,16 @@ void GameLogic::handleNavigationBoundaryCollision(BikeController* bike)
 	bike->setState(BikeController::BIKESTATE::RESPAWN, g_gameTime);
 }
 
+void GameLogic::handleSpeedZone(BikeController* bike, RouteController* routeController, btGhostObject *ghost)
+{
+	Speedzone zone = routeController->findSpeedZone(ghost);
+	bike->player()->setCurrentSpeedLimit(zone.maxSpeed);
+
+#ifdef VERBOSE
+	printf("just entered speedzone with limit %d km/h", zone.maxSpeed);
+#endif
+
+}
 
 btScalar GameLogic::impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike)
 {

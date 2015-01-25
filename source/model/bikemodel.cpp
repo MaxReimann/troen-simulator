@@ -293,6 +293,7 @@ float BikeModel::updateState(long double time)
 	//m_vehicle->updateVehicle(timeFactor/10);
 
 	float speed = m_vehicle->getCurrentSpeedKmHour() * METER_PER_MAP_UNIT;
+	m_oldVelocity = speed;
 	//std::cout << "speed" << speed << std::endl;
 
 	return speed;

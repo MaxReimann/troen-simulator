@@ -4,6 +4,7 @@
 // bullet
 #include <btBulletDynamicsCommon.h>
 #include "LinearMath/btHashMap.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 //troen
 #include "../constants.h"
 #include "../gamelogic.h"
@@ -198,11 +199,7 @@ PhysicsWorld::~PhysicsWorld()
 
 void PhysicsWorld::initializeWorld()
 {
-	btVector3 worldMin(-15000, -15000, -1000);
-	btVector3 worldMax(15000, 15000, 1000);
-	//m_overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
-	
-	
+
 	// can be used to used to filter manually potential collision partners
 	m_broadphase = new btDbvtBroadphase();
 
@@ -216,6 +213,20 @@ void PhysicsWorld::initializeWorld()
 	m_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
 
 	m_world->setGravity(DEFAULT_GRAVITY);
+
+	// setInternalGhostPairCallback():
+	// During Broadphase computation (aabb overlapping pairs), if the broadphase "pair cache" 
+	// has the "internal ghost pair callback" (m_ghostPairCallback) set, then add/remove 
+	// is invoked (for every overlapping aabb pair) on the class set here. The default btGhostPairCallback
+	// add/remove member funcs simply examine each object in the pair and if the object is a "ghost" object,
+	// then the pair is added/removed to the ghosts own internal pair cache via:
+	//      ghost->addOverlappingObjectInternal(proxy1, proxy0);  
+	// Note that the "1st" proxy is always the "other" object, the "2nd" is the ghost object itself.
+	// In the case of "ghost on ghost", both ghosts will each have a pair added with the other ghost as the
+	// 1st (other) parameter.
+	// Simply adding ghost objects "world->addCollisionObject(new btPairCachingHostObject(),...)" will automatically
+	// enable aabb collision pair maintenance for objects.  
+	m_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	
 	//using callbacks is the preffered way to handle collision events, 
 	//the bullet wiki promises, that are no invalid pointers when using this callback
@@ -340,9 +351,13 @@ void PhysicsWorld::checkForCollisionEvents()
 		// ignore manifolds that have no contact points.
 		if (contactManifold->getNumContacts() > 0)
 		{
+			const btCollisionObject *body0 = contactManifold->getBody0();
+			const btCollisionObject *body1 = contactManifold->getBody1();
+
+
 			// get the two rigid bodies involved in the collision
-			const btRigidBody* pBody0 = static_cast<const btRigidBody*>(contactManifold->getBody0());
-			const btRigidBody* pBody1 = static_cast<const btRigidBody*>(contactManifold->getBody1());
+			const btRigidBody* pBody0 = static_cast<const btRigidBody*>(body0);
+			const btRigidBody* pBody1 = static_cast<const btRigidBody*>(body1);
 
 			// create the pair in a predictable order (using the pointer value)
 			bool const swapped = pBody0 > pBody1;
@@ -355,11 +370,19 @@ void PhysicsWorld::checkForCollisionEvents()
 				// insert the pair into the current list
 				pairsThisUpdate.insert(thisPair);
 
+				//if one is a ghost object
+				if (!body0->hasContactResponse() || !body1->hasContactResponse())
+				{
+					if (m_pairsLastUpdate.find(thisPair) == m_pairsLastUpdate.end())
+						m_gameLogic.lock()->triggerEvent((btCollisionObject*)body0, (btCollisionObject*) body1);
+					continue;
+				}
 				// if this pair doesn't exist in the list
 				// from the previous update, it is a new
 				// pair and we must send a collision event
 				if (m_pairsLastUpdate.find(thisPair) == m_pairsLastUpdate.end())
 					m_gameLogic.lock()->collisionEvent((btRigidBody*)pBody0, (btRigidBody*)pBody1, contactManifold);
+			
 		}
 	}
 
@@ -381,9 +404,8 @@ void PhysicsWorld::checkForCollisionEvents()
 	{
 		void *p2Object = pair.first;
 		pt2Function customCollisionDetection = pair.second;
-		btPersistentManifold manifold;
 		//execute custom function on object
-		customCollisionDetection(p2Object, &manifold);
+		customCollisionDetection(p2Object);
 	}
 
 }

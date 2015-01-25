@@ -32,10 +32,10 @@ namespace troen
 		void reload(std::string levelName);
 		const inline btPoint getLevelSize();
 
-		static void callbackWrapper(void* pObject, btPersistentManifold *resultManifold);
+		static void callbackWrapper(void* pObject);
 	protected:
 		void initSpecifics();
-		void physicsUpdate(btPersistentManifold *manifold);
+		void physicsUpdate();
 		void setupDebugView();
 		void writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *markPoints=nullptr, std::vector<osg::Vec2> *markPoints2=nullptr);
 		void debugUpdate(int x_pix, int y_pix);

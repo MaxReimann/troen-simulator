@@ -37,6 +37,7 @@ namespace troen
 		// collision event handling
 		//
 		virtual void collisionEvent(btRigidBody* pBody0, btRigidBody * pBody1, btPersistentManifold* contactManifold);
+		void triggerEvent(btCollisionObject *obj1, btCollisionObject *obj2);
 
 		//
 		// logic methods
@@ -66,6 +67,7 @@ namespace troen
 		void handlePlayerDeathNonFence(BikeController* deadBike);
 		void handleEndZoneCollision(BikeController* bike);
 		void handleNavigationBoundaryCollision(BikeController* bike);
+		void handleSpeedZone(BikeController* bike, RouteController* routecontroller, btGhostObject *ghost);
 		// helper
 		float impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike);
 		void playCollisionSound(float impulse);

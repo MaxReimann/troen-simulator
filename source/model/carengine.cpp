@@ -7,42 +7,42 @@ using namespace troen;
 	{
 		mVehicle = _mVehicle;
 
-		MainGear = 3.85;
+		MainGear = 3.85f;
 		CurGear = 1;
 
-		Gears[0] = -3.68;
-		Gears[1] = 0.;
-		Gears[2] = 4.06;
-		Gears[3] = 2.4;
-		Gears[4] = 1.58;
-		Gears[5] = 1.19;
-		Gears[6] = 1.;
-		Gears[7] = 0.87;
+		Gears[0] = -3.68f;
+		Gears[1] = 0.f;
+		Gears[2] = 4.06f;
+		Gears[3] = 2.4f;
+		Gears[4] = 1.58f;
+		Gears[5] = 1.19f;
+		Gears[6] = 1.f;
+		Gears[7] = 0.87f;
 
-		Torque[0][0] = 1000.;
-		Torque[0][1] = 260.;
+		Torque[0][0] = 1000.f;
+		Torque[0][1] = 260.f;
 
-		Torque[1][0] = 2000.;
-		Torque[1][1] = 340.;
+		Torque[1][0] = 2000.f;
+		Torque[1][1] = 340.f;
 
-		Torque[2][0] = 3500.;
-		Torque[2][1] = 400.;
+		Torque[2][0] = 3500.f;
+		Torque[2][1] = 400.f;
 
-		Torque[3][0] = 7500.;
-		Torque[3][1] = 380.;
+		Torque[3][0] = 7500.f;
+		Torque[3][1] = 380.f;
 
-		Torque[4][0] = 8500.;
-		Torque[4][1] = 340.;
+		Torque[4][0] = 8500.f;
+		Torque[4][1] = 340.f;
 
-		Torque[4][0] = 9500.;
-		Torque[4][1] = 300.;
+		Torque[4][0] = 9500.f;
+		Torque[4][1] = 300.f;
 
-		IdleRPM = 1000.;
-		MaxRPM = 8300.;
+		IdleRPM = 1000.f;
+		MaxRPM = 8300.f;
 
-		RPM = 0.;
+		RPM = 0.f;
 
-		Efficiency = 0.8;
+		Efficiency = 0.8f;
 
 		Clutch = 0;
 		Throttle = 0;

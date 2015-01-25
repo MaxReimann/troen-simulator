@@ -42,6 +42,7 @@ m_health(BIKE_DEFAULT_HEALTH), //TODO: rename constants
 m_points(0),
 m_killCount(0),
 m_deathCount(0),
+m_currentSpeedLimit(30),
 m_hasGameView(config->ownView[id])
 {
 

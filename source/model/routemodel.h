@@ -2,9 +2,13 @@
 // troen
 #include "../forwarddeclarations.h"
 #include "abstractmodel.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
+#include "../controller/routecontroller.h"
 
 namespace troen
 {
+
+
 	class RouteModel : public AbstractModel
 	{
 	public:
@@ -14,9 +18,10 @@ namespace troen
 		void addFencePart(const btVector3 a, const btVector3 b);
 		void removeFirstFencePart();
 		void removeAllFences();
-		void enforceFencePartsLimit();
 		void addEndZoneCylinder(btVector3 origin, double radius, double height);
 		void addRigidBodiesToWorld();
+		void addSpeedZone(btTransform position, int speedLimit);
+		Speedzone findSpeedZone(btGhostObject *collided);
 	private:
 		RouteController* m_routeController;
 		std::weak_ptr<PhysicsWorld> m_world;
@@ -24,6 +29,8 @@ namespace troen
 		std::deque<std::shared_ptr<btRigidBody>>		m_rigidBodyDeque;
 		std::deque<std::shared_ptr<btMotionState>>		m_motionStateDeque;
 		std::deque<std::shared_ptr<btCollisionShape>>	m_collisionShapeDeque;
+		std::deque<std::shared_ptr<btGhostObject>>		m_ghostObjectDeque;
+		std::vector<Speedzone>							m_speedZoneList;
 
 	};
 }

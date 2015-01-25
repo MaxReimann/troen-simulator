@@ -41,6 +41,8 @@ namespace troen
 		const float health()		{ return m_health; };
 		const float points()		{ return m_points; };
 		TroenGame* getTroenGame()	{ return m_troenGame; }
+		int currentSpeedLimit() const { return m_currentSpeedLimit; }
+		void setCurrentSpeedLimit(int val) { m_currentSpeedLimit = val; }
 		//
 		// controllers
 		//
@@ -119,5 +121,6 @@ namespace troen
 		uniformVec		m_isReflectingUs;
 		uniformVec		m_playerPositionUs;
 		int m_currentRoute;
+		int m_currentSpeedLimit;
 	};
 }

@@ -17,6 +17,7 @@ namespace troen
 			btQuaternion rotation;
 			long double time;
 			float velocity;
+			int speedLimit;
 		};
 
 		class TrackBike

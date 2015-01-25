@@ -26,7 +26,7 @@ struct DrawShape
 namespace troen
 {
 
-	typedef void (*pt2Function)(void*, btPersistentManifold *m);
+	typedef void (*pt2Function)(void*);
 
 /*! The PhysicsWorld provides a level of abstraction over the btDynamicsWorld of Bullet. Primarily, it is responsible for stepping the world, adding/removing collision bodies and detecting collisions between them.*/
 	class PhysicsWorld

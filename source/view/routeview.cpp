@@ -334,3 +334,4 @@ void RouteView::addEndZoneCylinder(osg::Vec3 origin, double radius, double heigh
 	//m_node->addChild(m_radarElementsGroup);
 
 }
+

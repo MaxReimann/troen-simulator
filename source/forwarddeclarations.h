@@ -4,6 +4,9 @@
 #include <memory>
 #include <iostream>
 
+//printf debugging
+#define VERBOSE
+
 // This file contains forward declarations of classes
 
 // Qt forward declarations
@@ -58,6 +61,7 @@ class btCollisionShape;
 class btPersistentManifold;
 class btVector3;
 class btTransform;
+class btGhostObject;
 
 namespace scriptzeug {
 	class ScriptEnvironment;
