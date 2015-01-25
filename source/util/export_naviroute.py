@@ -189,8 +189,21 @@ class ExportPath(bpy.types.Operator, ExportHelper):
         if self.export_bounds:
             self.export_boundaries()
 
+        self.export_speedlimit_signs()
+
 
         return {"FINISHED"}
+
+    def export_speedlimit_signs(self):
+        signs = []
+        for obj in bpy.context.selectable_objects:
+            if "BelongsTo" in obj and obj["BelongsTo"] == self.curve_name:
+                signs.append(obj)
+        
+        path = self.filepath.rsplit(".", 1)[0] + ".signs" 
+        with open(path, "w") as output_file:
+            output_file.write(self.get_model_autogen(signs,"SPEEDZONETYPE", True))
+
 
     def export_boundaries(self):
         routes = {}
@@ -208,9 +221,9 @@ class ExportPath(bpy.types.Operator, ExportHelper):
         for bounds in routes.values():
             path = self.filepath.rsplit(".", 1)[0] + ".bounds" 
             with open(path, "w") as output_file:
-                output_file.write(self.get_model_autogen(bounds))
+                output_file.write(self.get_model_autogen(bounds,"NAVIGATION_BOUNDARY"))
 
-    def get_model_autogen(self, obstacles):
+    def get_model_autogen(self, obstacles, collisionType,speedLimits=False):
         #write out the cubes location and dimensions
         auto_gen_code  = ""
         for ob_index, obstacle in enumerate(obstacles):
@@ -227,7 +240,9 @@ class ExportPath(bpy.types.Operator, ExportHelper):
                                                           quat_z=str(get_quat(obstacle).z),
                                                           quat_w=str(get_quat(obstacle).w),
                                                           name=str(obstacle.name),
-                                                          collisionType="NAVIGATION_BOUNDARY")
+                                                          collisionType=collisionType)
+            if speedLimits != False:
+                auto_gen_code += "\n" + str(int(obstacle["SpeedLimit"]))
             if ob_index < len(obstacles) -1:
                 auto_gen_code += "\n"
         return auto_gen_code
