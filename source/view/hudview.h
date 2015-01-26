@@ -76,12 +76,14 @@ namespace troen
 		void setCountdownText(const std::string text);
 		void setTimeText(const double gameTime, const int timeLimit);
 		void toggleVisibility();
+		void updateRandomNumber(std::string number, osg::Vec2 position);
 		//void toggleRadar();
 	private:
 		osg::ref_ptr<osg::Camera> createHUD(const std::vector<std::shared_ptr<Player>>& players);
 		//osg::ref_ptr<osg::Camera> createRadar(const int index);
 
 		void resizeHudComponents(const int width, const int height);
+		osg::ref_ptr<osg::Geometry> createRandNumBackground(osg::BoundingBox bb);
 		osg::ref_ptr<osg::Camera>	m_camera;
 		//osg::ref_ptr<osg::Camera>	m_radarCamera;
 		osg::ref_ptr<osg::Geode>	m_savedGeode;
@@ -92,10 +94,14 @@ namespace troen
 		osg::ref_ptr<osgText::Font> m_font;
 		osg::ref_ptr<osgText::Text> m_speedText;
 		osg::ref_ptr<osgText::Text> m_countdownText;
+		osg::ref_ptr<osgText::Text> m_randomNumberText;
 		//osg::ref_ptr<osgText::Text> m_timeText;
 		osg::ref_ptr<osgText::Text> m_ingameMessageTexts[4];
 
 		osg::Vec4 m_playerColor;
 		osg::Vec4 m_fontColor;
+		osg::ref_ptr<osg::Group> m_mainNode;
+		osg::ref_ptr<osg::Geode> m_backgroundGeode;
+		osg::ref_ptr<osg::MatrixTransform> m_backgroundTransform;
 	};
 }

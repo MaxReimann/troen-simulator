@@ -92,6 +92,10 @@ void HUDController::update(
 		m_ingameMessages.pop_front();
 	}
 	hudview->updateIngameMessageTexts(m_ingameMessages);
+	
+	std::uniform_int_distribution<int> distribution(0, 100);
+	int n = distribution(m_randomGenerator);
+	hudview->updateRandomNumber(std::to_string(n), osg::Vec2(n, n));
 
 }
 

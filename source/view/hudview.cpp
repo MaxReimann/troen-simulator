@@ -17,6 +17,7 @@
 // troen
 #include "../player.h"
 #include "../constants.h"
+#include "osgDB/ReadFile"
 
 using namespace troen;
 
@@ -25,6 +26,7 @@ AbstractView(),
 m_trackNode(nullptr),
 m_speedText(new osgText::Text()),
 m_countdownText(new osgText::Text()),
+m_randomNumberText(new osgText::Text()),
 m_playerColor(osg::Vec4(players[i]->color(),1))
 {
 	m_node->addChild(createHUD(players));
@@ -51,8 +53,11 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 	// draw subgraph after main camera view.
 	m_camera->setRenderOrder(osg::Camera::POST_RENDER);
 
+	m_mainNode = new osg::Group();
+	m_camera->addChild(m_mainNode);
+
 	m_savedGeode = new osg::Geode();
-	m_camera->addChild(m_savedGeode);
+	m_mainNode->addChild(m_savedGeode);
 
 	m_font = osgText::readFontFile("data/fonts/arial.ttf");
 
@@ -88,6 +93,30 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 		DEFAULT_WINDOW_HEIGHT / 3);
 	setCountdownText(-1);
 	m_savedGeode->addDrawable(m_countdownText);
+
+
+	//random numbers
+	initializeText(
+		m_randomNumberText,
+		osg::Vec3(HUD_PROJECTION_SIZE / 2, HUD_PROJECTION_SIZE / 2, 0.f),
+		m_fontColor,
+		osgText::Text::AlignmentType::CENTER_CENTER,
+		DEFAULT_WINDOW_HEIGHT / 6);
+
+	m_savedGeode->addDrawable(m_randomNumberText);
+
+	m_randomNumberText->setText("test");
+	osg::BoundingBox bb;
+	bb.expandBy(m_randomNumberText->getBound());
+	m_randomNumberText->setText("");
+
+	m_backgroundGeode = new osg::Geode();
+	m_backgroundGeode->addDrawable(createRandNumBackground(bb));
+	m_backgroundTransform = new osg::MatrixTransform();
+	m_backgroundTransform->addChild(m_backgroundGeode);
+	m_mainNode->addChild(m_backgroundTransform);
+
+
 
 	//initializeText(
 	//	m_timeText,
@@ -158,6 +187,9 @@ void HUDView::resizeHudComponents(const int width, const int height)
 	m_countdownText->setCharacterSize(height / 3);
 	m_countdownText->setFontResolution(height / 3, height / 3);
 
+	m_randomNumberText->setCharacterSize(height / 10);
+	m_randomNumberText->setFontResolution(height / 10, height / 10);
+
 	//m_timeText->setCharacterSize(height / 8);
 	//m_timeText->setFontResolution(height / 8, height / 8);
 	
@@ -169,7 +201,21 @@ void HUDView::resizeHudComponents(const int width, const int height)
 }
 
 
+void HUDView::updateRandomNumber(std::string number, osg::Vec2 position)
+{
+	m_randomNumberText->setText(number);
+	m_randomNumberText->setPosition(osg::Vec3(position,0.0));
+	if (number == "")
+	{
+		m_backgroundGeode->setNodeMask(0); //invisible
+	}
+	else
+	{
+		m_backgroundGeode->setNodeMask(0xffffffff); //visible
 
+		m_backgroundTransform->setMatrix(osg::Matrix::translate(osg::Vec3(position, 0)));
+	}
+}
 
 void HUDView::setTrackNode(osg::Node* trackNode)
 {
@@ -221,3 +267,29 @@ void HUDView::updateIngameMessageTexts(std::deque<std::shared_ptr<IngameMessage>
 	}
 }
 
+osg::ref_ptr<osg::Geometry> HUDView::createRandNumBackground(osg::BoundingBox bb)
+{
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;
+	osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+	float depth = bb.zMin() - 0.1;
+	vertices->push_back(osg::Vec3(bb.xMin(), bb.yMax(), depth));
+	vertices->push_back(osg::Vec3(bb.xMin(), bb.yMin(), depth));
+	vertices->push_back(osg::Vec3(bb.xMax(), bb.yMin(), depth));
+	vertices->push_back(osg::Vec3(bb.xMax(), bb.yMax(), depth));
+	geom->setVertexArray(vertices);
+	osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+	normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+	geom->setNormalArray(normals, osg::Array::BIND_OVERALL);
+	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+	colors->push_back(osg::Vec4(0.7f, 0.7f, 1.0f, 0.4f));
+	geom->setColorArray(colors, osg::Array::BIND_OVERALL);
+	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+	osg::ref_ptr<osg::StateSet> stateset = geom->getOrCreateStateSet();
+	stateset->setMode(GL_BLEND, osg::StateAttribute::ON);
+	stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	//stateset->setAttribute(new osg::PolygonOffset(1.0f,1.0f),osg::StateAttribute::ON);
+	stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+	return geom;
+
+}
