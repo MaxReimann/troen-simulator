@@ -195,10 +195,10 @@ MainWindow::MainWindow(QWidget * parent)
 	m_studySetupComboBox = new QComboBox;
 
 
-	m_studySetupComboBox->addItem(MAIN_BENDED_NAVI_MAP);
-	m_studySetupComboBox->addItem(MAIN_BENDED_NAVI_NONE);
-	m_studySetupComboBox->addItem(MAIN_NORMAL_NAVI_MAP);
+	//m_studySetupComboBox->addItem(MAIN_BENDED_NAVI_MAP);
+	m_studySetupComboBox->addItem(MAIN_NORMAL_NAVI_NORMAL);
 	m_studySetupComboBox->addItem(MAIN_NORMAL_NAVI_BENDED);
+	m_studySetupComboBox->addItem(MAIN_NORMAL_NAVI_MAP);
 
 	vBoxLayoutUserStudy->addWidget(m_studySetupComboBox);
 

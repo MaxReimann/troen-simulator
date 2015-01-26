@@ -168,27 +168,26 @@ bool TroenGameBuilder::composeSceneGraph()
 	t->m_rootNode = composePostprocessing();
 	t->m_rootNode->addChild(t->m_skyDome.get());
 
+	NavigationWindow *navWindow = localPlayer->navigationWindow().get();
+
 	// viewer root nodes
 	{
 		//node on which bending operation is applied
 		bendedScene->addChild(t->m_sceneNode);
 		localPlayer->playerNode()->addChild(t->m_rootNode);
 
-		if (studySetup == MAIN_NORMAL_NAVI_BENDED || studySetup == MAIN_NORMAL_NAVI_MAP)
+		t->m_rootNode->addChild(t->m_sceneNode); //skip bended node
+		localPlayer->setBendingUniform(MAIN_WINDOW, false); //disable bending shaders
+
+		if (studySetup == MAIN_NORMAL_NAVI_BENDED /*|| studySetup == MAIN_NORMAL_NAVI_MAP  map not supported anymore*/)
 		{
-			t->m_rootNode->addChild(t->m_sceneNode); //skip bended node
-			localPlayer->setBendingUniform(MAIN_WINDOW, false); //disable bending shaders
-			
-			if (studySetup == MAIN_NORMAL_NAVI_BENDED)
-			{
-				localPlayer->navigationWindow()->addElements(bendedScene);
-				localPlayer->setBendingUniform(NAVIGATION_WINDOW, true);
-			}
+			navWindow->addElements(bendedScene);
+			localPlayer->setBendingUniform(NAVIGATION_WINDOW, true);
 		}
-		else if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_BENDED_NAVI_NONE)
+		else if (studySetup == MAIN_NORMAL_NAVI_NORMAL)
 		{
-			localPlayer->setBendingUniform(MAIN_WINDOW, true);
-			t->m_rootNode->addChild(bendedScene);
+			localPlayer->setBendingUniform(NAVIGATION_WINDOW, false);
+			navWindow->addElements(t->m_sceneNode);
 		}
 
 	}
@@ -199,8 +198,8 @@ bool TroenGameBuilder::composeSceneGraph()
 
 		for (auto player : t->m_players)
 		{
-			t->m_sceneNode->addChild(player->routeController()->getViewNode());
 			t->m_sceneNode->addChild(player->bikeController()->getViewNode());
+			navWindow->addElements(player->routeController()->getViewNode());
 		}
 	}
 

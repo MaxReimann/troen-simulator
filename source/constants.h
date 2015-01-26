@@ -28,6 +28,8 @@ namespace troen
 
 	// LOGIC
 	extern const double RESPAWN_DURATION;
+	extern const double RANDOM_NUMBER_DURATION;
+	extern const double RANDOM_NUMBER_INTERVAL;
 	extern const double GAME_START_COUNTDOWN_DURATION;
 
 	//PHYSIS
@@ -110,7 +112,7 @@ namespace troen
 
 	//study Setup
 	extern const QString MAIN_BENDED_NAVI_MAP;
-	extern const QString MAIN_BENDED_NAVI_NONE;
+	extern const QString MAIN_NORMAL_NAVI_NORMAL;
 	extern const QString MAIN_NORMAL_NAVI_MAP;
 	extern const QString MAIN_NORMAL_NAVI_BENDED;
 

@@ -27,6 +27,8 @@ m_trackNode(nullptr),
 m_speedText(new osgText::Text()),
 m_countdownText(new osgText::Text()),
 m_randomNumberText(new osgText::Text()),
+m_width(DEFAULT_WINDOW_WIDTH),
+m_height(DEFAULT_WINDOW_HEIGHT),
 m_playerColor(osg::Vec4(players[i]->color(),1))
 {
 	m_node->addChild(createHUD(players));
@@ -81,7 +83,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 		osg::Vec3(offset, offset, 0),
 		m_fontColor,
 		osgText::Text::AlignmentType::LEFT_BOTTOM,
-		DEFAULT_WINDOW_HEIGHT / 8);
+		DEFAULT_WINDOW_HEIGHT / 6);
 	setSpeedText(0);
 	m_savedGeode->addDrawable(m_speedText);
 
@@ -98,10 +100,10 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 	//random numbers
 	initializeText(
 		m_randomNumberText,
-		osg::Vec3(HUD_PROJECTION_SIZE / 2, HUD_PROJECTION_SIZE / 2, 0.f),
+		osg::Vec3(offset, offset, 0),
 		m_fontColor,
 		osgText::Text::AlignmentType::CENTER_CENTER,
-		DEFAULT_WINDOW_HEIGHT / 6);
+		DEFAULT_WINDOW_HEIGHT / 4);
 
 	m_savedGeode->addDrawable(m_randomNumberText);
 
@@ -172,6 +174,9 @@ void HUDView::resize(const int width,const int height)
 	m_camera->setViewport(hudViewport);
 	resizeHudComponents(width, height);
 
+	m_width = width;
+	m_height = height;
+
 	int normSize = sqrt(width*width + height*height) / 2;
 	int offsetX = normSize / 20;
 	int offsetY = height / 30;
@@ -201,20 +206,33 @@ void HUDView::resizeHudComponents(const int width, const int height)
 }
 
 
-void HUDView::updateRandomNumber(std::string number, osg::Vec2 position)
+void HUDView::updateRandomNumber(std::string number, osg::Vec2 normalizedPosition)
 {
-	m_randomNumberText->setText(number);
-	m_randomNumberText->setPosition(osg::Vec3(position,0.0));
 	if (number == "")
 	{
+		m_randomNumberText->setText("");
 		m_backgroundGeode->setNodeMask(0); //invisible
+		return;
 	}
-	else
-	{
-		m_backgroundGeode->setNodeMask(0xffffffff); //visible
+	
 
-		m_backgroundTransform->setMatrix(osg::Matrix::translate(osg::Vec3(position, 0)));
-	}
+	float offset = m_width / 15;
+	float halfextent = m_backgroundGeode->getBound().radius();
+	float max_x = m_width - offset - halfextent;
+	float max_y = m_height - offset;
+	float p_x = clamp(halfextent, max_x, (normalizedPosition.x() * m_width));
+	float p_y = clamp(halfextent + offset, max_y, (normalizedPosition.y() * m_height));
+
+
+	osg::Vec2 position(p_x, p_y);
+
+	m_backgroundGeode->setNodeMask(0xffffffff); //visible
+
+	m_backgroundTransform->setMatrix(osg::Matrix::translate(osg::Vec3(position, 0)));
+	m_randomNumberText->setPosition(osg::Vec3(position,0.0));
+	m_randomNumberText->setText(number);
+
+
 }
 
 void HUDView::setTrackNode(osg::Node* trackNode)
@@ -271,17 +289,27 @@ osg::ref_ptr<osg::Geometry> HUDView::createRandNumBackground(osg::BoundingBox bb
 {
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;
 	osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
-	float depth = bb.zMin() - 0.1;
-	vertices->push_back(osg::Vec3(bb.xMin(), bb.yMax(), depth));
-	vertices->push_back(osg::Vec3(bb.xMin(), bb.yMin(), depth));
-	vertices->push_back(osg::Vec3(bb.xMax(), bb.yMin(), depth));
-	vertices->push_back(osg::Vec3(bb.xMax(), bb.yMax(), depth));
+
+	osg::Vec3 sizeUpY(0, bb.yMax() + bb.yMax() / 2, 0.0);
+	osg::Vec3 sizeUpYN(0, -bb.yMax() / 2, 0.0);
+	bb.expandBy(sizeUpY);
+	bb.expandBy(sizeUpYN);
+
+
+	osg::Vec3 halfExtent((bb.xMax() - bb.xMin()) / 2.0, (bb.yMax() - bb.yMin()) / 2.0f, 0);
+	float x_length = bb.xMax() - bb.xMin();
+	float y_length = bb.yMax() - bb.yMin();
+
+	vertices->push_back(osg::Vec3(0, y_length, 0) - halfExtent);
+	vertices->push_back(osg::Vec3(0, 0, 0) - halfExtent);
+	vertices->push_back(osg::Vec3(x_length, 0, 0) - halfExtent);
+	vertices->push_back(osg::Vec3(x_length, y_length, 0) - halfExtent);
 	geom->setVertexArray(vertices);
 	osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
 	normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
 	geom->setNormalArray(normals, osg::Array::BIND_OVERALL);
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-	colors->push_back(osg::Vec4(0.7f, 0.7f, 1.0f, 0.4f));
+	colors->push_back(osg::Vec4(0.0f, 0.2f, 1.0f, 0.7f));
 	geom->setColorArray(colors, osg::Array::BIND_OVERALL);
 	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
 	osg::ref_ptr<osg::StateSet> stateset = geom->getOrCreateStateSet();

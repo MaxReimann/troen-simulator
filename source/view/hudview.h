@@ -103,5 +103,7 @@ namespace troen
 		osg::ref_ptr<osg::Group> m_mainNode;
 		osg::ref_ptr<osg::Geode> m_backgroundGeode;
 		osg::ref_ptr<osg::MatrixTransform> m_backgroundTransform;
+		int m_width;
+		int m_height;
 	};
 }

@@ -299,13 +299,13 @@ void TroenGame::resize(int width, int height, int windowType){
 		m_postProcessing->setupTextures(width, height);
 	}
 
-	if (windowType == NAVIGATION_WINDOW || windowType == BOTH_WINDOWS)
+	if (windowType == MAIN_WINDOW)
 	{
 		for (auto player : m_playersWithView)
 		{
 			player->hudController()->resize(width, height);
 		}
-	}
+	} 
 }
 
 

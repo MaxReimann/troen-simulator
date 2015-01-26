@@ -25,6 +25,8 @@ namespace troen
 	// LOGIC
 	const double RESPAWN_DURATION(4000);
 	const double GAME_START_COUNTDOWN_DURATION(3000);
+	const double RANDOM_NUMBER_DURATION(500);
+	const double RANDOM_NUMBER_INTERVAL(1000);
 
 	//PHYSIS
 	const btVector3 DEFAULT_GRAVITY(0,0,-10);
@@ -112,9 +114,8 @@ namespace troen
 
 
 	// study setup
-	const QString MAIN_BENDED_NAVI_MAP("Main:Bended Nav:Map");
-	const QString MAIN_BENDED_NAVI_NONE("Main:Bended Nav:None");
+	const QString MAIN_NORMAL_NAVI_NORMAL("Main:Normal Nav:Normal");
 	const QString MAIN_NORMAL_NAVI_MAP("Main:Normal Nav:Map");
 	const QString MAIN_NORMAL_NAVI_BENDED("Main:Normal Nav:Bended");
-	const QString windowSetupChoices[] { MAIN_BENDED_NAVI_MAP, MAIN_BENDED_NAVI_NONE, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
+	const QString windowSetupChoices[] { MAIN_NORMAL_NAVI_NORMAL, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
 }

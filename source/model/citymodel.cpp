@@ -127,6 +127,8 @@ Speedzone CityModel::findSpeedZone(btGhostObject *collided)
 		}
 		i++;
 	}
+
+	return { 0, 0 };
 }
 
 void CityModel::removeSpeedZones()

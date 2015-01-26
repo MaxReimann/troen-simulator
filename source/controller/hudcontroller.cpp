@@ -27,7 +27,9 @@ using namespace troen;
 HUDController::HUDController(const int id,
 	const std::vector<std::shared_ptr<Player>>& players) :
 AbstractController(),
-m_player(players[id])
+m_player(players[id]),
+m_nextRandNumStart(8000),
+m_lastRandNumStart(0)
 {
 	m_view = m_HUDView = std::make_shared<HUDView>(id, players);
 
@@ -92,16 +94,36 @@ void HUDController::update(
 		m_ingameMessages.pop_front();
 	}
 	hudview->updateIngameMessageTexts(m_ingameMessages);
-	
-	std::uniform_int_distribution<int> distribution(0, 100);
-	int n = distribution(m_randomGenerator);
-	hudview->updateRandomNumber(std::to_string(n), osg::Vec2(n, n));
 
+	updateRandomNumbers(currentGameloopTime);
+	
 }
 
 void HUDController::setTrackNode(osg::Node* trackNode)
 {
     m_HUDView->setTrackNode(trackNode);
+}
+
+void HUDController::updateRandomNumbers(const long double currentGameloopTime)
+{
+	if (currentGameloopTime >= m_nextRandNumStart)
+	{
+		std::uniform_int_distribution<int> randNumDist1(0, 1000);
+		int n = randNumDist1(m_randomGenerator);
+		int n2 = randNumDist1(m_randomGenerator);
+		m_HUDView->updateRandomNumber(std::to_string(n), osg::Vec2(n/1000.0f, n2/1000.f));
+
+		std::uniform_int_distribution<int> randNumDist2(-500, 500);
+		m_lastRandNumStart = currentGameloopTime;
+		m_nextRandNumStart = currentGameloopTime + RANDOM_NUMBER_INTERVAL + RANDOM_NUMBER_DURATION + randNumDist2(m_randomGenerator);
+	} 
+	else if (currentGameloopTime >= m_lastRandNumStart + RANDOM_NUMBER_DURATION)
+	{
+		m_HUDView->updateRandomNumber("", osg::Vec2(0, 0));
+	}
+
+
+
 }
 
 

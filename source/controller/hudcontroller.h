@@ -42,11 +42,14 @@ namespace troen
 		void addAllRoutesFinishedMessage();
 		void addCrashedMessage();
 		void toggleVisibility();
+		void updateRandomNumbers(const long double currentGameloopTime);
 	private:
 		std::shared_ptr<HUDView> m_HUDView;
 		std::deque<std::shared_ptr<IngameMessage>> m_ingameMessages;
 		std::default_random_engine m_randomGenerator;
 
 		std::weak_ptr<Player> m_player;
+		long double m_nextRandNumStart;
+		long double m_lastRandNumStart;
 	};
 }

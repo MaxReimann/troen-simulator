@@ -176,6 +176,7 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 void BikeModel::removeRaycastVehicle()
 {
 	m_world->getDrawShapes().clear();
+
 	m_world->getDiscreteWorld()->removeVehicle(m_vehicle);
 	delete m_vehicle;
 }
@@ -406,7 +407,7 @@ btVector3 BikeModel::getDirection()
 {
 	float angle = m_carChassis->getOrientation().getAngle();
 	btVector3 axis = m_carChassis->getOrientation().getAxis();
-	const btVector3 front = btVector3(0, -1, 0);
+	const btVector3 front = btVector3(0, 1, 0);
 	return front.rotate(axis, angle);
 }
 void BikeModel::moveBikeToLastPoint()
