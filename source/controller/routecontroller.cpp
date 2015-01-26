@@ -7,6 +7,7 @@
 #include "../view/routeview.h"
 #include "../model/routemodel.h"
 #include "../model/physicsworld.h"
+#include "../model/levelmodel.h"
 
 
 using namespace troen;
@@ -65,13 +66,6 @@ void RouteController::createTrack(Route route)
 	osg::Vec3 p = m_subdividedPoints[100];
 	btTransform t;
 	t.setIdentity(); t.setOrigin(osgToBtVec3(p));
-
-	addSpeedZone(t);
-}
-
-Speedzone RouteController::findSpeedZone(btGhostObject *obj)
-{
-	return m_routeModel->findSpeedZone(obj);
 }
 
 
@@ -231,11 +225,7 @@ void RouteController::addEndZone()
 }
 
 
-void RouteController::addSpeedZone(btTransform position)
-{
 
-	m_routeModel->addSpeedZone(position, 50);
-}
 
 btTransform RouteController::getLastWayPoint()
 {

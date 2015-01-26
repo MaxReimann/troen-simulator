@@ -4,6 +4,7 @@
 // troen
 #include "abstractcontroller.h"
 #include "../forwarddeclarations.h"
+#include "../model/levelmodel.h"
 
 namespace troen
 {
@@ -12,6 +13,13 @@ namespace troen
 		TROEN,
 		BERLIN
 	};
+
+	struct Speedzone
+	{
+		int speedZoneIndex;
+		int maxSpeed;
+	};
+
 	class LevelController : public AbstractController
 	{
 		friend class LevelModel;
@@ -27,6 +35,11 @@ namespace troen
 		osg::ref_ptr<osg::Group>  getFloorView();
 		std::shared_ptr<LevelModel> getAsLevelModel();
 		std::shared_ptr<CityModel> getAsCityModel();
+		std::shared_ptr<CityView> getAsCityView();
+		std::vector<BoxModel> getSpeedZones(std::string path);
+
+		void addSpeedZones(std::string filePath);
+		Speedzone findSpeedZone(btGhostObject *obj);
 
 		void reload();
 		void addBoundaries(std::string path);
@@ -34,7 +47,7 @@ namespace troen
 
 		void addRigidBodiesToWorld();
 		void removeRigidBodiesFromWorld();
-		void removeTemporaries(bool walls, bool boundaries);
+		void removeTemporaries(bool walls=true, bool boundaries=true, bool speedZones = true);
 		void removeBoundaries();
 		TroenGame* m_troenGame;
 	protected:

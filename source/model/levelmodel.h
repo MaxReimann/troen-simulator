@@ -41,6 +41,7 @@ namespace troen
 		btQuaternion rotation;
 		std::string name;
 		troen::COLLISIONTYPE collisionType;
+		int speedLimit;
 	};
 
 
@@ -48,7 +49,7 @@ namespace troen
 	{
 		friend LevelController;
 	public:
-		LevelModel(const LevelController* levelController, std::string levelName);
+		LevelModel(LevelController* levelController, std::string levelName);
 		virtual ~LevelModel(){};
 		virtual const btPoint getLevelSize();
 		
@@ -57,15 +58,15 @@ namespace troen
 		virtual std::vector<BoxModel>& getObstacles() { return m_obstacles; };
 		virtual void initSpecifics();
 
-
+		std::vector<BoxModel> parseLevelFile(std::string filePath, bool useSpeedLimit=false);
 	protected:
-		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
+		virtual void attachWorld(std::shared_ptr<PhysicsWorld> &world);
 		virtual void addBoxes(std::vector<BoxModel> &boxes, const COLLISIONTYPE type = ABSTRACTTYPE);
 		virtual void addFloor(const float yPosition);
 
 		void addObstaclesFromFile(std::string levelName);
 		void addObstaclesFromFile(std::string levelName, std::string filePath);
-		const LevelController* m_levelController;
+		LevelController* m_levelController;
 
 		std::vector<BoxModel> m_floors;
 		std::vector<BoxModel> m_obstacles;

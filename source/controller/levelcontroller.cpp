@@ -15,6 +15,7 @@
 
 #include "../troengame.h"
 #include "../model/objectinfo.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 
 using namespace troen;
@@ -91,7 +92,7 @@ osg::ref_ptr<osg::Group>  LevelController::getFloorView()
 void LevelController::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 {
 	m_world = world;
-	getAsLevelModel()->attachWorld(world);
+	getAsCityModel()->attachWorld(world);
 }
 
 void LevelController::addBoundaries(std::string path)
@@ -108,12 +109,50 @@ void LevelController::addBoundaries(std::string path)
 	m_levelModel->addObstaclesFromFile("", path);
 }
 
-void LevelController::removeTemporaries(bool walls, bool boundaries)
+Speedzone LevelController::findSpeedZone(btGhostObject *obj)
+{
+	return getAsCityModel()->findSpeedZone(obj);
+}
+
+void LevelController::addSpeedZones(std::string filePath)
+{
+	for (auto zone : getSpeedZones(filePath))
+	{
+		btTransform trans;
+		trans.setOrigin(zone.center);
+		trans.setRotation(zone.rotation);
+		btQuaternion rot = trans.getRotation();
+		rot *= btQuaternion(btVector3(0, 0, 1), PI_2); //rotate by 90 deg
+		trans.setRotation(rot);
+		getAsCityModel()->addSpeedZone(trans, zone.speedLimit);
+
+		getAsCityView()->addSpeedZone(btToOSGVec3((zone.center)), btToOSGQuat((trans.getRotation())), zone.speedLimit);
+	}
+}
+
+
+std::vector<BoxModel> LevelController::getSpeedZones(std::string path)
+{
+	if (path.find("signs") == std::string::npos)
+	{
+		//change ending
+		int i = path.length() - 1;
+		while (path.at(i) != '.' && i >= 0) i--;
+		path = path.substr(0, i + 1) + "signs";
+		std::cout << "path: " << path << std::endl;
+	}
+
+	return m_levelModel->parseLevelFile(path, true);
+}
+
+void LevelController::removeTemporaries(bool walls, bool boundaries, bool speedZones)
 {
 	if (walls)
 		getAsCityModel()->clearTemporaryWalls();
 	if (boundaries)
 		removeBoundaries();
+	if (speedZones)
+		getAsCityModel()->removeSpeedZones();
 }
 
 void LevelController::removeBoundaries()
@@ -181,6 +220,11 @@ std::shared_ptr<LevelModel> LevelController::getAsLevelModel()
 std::shared_ptr<CityModel> LevelController::getAsCityModel()
 {
 	return std::dynamic_pointer_cast<CityModel>(m_model);
+}
+
+std::shared_ptr<CityView> LevelController::getAsCityView()
+{
+	return std::dynamic_pointer_cast<CityView>(m_view);
 }
 
 

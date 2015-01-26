@@ -32,6 +32,7 @@
 #include "../model/physicsworld.h"
 #include "../util/chronotimer.h"
 #include "objectinfo.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 
 
@@ -56,7 +57,7 @@ inline T posMod(T a, T b)
 	return (a%b + b) % b;
 }
 
-CityModel::CityModel(const LevelController* levelController, std::string levelName) :
+CityModel::CityModel(LevelController* levelController, std::string levelName) :
 LevelModel(levelController, levelName)
 {
 	m_collisionImage = QImage("data/textures/berlin_binary_detailed.png");
@@ -68,6 +69,7 @@ LevelModel(levelController, levelName)
 		osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0),
 		osg::Vec2(0.0, 0.0), osg::Vec2(0.0, 0.0)};
 	m_lastBodies = std::vector<std::shared_ptr<rigidBodyWrap>>();
+	m_speedZoneList = std::vector<Speedzone>();
 
 	if (debugging)
 	{
@@ -83,6 +85,56 @@ void CityModel::initSpecifics()
 }
 
 
+void CityModel::attachWorld(std::shared_ptr<PhysicsWorld> &world)
+{
+	LevelModel::attachWorld(world);
+	for (auto speedzone : m_ghostObjectList)
+	{
+		m_world->getDiscreteWorld()->addCollisionObject(speedzone.get(), btBroadphaseProxy::SensorTrigger,
+			btBroadphaseProxy::DefaultFilter & ~btBroadphaseProxy::SensorTrigger);
+	}
+}
+
+
+
+void CityModel::addSpeedZone(btTransform position, int speedLimit)
+{
+	std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
+	position.setOrigin(position.getOrigin() - btVector3(50, 0, 0));
+	ghostObject->setWorldTransform(position);
+
+	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(150, 10, 10));
+	ghostObject->setCollisionShape(boxShape.get());
+	ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+	ObjectInfo* info = new ObjectInfo(m_levelController, SPEEDZONETYPE);
+	ghostObject->setUserPointer(info);
+
+
+	m_collisionShapes.push_back(boxShape);
+	m_ghostObjectList.push_back(ghostObject);
+	m_speedZoneList.push_back({ m_speedZoneList.size(), speedLimit });
+}
+
+Speedzone CityModel::findSpeedZone(btGhostObject *collided)
+{
+	int i = 0;
+	for (auto speedZone : m_ghostObjectList)
+	{
+		if (speedZone.get() == collided)
+		{
+			return m_speedZoneList[i];
+		}
+		i++;
+	}
+}
+
+void CityModel::removeSpeedZones()
+{
+	for (auto ghostObject : m_ghostObjectList)
+		m_world->removeCollisionObject(ghostObject.get());
+	m_ghostObjectList.clear();
+}
 
 void CityModel::reload(std::string levelName)
 {

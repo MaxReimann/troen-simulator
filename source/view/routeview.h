@@ -33,6 +33,7 @@ namespace troen
 		void showFencesInRadarForPlayer(const int id);
 		void hideFencesInRadarForPlayer(const int id);
 
+
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool val);
 		std::vector<osg::Vec3> subdivide(std::vector<osg::Vec3>& input, int level);
@@ -63,5 +64,6 @@ namespace troen
 		RouteController* m_fenceController;
 		int m_stripPointers[4];
 		bool m_emptyCoords;
+
 	};
 }

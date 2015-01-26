@@ -200,7 +200,7 @@ void GameLogic::triggerEvent(btCollisionObject *obj1, btCollisionObject *obj2)
 		{
 		case SPEEDZONETYPE:
 			handleSpeedZone(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
-				dynamic_cast<RouteController*>(collisionBodyControllers[otherIndex]),
+				dynamic_cast<LevelController*>(collisionBodyControllers[otherIndex]),
 				dynamic_cast<btGhostObject*>(otherIndex == 0 ? obj1 : obj2));
 			break;
 		default:
@@ -270,9 +270,9 @@ void GameLogic::handleNavigationBoundaryCollision(BikeController* bike)
 	bike->setState(BikeController::BIKESTATE::RESPAWN, g_gameTime);
 }
 
-void GameLogic::handleSpeedZone(BikeController* bike, RouteController* routeController, btGhostObject *ghost)
+void GameLogic::handleSpeedZone(BikeController* bike, LevelController* levelController, btGhostObject *ghost)
 {
-	Speedzone zone = routeController->findSpeedZone(ghost);
+	Speedzone zone = levelController->findSpeedZone(ghost);
 	bike->player()->setCurrentSpeedLimit(zone.maxSpeed);
 
 #ifdef VERBOSE

@@ -16,7 +16,7 @@
 using namespace troen;
 extern char MyHeightfield[];
 
-LevelModel::LevelModel(const LevelController* levelController, std::string levelName)
+LevelModel::LevelModel(LevelController* levelController, std::string levelName)
 {
 	AbstractModel();
 	m_levelController = levelController;
@@ -55,20 +55,32 @@ void LevelModel::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 
 void LevelModel::addObstaclesFromFile(std::string levelName, std::string filePath)
 {
+
+	std::vector<BoxModel> newObstacles = parseLevelFile(filePath, false);
+	m_obstacles.insert(m_obstacles.end(), newObstacles.begin(), newObstacles.end());
+	addBoxes(m_obstacles);
+}
+
+
+std::vector<BoxModel> LevelModel::parseLevelFile(std::string filePath, bool useSpeedLimit)
+{
+
 	std::string line;
+	std::ifstream input(filePath);
+	std::vector<BoxModel> newObstacles;
 
 	btVector3 center, dimensions;
 	btQuaternion rotation;
 	std::string name, collisionTypeString;
-
-	std::ifstream input(filePath);
-	std::vector<BoxModel> newObstacles;
+	
 
 	while (std::getline(input, line)) {
 
+		double x, y, z, w;
+
 		QString qLine;
 
-		double x, y, z, w;
+		int speed;
 
 		// center
 
@@ -132,7 +144,7 @@ void LevelModel::addObstaclesFromFile(std::string levelName, std::string filePat
 		std::getline(input, line);
 		collisionTypeString = line;
 
-		const std::string collisionTypes[10] = { "ABSTRACTTYPE", "BIKETYPE", "LEVELTYPE", "LEVELWALLTYPE", "LEVELGROUNDTYPE", "LEVELOBSTACLETYPE", "FENCETYPE", "ITEMTYPE", "ZONETYPE" , "NAVIGATION_BOUNDARY" };
+		const std::string collisionTypes[10] = { "ABSTRACTTYPE", "BIKETYPE", "LEVELTYPE", "LEVELWALLTYPE", "LEVELGROUNDTYPE", "LEVELOBSTACLETYPE", "FENCETYPE", "ITEMTYPE", "ZONETYPE", "NAVIGATION_BOUNDARY" };
 		int index = 0;
 		for (auto type : collisionTypes) {
 			if (type == collisionTypeString)
@@ -143,13 +155,20 @@ void LevelModel::addObstaclesFromFile(std::string levelName, std::string filePat
 		troen::COLLISIONTYPE collisionType = static_cast<troen::COLLISIONTYPE>(index);
 
 		BoxModel newBox(center, dimensions, rotation, name, collisionType);
+
+		if (useSpeedLimit)
+		{
+			std::getline(input, line);
+			qLine = QString::fromStdString(line);
+			speed = qLine.toInt();
+			newBox.speedLimit = speed;
+		}
+
 		newObstacles.push_back(newBox);
 	}
 
-	m_obstacles.insert(m_obstacles.end(), newObstacles.begin(), newObstacles.end());
-	addBoxes(m_obstacles);
+	return newObstacles;
 }
-
 
 void LevelModel::addFloor(float yPosition)
 {

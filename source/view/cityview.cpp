@@ -37,6 +37,7 @@ void CityView::initSpecifics(std::shared_ptr<AbstractModel> model)
 	m_model = model;
 	 //freom blender file
 	osg::Vec2 levelSize = pairToVec2(getCityModel()->getLevelSize());
+	loadSpeedSigns();
 
 
 	m_node->addChild(constructFloors(levelSize));
@@ -87,3 +88,38 @@ std::shared_ptr<CityModel> CityView::getCityModel()
 	return std::dynamic_pointer_cast<CityModel>(m_model);
 }
 
+
+
+
+void CityView::loadSpeedSigns()
+{
+	std::string filePath("data/models/signs/");
+	m_zone30 = osgDB::readNodeFile(filePath + "30Zone.obj");
+	m_zone50 = osgDB::readNodeFile(filePath + "50Zone.obj");
+	
+	m_signsGroup = new osg::Group();
+	m_signsGroup->setName("signsGroup");
+	m_node->addChild(m_signsGroup);
+	m_signsGroup->setNodeMask(CAMERA_MASK_MAIN);
+
+	setTexture(m_signsGroup->getOrCreateStateSet(), "data/models/signs/speedlimits.tga", 0);
+	addShaderAndUniforms(m_signsGroup, shaders::DEFAULT, osg::Vec2f(LEVEL_SIZE, LEVEL_SIZE), DEFAULT, 1.0);
+
+	
+}
+
+void CityView::addSpeedZone(osg::Vec3 position, osg::Quat rotation, int speedLimit)
+{
+	std::cout << position.x() << std::endl;
+	osg::ref_ptr<osg::MatrixTransform> mxt = new osg::MatrixTransform;
+	osg::Matrixd mat = osg::Matrix::translate(position);
+	mat.setRotate(rotation);
+	mxt->setMatrix(mat);
+
+	if (speedLimit == 30)
+		mxt->addChild(m_zone30);
+	else if (speedLimit == 50)
+		mxt->addChild(m_zone50);
+
+	m_signsGroup->addChild(mxt);
+}

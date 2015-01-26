@@ -14,6 +14,7 @@
 #include "osg/Vec3"
 
 #include "../util/basicshapes.h"
+#include "osgDB/ReadFile"
 
 using namespace troen;
 

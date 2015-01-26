@@ -26,11 +26,7 @@ void RouteModel::addRigidBodiesToWorld()
 {
 	for (auto boundary : m_rigidBodyDeque)
 		m_world.lock()->addRigidBody(boundary.get());
-	for (auto speedzone : m_ghostObjectDeque)
-	{
-		m_world.lock()->getDiscreteWorld()->addCollisionObject(speedzone.get(), btBroadphaseProxy::SensorTrigger, 
-			btBroadphaseProxy::DefaultFilter & ~btBroadphaseProxy::SensorTrigger);
-	}
+
 }
 
 
@@ -43,9 +39,7 @@ void RouteModel::removeAllFences()
 	m_motionStateDeque.clear();
 	m_collisionShapeDeque.clear();
 
-	for (auto ghostObject : m_ghostObjectDeque)
-		m_world.lock()->removeCollisionObject(ghostObject.get());
-	m_ghostObjectDeque.clear();
+
 }
 
 
@@ -81,38 +75,6 @@ void RouteModel::addEndZoneCylinder(btVector3 origin, double radius, double heig
 	m_motionStateDeque.push_back(zoneMotionState);
 	m_rigidBodyDeque.push_back(zoneRigidBody);
 
-}
-
-
-void RouteModel::addSpeedZone(btTransform position, int speedLimit)
-{
-	std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
-	ghostObject->setWorldTransform(position);
-
-	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(40, 10, 10));
-	ghostObject->setCollisionShape(boxShape.get());
-	ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
-	
-	ObjectInfo* info = new ObjectInfo(m_routeController, SPEEDZONETYPE);
-	ghostObject->setUserPointer(info);
-
-	
-	m_collisionShapeDeque.push_back(boxShape);
-	m_ghostObjectDeque.push_back(ghostObject);
-	m_speedZoneList.push_back({ m_speedZoneList.size(), speedLimit });
-}
-
-Speedzone RouteModel::findSpeedZone(btGhostObject *collided)
-{
-	int i = 0;
-	for (auto speedZone : m_ghostObjectDeque)
-	{
-		if (speedZone.get() == collided)
-		{
-			return m_speedZoneList[i];
-		}
-		i++;
-	}
 }
 
 

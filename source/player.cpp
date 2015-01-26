@@ -24,6 +24,7 @@
 #include "view/nodefollowcameramanipulator.h"
 
 #include "model/bikemodel.h"
+#include "model/levelmodel.h"
 
 #include "navigation/routeparser.h"
 
@@ -78,8 +79,10 @@ m_hasGameView(config->ownView[id])
 		game->resourcePool());
 
 
-	game->levelController()->addBoundaries(m_routes.at(m_currentRoute).filePath);
 	m_routeController = std::make_shared<RouteController>(this, initialTransform, m_routes[m_currentRoute]);
+	std::string routesPath = m_routes.at(m_currentRoute).filePath;
+	game->levelController()->addBoundaries(routesPath);
+	game->levelController()->addSpeedZones(routesPath);
 
 	// HUDController must be initialized later, because it
 	// can only be created, once all Players are created

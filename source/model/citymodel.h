@@ -3,6 +3,7 @@
 //troen
 #include "../forwarddeclarations.h"
 #include "abstractmodel.h"
+#include "../controller/levelcontroller.h"
 #include <btBulletDynamicsCommon.h>
 
 #include "levelmodel.h"
@@ -28,11 +29,12 @@ namespace troen
 	{
 		friend LevelController;
 	public:
-		CityModel(const LevelController* levelController, std::string levelName);
+		CityModel(LevelController* levelController, std::string levelName);
 		void reload(std::string levelName);
 		const inline btPoint getLevelSize();
 
 		static void callbackWrapper(void* pObject);
+		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
 	protected:
 		void initSpecifics();
 		void physicsUpdate();
@@ -44,6 +46,9 @@ namespace troen
 		inline osg::Vec2 pixelToWorld(osg::Vec2 pixel);
 		osg::Vec2 findBorder(osg::Vec2 startI, osg::Vec2 direction);
 		void clearTemporaryWalls();
+		void addSpeedZone(btTransform position, int speedLimit);
+		Speedzone findSpeedZone(btGhostObject *collided);
+		void removeSpeedZones();
 		QImage m_collisionImage;
 		int m_count;
 		osg::ref_ptr<osgViewer::View> m_view;
@@ -57,6 +62,8 @@ namespace troen
 		osg::ref_ptr<osg::Image> m_image;
 		std::vector<osg::Vec2> m_checks;
 		std::vector<std::shared_ptr<rigidBodyWrap>> m_lastBodies;
+		std::vector<std::shared_ptr<btGhostObject>>		m_ghostObjectList;
+		std::vector<Speedzone>							m_speedZoneList;
 	};
 
 }

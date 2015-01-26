@@ -291,6 +291,8 @@ namespace troen
 #define compDiv(v1,v2) \
 	osg::Vec2(v1.x() / v2.x(), v1.y() / v2.y())
 
+#define vecToString(v) \
+	(std::to_string(v.x()) + " " + std::to_string(v.y()) + " " + std::to_string(v.z()))
 
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/
 

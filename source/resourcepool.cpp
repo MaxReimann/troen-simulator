@@ -76,7 +76,9 @@ osg::Image* ResourcePool::getImage(TextureResource texture)
 		readData();
 
 	if (!m_images[texture]->valid() || !m_images[texture] || m_images[texture]->getImageSizeInBytes() <= 0) {
+#ifdef VERBOSE
 		std::cout << "rereading data for texture: " << texture << std::endl;
+#endif
 		readData();	
 	}
 

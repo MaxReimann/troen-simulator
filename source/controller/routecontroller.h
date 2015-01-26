@@ -8,14 +8,10 @@
 
 #include <osg/Vec3>
 #include "../navigation/routeparser.h"
+#include "../model/levelmodel.h"
 
 namespace troen
 {
-	struct Speedzone
-	{
-		int speedZoneIndex;
-		int maxSpeed;
-	};
 
 	class RouteController : public AbstractController
 	{
@@ -46,8 +42,7 @@ namespace troen
 		btTransform getFirstWayPoint();
 		btTransform getLastWayPoint();
 		void createTrack(Route route);
-		void addSpeedZone(btTransform position);
-		Speedzone findSpeedZone(btGhostObject *obj);
+
 
 	private:
 		std::shared_ptr<RouteView> m_routeView;
