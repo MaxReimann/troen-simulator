@@ -94,8 +94,8 @@ std::shared_ptr<CityModel> CityView::getCityModel()
 void CityView::loadSpeedSigns()
 {
 	std::string filePath("data/models/signs/");
-	m_zone30 = osgDB::readNodeFile(filePath + "30Zone.obj");
-	m_zone50 = osgDB::readNodeFile(filePath + "50Zone.obj");
+	m_zone30 = osgDB::readNodeFile(filePath + "30Zone.ive");
+	m_zone50 = osgDB::readNodeFile(filePath + "50Zone.ive");
 	
 	m_signsGroup = new osg::Group();
 	m_signsGroup->setName("signsGroup");
