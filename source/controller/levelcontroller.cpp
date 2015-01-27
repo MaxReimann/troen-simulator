@@ -99,6 +99,7 @@ void LevelController::addBoundaries(std::string path)
 {
 	if (path.find("bounds") == std::string::npos)
 	{
+
 		//change ending
 		int i = path.length() - 1;
 		while (path.at(i) != '.' && i >= 0) i--;
@@ -106,7 +107,10 @@ void LevelController::addBoundaries(std::string path)
 		std::cout << "path: " << path << std::endl;
 
 	}
-	m_levelModel->addObstaclesFromFile("", path);
+	std::vector<BoxModel> boxes = m_levelModel->parseLevelFile(path, false);
+	getAsCityModel()->addBoxesAsGhosts(boxes, NAVIGATION_BOUNDARY);
+
+	//getAsLevelModel()->addObstaclesFromFile("", path);
 }
 
 Speedzone LevelController::findSpeedZone(btGhostObject *obj)
@@ -149,28 +153,10 @@ void LevelController::removeTemporaries(bool walls, bool boundaries, bool speedZ
 {
 	if (walls)
 		getAsCityModel()->clearTemporaryWalls();
-	if (boundaries)
-		removeBoundaries();
-	if (speedZones)
-		getAsCityModel()->removeSpeedZones();
+	if (boundaries || speedZones)
+		getAsCityModel()->removeGhosts(); //will remove both
 }
 
-void LevelController::removeBoundaries()
-{
-	auto bodies = getRigidBodies();
-	auto bodyIter = std::begin(bodies);
-	while (bodyIter != std::end(bodies))
-	{
-		ObjectInfo *info = static_cast<ObjectInfo *>(bodyIter->get()->getUserPointer());
-		if (static_cast<COLLISIONTYPE>(info->getUserIndex()) != LEVELGROUNDTYPE)
-		{
-			m_world.lock()->removeRigidBody(bodyIter->get());
-			bodyIter = bodies.erase(bodyIter);
-		}
-		else
-			++bodyIter;
-	}
-}
 
 void LevelController::removeRigidBodiesFromWorld()
 {

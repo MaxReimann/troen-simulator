@@ -48,7 +48,6 @@ namespace troen
 		void addRigidBodiesToWorld();
 		void removeRigidBodiesFromWorld();
 		void removeTemporaries(bool walls=true, bool boundaries=true, bool speedZones = true);
-		void removeBoundaries();
 		TroenGame* m_troenGame;
 	protected:
 		std::shared_ptr<LevelView> m_levelView;

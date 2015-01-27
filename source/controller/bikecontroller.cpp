@@ -340,7 +340,7 @@ void BikeController::updateModel(const long double gameTime)
 
 		if (gameTime > m_respawnTime + RESPAWN_DURATION * 2.f / 3.f)
 		{
-			m_player->getTroenGame()->levelController()->removeTemporaries(true, false);
+			m_player->getTroenGame()->levelController()->removeTemporaries(true, false, false);
 			reset();
 			updateFov(0);
 			m_state = RESPAWN_PART_2;

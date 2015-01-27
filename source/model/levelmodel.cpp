@@ -218,6 +218,7 @@ void LevelModel::addFloor(float yPosition)
 	m_rigidBodies.push_back(groundRigidBody);
 }
 
+
 void LevelModel::addBoxes(std::vector<BoxModel> &boxes, COLLISIONTYPE type)
 {
 	for (int i = 0; i < boxes.size(); ++i)
@@ -237,6 +238,12 @@ void LevelModel::addBoxes(std::vector<BoxModel> &boxes, COLLISIONTYPE type)
 		}
 		else {
 			info = new ObjectInfo(const_cast<LevelController*>(m_levelController), type);
+		}
+
+		if (type == NAVIGATION_BOUNDARY)
+		{
+			printf("cf nocont\n");
+			wallRigidBody->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 		}
 
 		wallRigidBody->setUserPointer(info);

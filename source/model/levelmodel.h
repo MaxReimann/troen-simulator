@@ -66,6 +66,7 @@ namespace troen
 
 		void addObstaclesFromFile(std::string levelName);
 		void addObstaclesFromFile(std::string levelName, std::string filePath);
+
 		LevelController* m_levelController;
 
 		std::vector<BoxModel> m_floors;

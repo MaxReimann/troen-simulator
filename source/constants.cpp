@@ -25,8 +25,8 @@ namespace troen
 	// LOGIC
 	const double RESPAWN_DURATION(4000);
 	const double GAME_START_COUNTDOWN_DURATION(3000);
-	const double RANDOM_NUMBER_DURATION(500);
-	const double RANDOM_NUMBER_INTERVAL(1000);
+	const double RANDOM_NUMBER_DURATION(800);
+	const double RANDOM_NUMBER_INTERVAL(8000);
 
 	//PHYSIS
 	const btVector3 DEFAULT_GRAVITY(0,0,-10);

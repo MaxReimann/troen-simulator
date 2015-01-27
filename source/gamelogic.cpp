@@ -165,9 +165,6 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 			break;
 		case LEVELGROUNDTYPE:
 			break;
-		case NAVIGATION_BOUNDARY:
-			handleNavigationBoundaryCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
-			break;
 		default:
 			break;
 		}
@@ -202,6 +199,9 @@ void GameLogic::triggerEvent(btCollisionObject *obj1, btCollisionObject *obj2)
 			handleSpeedZone(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]),
 				dynamic_cast<LevelController*>(collisionBodyControllers[otherIndex]),
 				dynamic_cast<btGhostObject*>(otherIndex == 0 ? obj1 : obj2));
+			break;
+		case NAVIGATION_BOUNDARY:
+			handleNavigationBoundaryCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
 			break;
 		default:
 			std::cout << "unknown zone" << std::endl;
@@ -265,7 +265,7 @@ void GameLogic::handleEndZoneCollision(BikeController* bike)
 void GameLogic::handleNavigationBoundaryCollision(BikeController* bike)
 {
 	m_troenGame->bikeTracker()->recordWrongTurn();
-	bike->getModel()->moveBikeToLastPoint();
+	//bike->getModel()->moveBikeToLastPoint();
 	bike->player()->hudController()->addNavigationErrorMessage();
 	bike->setState(BikeController::BIKESTATE::RESPAWN, g_gameTime);
 }

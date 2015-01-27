@@ -35,6 +35,12 @@ namespace troen
 
 		static void callbackWrapper(void* pObject);
 		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
+
+		std::vector<std::shared_ptr<btGhostObject>> getGhostObjects() 
+		{ 
+			return m_ghostObjectList; 
+		}
+
 	protected:
 		void initSpecifics();
 		void physicsUpdate();
@@ -48,7 +54,8 @@ namespace troen
 		void clearTemporaryWalls();
 		void addSpeedZone(btTransform position, int speedLimit);
 		Speedzone findSpeedZone(btGhostObject *collided);
-		void removeSpeedZones();
+		void removeGhosts();
+		void addBoxesAsGhosts(std::vector<BoxModel> &boxes, COLLISIONTYPE type);
 		QImage m_collisionImage;
 		int m_count;
 		osg::ref_ptr<osgViewer::View> m_view;

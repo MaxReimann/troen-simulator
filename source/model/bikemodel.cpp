@@ -417,7 +417,7 @@ void BikeModel::moveBikeToLastPoint()
 
 void BikeModel::moveBikeToPosition(btTransform position)
 {
-	m_vehicle->resetSuspension();
+	resetBody(m_world->getDiscreteWorld());
 	m_carChassis->setWorldTransform(position);
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));

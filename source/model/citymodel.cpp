@@ -100,10 +100,10 @@ void CityModel::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 void CityModel::addSpeedZone(btTransform position, int speedLimit)
 {
 	std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
-	position.setOrigin(position.getOrigin() - btVector3(50, 0, 0));
+	position.setOrigin(position.getOrigin() - btVector3(70, 0, 0));
 	ghostObject->setWorldTransform(position);
 
-	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(150, 10, 10));
+	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(180, 10, 10));
 	ghostObject->setCollisionShape(boxShape.get());
 	ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
@@ -114,6 +114,27 @@ void CityModel::addSpeedZone(btTransform position, int speedLimit)
 	m_collisionShapes.push_back(boxShape);
 	m_ghostObjectList.push_back(ghostObject);
 	m_speedZoneList.push_back({ m_speedZoneList.size(), speedLimit });
+}
+
+
+void CityModel::addBoxesAsGhosts(std::vector<BoxModel> &boxes, COLLISIONTYPE type)
+{
+	for (auto box : boxes)
+	{
+		std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
+		ghostObject->setWorldTransform(btTransform(box.rotation, box.center));
+
+		std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(box.dimensions / 2);
+		ghostObject->setCollisionShape(boxShape.get());
+		ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+		ObjectInfo* info;
+		info = new ObjectInfo(m_levelController, type);
+		ghostObject->setUserPointer(info);
+
+		m_collisionShapes.push_back(boxShape);
+		m_ghostObjectList.push_back(ghostObject);
+	}
 }
 
 Speedzone CityModel::findSpeedZone(btGhostObject *collided)
@@ -131,10 +152,12 @@ Speedzone CityModel::findSpeedZone(btGhostObject *collided)
 	return { 0, 0 };
 }
 
-void CityModel::removeSpeedZones()
+void CityModel::removeGhosts()
 {
 	for (auto ghostObject : m_ghostObjectList)
+	{
 		m_world->removeCollisionObject(ghostObject.get());
+	}
 	m_ghostObjectList.clear();
 }
 
@@ -147,6 +170,7 @@ void CityModel::reload(std::string levelName)
 
 	addFloor(-10);
 }
+
 
 
 
