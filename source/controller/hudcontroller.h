@@ -51,5 +51,6 @@ namespace troen
 		std::weak_ptr<Player> m_player;
 		long double m_nextRandNumStart;
 		long double m_lastRandNumStart;
+		int m_randNumIndex;
 	};
 }

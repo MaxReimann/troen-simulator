@@ -22,6 +22,17 @@ namespace
 	const std::string allRoutesCompleteMessage("Congrats, you completed all routes!");
 }
 
+
+int randomNumbers[] = {
+	544, 569, 408, 968, 565, 520, 291, 120, 960, 419, 106, 746, 336, 877, 297, 910, 458, 326, 245, 643, 200, 238, 716, 773, 174, 370,
+	852, 311, 690, 184, 224, 776, 702, 166, 385, 684, 838, 887, 397, 599, 248, 743, 296, 968, 798, 438, 987, 824, 216, 970, 439, 730,
+	173, 893, 817, 574, 771, 640, 210, 450, 173, 264, 988, 638, 696, 183, 726, 232, 673, 210, 503, 172, 321, 575, 702, 532, 381, 125,
+	264, 256, 741, 133, 319, 471, 398, 262, 470, 600, 765, 676, 912, 327, 157, 873, 572, 610, 500, 136, 733, 387, 263, 870, 680, 532,
+	813, 241, 123, 515, 126, 364, 349, 690, 497, 806, 974, 183, 754, 402, 837, 956, 378, 172, 724, 702, 616, 394, 671, 702, 467, 101,
+	808, 951, 235, 986, 360, 349, 306, 684, 433, 991, 579, 664, 751, 595, 352, 722, 989, 263, 910, 326, 110, 358, 466, 243, 844, 290,
+	775, 997, 880, 266, 781, 594, 479, 260, 262, 696, 967, 443, 105, 985, 354, 383, 966, 659, 537, 755
+};
+
 using namespace troen;
 
 HUDController::HUDController(const int id,
@@ -29,7 +40,8 @@ HUDController::HUDController(const int id,
 AbstractController(),
 m_player(players[id]),
 m_nextRandNumStart(8000),
-m_lastRandNumStart(0)
+m_lastRandNumStart(0),
+m_randNumIndex(0)
 {
 	m_view = m_HUDView = std::make_shared<HUDView>(id, players);
 
@@ -108,10 +120,13 @@ void HUDController::updateRandomNumbers(const long double currentGameloopTime)
 {
 	if (currentGameloopTime >= m_nextRandNumStart)
 	{
+
+		int displayNum = randomNumbers[m_randNumIndex++];;
+
 		std::uniform_int_distribution<int> randNumDist1(0, 1000);
-		int n = randNumDist1(m_randomGenerator);
-		int n2 = randNumDist1(m_randomGenerator);
-		m_HUDView->updateRandomNumber(std::to_string(n), osg::Vec2(n/1000.0f, n2/1000.f));
+		int x = randNumDist1(m_randomGenerator);
+		int y = randNumDist1(m_randomGenerator);
+		m_HUDView->updateRandomNumber(std::to_string(displayNum), osg::Vec2(x/1000.0f, y/1000.f));
 
 		std::uniform_int_distribution<int> randNumDist2(-500, 500);
 		m_lastRandNumStart = currentGameloopTime;
