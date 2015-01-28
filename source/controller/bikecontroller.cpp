@@ -322,6 +322,10 @@ void BikeController::setState(BIKESTATE newState, double respawnTime /*=-1*/)
 	m_respawnTime = respawnTime;
 }
 
+CarEngine* BikeController::getEngine()
+{
+	return m_bikeModel->m_engine.get();
+}
 
 
 void BikeController::updateModel(const long double gameTime)

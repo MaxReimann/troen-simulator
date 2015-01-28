@@ -3,6 +3,8 @@
 #include <string>
 #include <map>
 #include <fmod.hpp>
+#include "carsounddata.h"
+
 
 namespace troen
 {
@@ -14,7 +16,6 @@ namespace sound
 		AudioManager();
 		~AudioManager();
 		void Update(float elapsed);
-
 		void LoadSFX(const std::string& path);
 		void LoadSong(const std::string& path);
 		void LoadEngineSound();
@@ -30,13 +31,13 @@ namespace sound
 		void detectBeat(const float tickCount);
 
 		float getTimeSinceLastBeat();
-		void setMotorSpeed(const float speed);
+		void setMotorSpeed(CarEngine * engine);
 	private:
 		typedef std::map<std::string, FMOD::Sound*> SoundMap;
 		enum Category { CATEGORY_SFX, CATEGORY_SONG, CATEGORY_ENGINE, CATEGORY_COUNT };
 
 		void Load(const Category type, const std::string& path);
-
+		void auxiliaryCarSounds();
 		FMOD::System* system;
 		FMOD::ChannelGroup* master;
 		FMOD::ChannelGroup* groups[CATEGORY_COUNT];
@@ -47,6 +48,9 @@ namespace sound
 
 		FMOD::Channel* currentSong;
 		FMOD::Channel* engineChannel;
+		FMOD::Channel* axleChannel;
+
+		std::shared_ptr<CarSoundData> m_engineSoundData;
 
 		std::string currentSongPath;
 		std::string nextSongPath;

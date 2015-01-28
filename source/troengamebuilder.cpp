@@ -73,10 +73,9 @@ bool TroenGameBuilder::build()
 	////////////////////////////////////////////////////////////////////////////////
 	std::cout << "[TroenGame::build] sound ..." << std::endl;
 	t->m_audioManager = std::shared_ptr<sound::AudioManager>(new sound::AudioManager);
-	//t->m_audioManager->LoadSFX("data/sound/explosion.wav");
+
 	//t->m_audioManager->LoadSong("data/sound/theGameHasChanged.mp3");
-	//t->m_audioManager->LoadEngineSound();
-	//t->m_audioManager->SetSongsVolume(0.5);
+	t->m_audioManager->SetSongsVolume(0.5);
 
 	//t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
 	//t->m_audioManager->PlayEngineSound();

@@ -8,6 +8,7 @@ namespace troen
 {
 	class CarEngine
 	{
+		friend class CarSoundData;
 	public:
 		CarEngine(btRaycastVehicle *_mVehicle);
 		~CarEngine();
@@ -46,8 +47,8 @@ namespace troen
 
 		unsigned int CurGear;
 
-		btScalar MainGear;
 		btScalar Gears[8];
+		btScalar MainGear;
 		btScalar IdleRPM;
 		btScalar MaxRPM;
 

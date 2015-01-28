@@ -7,6 +7,7 @@
 
 #include "../globals.h"
 #include "../constants.h"
+#include "../model/carengine.h"
 
 
 using namespace troen::sound;
@@ -40,6 +41,13 @@ AudioManager::AudioManager() : currentSong(0), engineChannel(0), fade(FADE_NONE)
 
 	// Seed random number generator for SFXs
 	srand((unsigned int) time(0));
+	m_engineSoundData = std::make_shared<CarSoundData>();
+
+
+	LoadSFX("data/sound/explosion.wav");
+	LoadSFX("data/sound/gear_change1.wav");
+	LoadEngineSound();
+
 }
 
 AudioManager::~AudioManager() {
@@ -65,19 +73,26 @@ void AudioManager::LoadSong(const std::string& path) {
 
 void AudioManager::LoadEngineSound()
 {
-	Load(CATEGORY_ENGINE, "data/sound/engine-loop-1-normalized.wav");
+	Load(CATEGORY_ENGINE, "data/sound/porsche_engine.wav");// engine - loop - 1 - normalized.wav");
 }
 
 void AudioManager::PlayEngineSound()
 {
 	// Search for a matching sound in the map
-	SoundMap::iterator sound = sounds[CATEGORY_ENGINE].find("data/sound/engine-loop-1-normalized.wav");
+	SoundMap::iterator sound = sounds[CATEGORY_ENGINE].find("data/sound/porsche_engine.wav");
 	if (sound == sounds[CATEGORY_ENGINE].end()) return;
 	
 	system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &engineChannel);
 	engineChannel->setChannelGroup(groups[CATEGORY_ENGINE]);
-	engineChannel->setVolume(0.1f);
+	engineChannel->setVolume(0.9f);
 	engineChannel->setPaused(false);
+
+	sound = sounds[CATEGORY_ENGINE].find("data/sound/axle.wav");
+	if (sound == sounds[CATEGORY_ENGINE].end()) return;
+	system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &axleChannel);
+	axleChannel->setChannelGroup(groups[CATEGORY_ENGINE]);
+	axleChannel->setVolume(0.1f);
+	axleChannel->setPaused(false);
 }
 
 void AudioManager::Load(Category type, const std::string& path) {
@@ -141,15 +156,17 @@ void AudioManager::StopSongs() {
 	nextSongPath.clear();
 }
 
-void AudioManager::setMotorSpeed(float speed) {
-	float speedFactor = (speed - BIKE_VELOCITY_MIN) / BIKE_VELOCITY_MAX;
+void AudioManager::setMotorSpeed(troen::CarEngine * engine) {
+	m_engineSoundData->update(engine);
 
-	float currentFrequency;
-	engineChannel->getFrequency(&currentFrequency);
 
-	float desiredFrequency = ENGINE_FREQUENCY_LOW + speedFactor * ENGINE_FREQUENCY_HIGH;
+	engineChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->engine.f*2000);// currentFrequency + (desiredFrequency - currentFrequency) / 100);
 
-	engineChannel->setFrequency(currentFrequency + (desiredFrequency - currentFrequency) / 100);
+	axleChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->axle.f * 2000);
+	axleChannel->setVolume(m_engineSoundData->axle.a);
+
+	// For the moment, simulate LP filter by tweaking the volume
+	engineChannel->setVolume((m_engineSoundData->engine.a * exp(1.3*m_engineSoundData->engine.lp - 1.3)));
 }
 
 float AudioManager::getTimeSinceLastBeat()
@@ -222,10 +239,19 @@ void AudioManager::detectBeat(float tickCount)
 	delete[] specRight;
 }
 
+void AudioManager::auxiliaryCarSounds()
+{
+	if (m_engineSoundData->gear_changing)
+	{
+		PlaySFX("data/sound/gear_change1.wav", 0.05f, 0.1f, 1.0, 1.0);
+	}
+}
+
+
 void AudioManager::Update(float elapsed)
 {
 
-
+	auxiliaryCarSounds();
 
 	detectBeat(elapsed);
 

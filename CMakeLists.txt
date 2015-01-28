@@ -189,6 +189,8 @@ set(sources
 
 	source/sound/audiomanager.h
 	source/sound/audiomanager.cpp
+	source/sound/carsounddata.cpp
+	source/sound/carsounddata.h
 
 	source/model/bikemodel.h
 	source/model/bikemodel.cpp

@@ -73,6 +73,7 @@ namespace troen
 
 		bool turboInitiated()	{ return m_turboInitiated; };
 		bool hasKeyboardHandler() { return m_keyboardHandler != nullptr; };
+		CarEngine* getEngine();
 		
 
 		std::shared_ptr<BikeModel> getModel();

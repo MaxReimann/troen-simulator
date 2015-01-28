@@ -107,7 +107,7 @@ void TroenGame::startGameLoop()
 	// - checkForUserInput and updateModels
 	// - physics + updateViews
 	// - render;
-	std::cout << "moogajldksfh" << std::endl;
+	m_audioManager->PlayEngineSound();
 
 
 	// terminates when first viewer is closed
@@ -151,7 +151,7 @@ void TroenGame::startGameLoop()
 			m_countdownTimers->update();
 
 			m_audioManager->Update(g_gameLoopTime / 1000);
-			m_audioManager->setMotorSpeed(m_players[0]->bikeController()->speed());
+			m_audioManager->setMotorSpeed(m_players[0]->bikeController()->getEngine());
 
 			// Hack: normalize and use the speed to control the deformation
 			float bikeSpeed = m_players[0]->bikeController()->speed();

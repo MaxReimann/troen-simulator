@@ -255,8 +255,7 @@ float BikeModel::updateState(long double time)
 	m_vehicleSteering = m_bikeInputState->getSteering();
 
 	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForce;
-	float throttle = m_bikeInputState->getAcceleration() * 2.0;
-
+	float throttle = m_bikeInputState->getAcceleration();// *2.0;
 	m_engine->setThrottle(throttle);
 
 	{
