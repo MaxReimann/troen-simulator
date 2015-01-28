@@ -115,11 +115,6 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	double CUBE_HALF_EXTENTS = m_vehicleParameters.cubeHalfExtents;
 	double connectionHeight = m_vehicleParameters.connectionHeight;
 
-	btTransform tr;
-	tr.setIdentity();
-	tr.setOrigin(btVector3(0, 0.f, 0));
-
-	
 
 	//m_carChassis->setDamping(0.0,0.0);
 	m_wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
@@ -169,7 +164,7 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	}
 	world->drawVehicle = m_vehicle;
 
-	resetBody(discreteWorld);
+	m_vehicle->resetSuspension();
 	
 }
 
@@ -182,8 +177,9 @@ void BikeModel::removeRaycastVehicle()
 }
 
 
-void BikeModel::resetBody(btDynamicsWorld *world)
+void BikeModel::resetBody()
 {
+	btDynamicsWorld *world = m_world->getDiscreteWorld();
 	m_vehicleSteering = 0.f;
 	//m_carChassis->setCenterOfMassTransform(btTransform::getIdentity());
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
@@ -191,9 +187,17 @@ void BikeModel::resetBody(btDynamicsWorld *world)
 	world->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(m_carChassis->getBroadphaseHandle(), world->getDispatcher());
 	if (m_vehicle)
 	{
+		m_vehicleParameters.loadVehicleParameters();
 		m_vehicle->resetSuspension();
 		for (int i = 0; i < m_vehicle->getNumWheels(); i++)
 		{
+			btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
+			wheel.m_suspensionStiffness = m_vehicleParameters.suspensionStiffness;
+			wheel.m_wheelsDampingRelaxation = m_vehicleParameters.suspensionDamping;
+			wheel.m_wheelsDampingCompression = m_vehicleParameters.suspensionCompression;
+			wheel.m_frictionSlip = m_vehicleParameters.wheelFriction;
+			wheel.m_rollInfluence = m_vehicleParameters.rollInfluence;
+			wheel.m_maxSuspensionForce = 50000.f;
 			//synchronize the wheels with the (interpolated) chassis worldtransform
 			m_vehicle->updateWheelTransform(i, true);
 		}
@@ -243,21 +247,16 @@ float BikeModel::updateState(long double time)
 	m_lastUpdateTime = time;
 	float timeFactor = m_timeSinceLastUpdate / 1000.0;
 
-	btVector3 positionSmoothed = m_carChassis->getWorldTransform().getOrigin() * 0.3 + m_lastTransform.getOrigin() * 0.7;
-	btQuaternion rotationSmoothed = m_carChassis->getWorldTransform().getRotation() * 0.3 + m_lastTransform.getRotation() * 0.7;
+	btVector3 positionSmoothed = m_carChassis->getWorldTransform().getOrigin() * 0.4 + m_lastTransform.getOrigin() * 0.6;
+	btQuaternion rotationSmoothed = m_carChassis->getWorldTransform().getRotation() * 0.4 + m_lastTransform.getRotation() * 0.6;
 	m_lastTransform.setOrigin(positionSmoothed);
 	m_lastTransform.setRotation(rotationSmoothed);
 
-	// call this exactly once per frame
 	m_vehicleSteering = m_bikeInputState->getSteering();
 
-	m_bikeInputState->setSteering(m_vehicleSteering);
-
-	//m_engineForce = m_bikeInputState->getAcceleration() * m_vehicleParameters.maxEngineForce;
 	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForce;
 	float throttle = m_bikeInputState->getAcceleration() * 2.0;
 
-	//std::cout << "break: " << m_breakingForce << "  acc " << throttle <<std::endl;
 	m_engine->setThrottle(throttle);
 
 	{
@@ -417,7 +416,7 @@ void BikeModel::moveBikeToLastPoint()
 
 void BikeModel::moveBikeToPosition(btTransform position)
 {
-	resetBody(m_world->getDiscreteWorld());
+	
 	m_carChassis->setWorldTransform(position);
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));

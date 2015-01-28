@@ -125,7 +125,7 @@ namespace troen
 		void dampOut();
 		void clearDamping();
 		void constructVehicleBody(std::shared_ptr<PhysicsWorld> world);
-		void resetBody(btDynamicsWorld *world);
+		void resetBody();
 		double getBrakeForce();
 		void removeRaycastVehicle();
 		btVector3 getEulerYPR();

@@ -67,6 +67,7 @@ void BikeController::reset()
 	btTransform position = player()->routeController()->getLastWayPoint();
 	position.setOrigin(position.getOrigin() + btVector3(0, 0, 10.0));
 	moveBikeToPosition(position);
+	m_bikeModel->resetBody();
 }
 
 void BikeController::respawnAt(btTransform respawnPoint)
