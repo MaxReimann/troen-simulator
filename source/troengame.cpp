@@ -216,6 +216,9 @@ void TroenGame::fixCulling(osg::ref_ptr<osgViewer::View> view)
 
 void TroenGame::handleBending(double interpolationSkalar)
 {
+	if (!use_bendedViews)
+		return;
+
 	m_deformationRendering->setInterpolationSkalar(1.0);
 
 	double currentBending = m_deformationRendering->getDeformationEnd();

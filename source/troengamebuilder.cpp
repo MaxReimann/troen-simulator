@@ -161,33 +161,33 @@ bool TroenGameBuilder::build()
 
 bool TroenGameBuilder::composeSceneGraph()
 {
-	osg::ref_ptr<osg::Group> bendedScene = new osg::Group();
+	osg::ref_ptr<osg::Group> naviScene = new osg::Group();
 	QString studySetup = t->m_gameConfig->studySetup;
 	auto localPlayer = t->m_playersWithView.at(0);
 
-	t->m_rootNode = composePostprocessing();
+	//t->m_rootNode = composePostprocessing();
 	t->m_rootNode->addChild(t->m_skyDome.get());
 
 	NavigationWindow *navWindow = localPlayer->navigationWindow().get();
 
 	// viewer root nodes
 	{
-		//node on which bending operation is applied
-		bendedScene->addChild(t->m_sceneNode);
 		localPlayer->playerNode()->addChild(t->m_rootNode);
+		t->m_rootNode->addChild(t->m_sceneNode);
 
-		t->m_rootNode->addChild(t->m_sceneNode); //skip bended node
 		localPlayer->setBendingUniform(MAIN_WINDOW, false); //disable bending shaders
+		
+		navWindow->addElements(naviScene);
 
 		if (studySetup == MAIN_NORMAL_NAVI_BENDED /*|| studySetup == MAIN_NORMAL_NAVI_MAP  map not supported anymore*/)
 		{
-			navWindow->addElements(bendedScene);
 			localPlayer->setBendingUniform(NAVIGATION_WINDOW, true);
+			t->use_bendedViews = true;
 		}
 		else if (studySetup == MAIN_NORMAL_NAVI_NORMAL)
 		{
 			localPlayer->setBendingUniform(NAVIGATION_WINDOW, false);
-			navWindow->addElements(t->m_sceneNode);
+			t->use_bendedViews = false;
 		}
 
 	}
@@ -195,11 +195,13 @@ bool TroenGameBuilder::composeSceneGraph()
 	// level elements
 	{ 
 		t->m_sceneNode->addChild(t->m_levelController->getViewNode());
+		naviScene->addChild(t->levelController()->getNaviView());
+		//navWindow->addElements();
 
 		for (auto player : t->m_players)
 		{
 			t->m_sceneNode->addChild(player->bikeController()->getViewNode());
-			navWindow->addElements(player->routeController()->getViewNode());
+			naviScene->addChild(player->routeController()->getViewNode());
 		}
 	}
 
@@ -209,17 +211,13 @@ bool TroenGameBuilder::composeSceneGraph()
 
 		osg::Group * node = localPlayer->hudController()->getViewNode();
 		t->m_rootNode->addChild(node);
-		//localPlayer->navigationWindow()->addElements(node); 
-
-		//if (studySetup == MAIN_BENDED_NAVI_MAP || studySetup == MAIN_NORMAL_NAVI_MAP)
-		//	composeRadarScene();
-
 	}
 
 	// bended views
+	if (t->use_bendedViews)
 	{
 		const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
-		t->m_deformationRendering = new SplineDeformationRendering(bendedScene);
+		t->m_deformationRendering = new SplineDeformationRendering(naviScene);
 		t->m_deformationRendering->setDeformationStartEnd(0.1, 100000);
 		t->m_deformationRendering->setPreset(4);
 		t->enableBendedViews();

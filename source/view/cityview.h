@@ -19,16 +19,17 @@ namespace troen
 		CityView(std::shared_ptr<AbstractModel> model, std::string levelName);
 		void initSpecifics(std::shared_ptr<AbstractModel> model);
 		void addSpeedZone(osg::Vec3 position, osg::Quat rotation, int speedLimit);
+		osg::ref_ptr<osg::Group> getNaviNode() { return m_naviNode; }
 	
 	protected:
 		osg::ref_ptr<osg::Group> constructFloors(osg::Vec2 levelSize);
-		osg::ref_ptr<osg::Group> constructCity(osg::Vec2 levelSize, std::string levelName);
-
+		osg::ref_ptr<osg::Group> constructCity(osg::Vec2 levelSize, int LODlevel);
 		std::shared_ptr<CityModel> getCityModel();
 		void loadSpeedSigns();
 
 		osg::ref_ptr<osg::Node> m_zone30;
 		osg::ref_ptr<osg::Node> m_zone50;
 		osg::ref_ptr<osg::Group> m_signsGroup;
+		osg::ref_ptr<osg::Group> m_naviNode;
 	};
 }

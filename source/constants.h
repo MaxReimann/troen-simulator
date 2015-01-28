@@ -71,7 +71,7 @@ namespace troen
 
 	// LEVEL
 	extern const int LEVEL_SIZE;
-	extern const double METER_PER_MAP_UNIT;
+	extern const double MAP_UNITS_PER_METER;
 
 	// FENCE
 	// determines how accurate the fence will be

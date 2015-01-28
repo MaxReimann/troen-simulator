@@ -37,6 +37,7 @@ namespace troen
 		std::shared_ptr<CityModel> getAsCityModel();
 		std::shared_ptr<CityView> getAsCityView();
 		std::vector<BoxModel> getSpeedZones(std::string path);
+		osg::ref_ptr<osg::Group> getNaviView();
 
 		void addSpeedZones(std::string filePath);
 		Speedzone findSpeedZone(btGhostObject *obj);

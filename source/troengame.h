@@ -98,6 +98,7 @@ namespace troen
 		osg::ref_ptr<SkyDome> skyDome()
 			{ return m_skyDome; };
 		ResourcePool* resourcePool(){ return &m_resourcePool; };
+		bool useBendedViews() const { return use_bendedViews; }
 
 		//
 		// Events
@@ -174,6 +175,7 @@ namespace troen
 		SplineDeformationRendering* m_deformationRendering;
 
 		// Startup Options
+		bool					use_bendedViews;
 		QThread* m_gameThread;
 	};
 }

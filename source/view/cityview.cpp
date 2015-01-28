@@ -39,9 +39,14 @@ void CityView::initSpecifics(std::shared_ptr<AbstractModel> model)
 	osg::Vec2 levelSize = pairToVec2(getCityModel()->getLevelSize());
 	loadSpeedSigns();
 
+	auto floor = constructFloors(levelSize);
 
-	m_node->addChild(constructFloors(levelSize));
-	m_node->addChild(constructCity(levelSize, m_levelName));
+	m_node->addChild(floor);
+	m_node->addChild(constructCity(levelSize, 0));
+
+	m_naviNode = new osg::Group();
+	m_naviNode->addChild(floor);
+	m_naviNode->addChild(constructCity(levelSize, 1));
 }
 
 osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize)
@@ -68,19 +73,29 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize)
 	return floorsGroup;
 }
 
-osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, std::string levelName)
+osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlevel)
 {
 
-	osg::ref_ptr<osg::Group> obstaclesGroup = new osg::Group();
-	obstaclesGroup->setName("obstaclesGroup");
+	osg::ref_ptr<osg::Group> LODBuildings = new osg::Group();
+	osg::ref_ptr<osg::Group> readObstacles;
 
-	osg::ref_ptr<osg::Group> readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/full_level.ive"));
-	obstaclesGroup->addChild(readObstacles);
+	if (LODlevel == 0)
+	{
+		LODBuildings->setName("L0CityGroup");
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/full_level.ive"));
+	}
+	else if (LODlevel == 1)
+	{
+		LODBuildings->setName("L1CityGroup");
+		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clrearly anymore ..
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/full_level.ive")); 
+	}
 
+	LODBuildings->addChild(readObstacles);
 	//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/generalized/01_00/texatlas.tga", 0, true);
 	addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
 
-	return obstaclesGroup;
+	return LODBuildings;
 }
 
 std::shared_ptr<CityModel> CityView::getCityModel()

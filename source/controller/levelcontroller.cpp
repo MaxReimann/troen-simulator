@@ -198,6 +198,12 @@ void LevelController::debugSnapShot()
 	}
 }
 
+osg::ref_ptr<osg::Group> LevelController::getNaviView()
+{
+	return getAsCityView()->getNaviNode();
+}
+
+
 std::shared_ptr<LevelModel> LevelController::getAsLevelModel()
 {
 	return std::dynamic_pointer_cast<LevelModel>(m_model);
