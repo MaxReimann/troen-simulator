@@ -154,6 +154,7 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	radarMatrixTransform->setNodeMask(CAMERA_MASK_RADAR);
 
 	m_pat->addChild(radarMatrixTransform);
+	
 	m_pat->addChild(PlayerMarker(color).getNode());
 	m_node->addChild(m_pat);
 }
@@ -285,6 +286,8 @@ void BikeView::addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo)
 
 void BikeView::setWheelRotation(int index, btTransform t)
 {
-	//wheels[index]->setPosition(btToOSGVec3((t.getOrigin())));
+	//osg::Vec3 pos = wheels[index]->getPosition();
+	//pos = osg::Vec3(pos.x(), pos.y(), t.getOrigin().z());
+	//wheels[index]->setPosition(pos);
 	wheels[index]->setAttitude(btToOSGQuat((t.getRotation())));
 }

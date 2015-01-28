@@ -25,7 +25,7 @@ namespace troen
 
 		int forwardAxis = 1;
 		double	maxBreakingForce = 00.0;
-		double	maxEngineForce = 00.0;//this should be engine/velocity dependent
+		double	engineEfficiency = 00.0; //scale velocity with this parameter
 		double	wheelRadius = 00.0;
 		double	wheelWidth = 00.0;
 		double	wheelFriction = 00.0;//BT_LARGE_double;
@@ -39,8 +39,8 @@ namespace troen
 		bool *changesPending;
 
 
-		double MaxEngineForce() const { return maxEngineForce; }
-		void setMaxEngineForce(const double & val) { maxEngineForce = val; }
+		double EngineEfficiency() const { return engineEfficiency; }
+		void setEngineEfficiency(const double & val) { engineEfficiency = val; }
 
 		double MaxBreakingForce() const { return maxBreakingForce; }
 		void setMaxBreakingForce(const double & val) { maxBreakingForce = val; }

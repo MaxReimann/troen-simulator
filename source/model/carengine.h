@@ -11,6 +11,7 @@ namespace troen
 		friend class CarSoundData;
 	public:
 		CarEngine(btRaycastVehicle *_mVehicle);
+		CarEngine(btRaycastVehicle *_mVehicle, float effiency);
 		~CarEngine();
 
 		void update(float deltat)				{ _computeAxisTorque(deltat); }

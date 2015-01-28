@@ -100,10 +100,10 @@ void CityModel::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 void CityModel::addSpeedZone(btTransform position, int speedLimit)
 {
 	std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
-	position.setOrigin(position.getOrigin() - btVector3(70, 0, 0));
+	position.setOrigin(position.getOrigin());
 	ghostObject->setWorldTransform(position);
 
-	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(180, 10, 10));
+	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(50, 2, 2));
 	ghostObject->setCollisionShape(boxShape.get());
 	ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 

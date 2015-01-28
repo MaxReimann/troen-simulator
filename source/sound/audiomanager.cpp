@@ -160,9 +160,9 @@ void AudioManager::setMotorSpeed(troen::CarEngine * engine) {
 	m_engineSoundData->update(engine);
 
 
-	engineChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->engine.frequency*2000);// currentFrequency + (desiredFrequency - currentFrequency) / 100);
+	engineChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->engine.frequency*6000);// currentFrequency + (desiredFrequency - currentFrequency) / 100);
 
-	axleChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->axle.frequency * 2000);
+	axleChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->axle.frequency * 6000);
 	axleChannel->setVolume(m_engineSoundData->axle.amplitude);
 
 	// For the moment, simulate LP filter by tweaking the volume

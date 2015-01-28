@@ -79,7 +79,7 @@ bool TroenGameBuilder::build()
 
 	//t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
 	//t->m_audioManager->PlayEngineSound();
-	t->m_audioManager->SetMasterVolume(0.f);
+	//t->m_audioManager->SetMasterVolume(0.f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//

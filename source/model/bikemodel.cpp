@@ -114,6 +114,7 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	double suspensionRestLength = m_vehicleParameters.suspensionRestLength;
 	double CUBE_HALF_EXTENTS = m_vehicleParameters.cubeHalfExtents;
 	double connectionHeight = m_vehicleParameters.connectionHeight;
+	double engineEfficiency = m_vehicleParameters.engineEfficiency;
 
 
 	//m_carChassis->setDamping(0.0,0.0);
@@ -122,33 +123,35 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	m_vehicleRayCaster = new btDefaultVehicleRaycaster(discreteWorld);
 	m_vehicle =  new btRaycastVehicle(m_tuning, m_carChassis.get(), m_vehicleRayCaster);
 	discreteWorld->addAction(m_vehicle);
-	m_engine = std::make_shared<CarEngine>(m_vehicle);
+	m_engine = std::make_shared<CarEngine>(m_vehicle, engineEfficiency);
 
 
 
 
 	//choose coordinate system
 	m_vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex);
+	btVector3 halfCH = btVector3(0, 0, connectionHeight / 2 );
+	btVector3 viewOffset = wheelAxleCS / 2.0 + halfCH;
 
 	bool isFrontWheel = true;
 	btVector3 connectionPointCS0(CUBE_HALF_EXTENTS - (0.3*wheelWidth), 2 * CUBE_HALF_EXTENTS - wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - viewOffset)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2 - halfCH)));
 	
 	connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3*wheelWidth), 2 * CUBE_HALF_EXTENTS - wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - viewOffset)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2 - halfCH)));
 
 	
 	
 	isFrontWheel = false;
 	connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3*wheelWidth), -2 * CUBE_HALF_EXTENTS + wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - viewOffset)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2 - halfCH)));
 	
 	connectionPointCS0 = btVector3(CUBE_HALF_EXTENTS - (0.3*wheelWidth), -2 * CUBE_HALF_EXTENTS + wheelRadius, connectionHeight);
 	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - wheelAxleCS / 2)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2)));
+	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - viewOffset)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2 - halfCH)));
 
 	
 	btVector3 wheelColor(1, 0, 0);
@@ -281,6 +284,7 @@ float BikeModel::updateState(long double time)
 
 
 		btTransform localTrans = m_carChassis->getWorldTransform().inverse() * m_vehicle->getWheelInfo(i).m_worldTransform;
+
 		//localTrans.setOrigin(m_carChassis->getCenterOfMassPosition() + localTrans.getOrigin());
 		//float xRot = m_vehicle->getWheelInfo(i).m_rotation;
 		//btMatrix3x3 m(localTrans.getRotation());
@@ -291,7 +295,7 @@ float BikeModel::updateState(long double time)
 	}
 	//m_vehicle->updateVehicle(timeFactor/10);
 
-	float speed = m_vehicle->getCurrentSpeedKmHour() / MAP_UNITS_PER_METER;
+	float speed = m_vehicle->getCurrentSpeedKmHour() / 2.0;
 	m_oldVelocity = speed;
 	//std::cout << "speed" << speed << std::endl;
 
@@ -448,7 +452,7 @@ VehiclePhysicSettings::VehiclePhysicSettings() : reflectionzeug::Object("vehicle
 {
 	typedef VehiclePhysicSettings VPS;
 
-	addProperty<double>("maxEngineForce", *this, &VPS::MaxEngineForce, &VPS::setMaxEngineForce);
+	addProperty<double>("engineEfficiency", *this, &VPS::EngineEfficiency, &VPS::setEngineEfficiency);
 	addProperty<double>("maxBreakingForce", *this, &VPS::MaxBreakingForce, &VPS::setMaxBreakingForce);
 	addProperty<double>("wheelRadius", *this, &VPS::WheelRadius, &VPS::setWheelRadius);
 	addProperty<double>("wheelWidth", *this, &VPS::WheelWidth, &VPS::setWheelWidth);

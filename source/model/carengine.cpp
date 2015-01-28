@@ -3,7 +3,7 @@
 
 using namespace troen;
 
-	CarEngine::CarEngine(btRaycastVehicle *_mVehicle)
+	CarEngine::CarEngine(btRaycastVehicle *_mVehicle, float effiency)
 	{
 		mVehicle = _mVehicle;
 
@@ -22,27 +22,47 @@ using namespace troen;
 		Torque[0][0] = 1000.f;
 		Torque[0][1] = 260.f;
 
-		Torque[1][0] = 2000.f;
+		Torque[1][0] = 1400.f;
 		Torque[1][1] = 340.f;
 
-		Torque[2][0] = 3500.f;
+		Torque[2][0] = 1800.f;
 		Torque[2][1] = 400.f;
 
-		Torque[3][0] = 7500.f;
+		Torque[3][0] = 2200.f;
 		Torque[3][1] = 380.f;
 
-		Torque[4][0] = 8500.f;
+		Torque[4][0] = 2500.f;
 		Torque[4][1] = 340.f;
 
-		Torque[4][0] = 9500.f;
+		Torque[4][0] = 2700.f;
 		Torque[4][1] = 300.f;
 
+
+
+		//Torque[0][0] = 1000.f;
+		//Torque[0][1] = 260.f;
+
+		//Torque[1][0] = 2000.f;
+		//Torque[1][1] = 340.f;
+
+		//Torque[2][0] = 3500.f;
+		//Torque[2][1] = 400.f;
+
+		//Torque[3][0] = 7500.f;
+		//Torque[3][1] = 380.f;
+
+		//Torque[4][0] = 8500.f;
+		//Torque[4][1] = 340.f;
+
+		//Torque[4][0] = 9500.f;
+		//Torque[4][1] = 300.f;
+
 		IdleRPM = 1000.f;
-		MaxRPM = 8300.f;
+		MaxRPM = 3000.f;
 
 		RPM = 0.f;
 
-		Efficiency = 0.8f;
+		Efficiency = effiency;
 
 		Clutch = 0;
 		Throttle = 0;
@@ -139,9 +159,9 @@ using namespace troen;
 	{
 		if (Throttle == 1 && CurGear < 2)
 			CurGear = 2;
-		if (RPM > 7100 && CurGear < 7)
+		if (RPM > 2100 && CurGear < 7)
 			return 1;
-		else if (RPM < 3000 && CurGear > 2)
+		else if (RPM < 1500 && CurGear > 2)
 			return -1;
 		else
 			return 0;
