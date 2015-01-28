@@ -53,7 +53,7 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize)
 {
 	osg::ref_ptr<osg::Group> floorsGroup = new osg::Group();
 
-	osg::ref_ptr<osg::Node> floors = osgDB::readNodeFile("data/models/berlin/generalized/01_00/floor_highres.ive");
+	osg::ref_ptr<osg::Node> floors = osgDB::readNodeFile("data/models/berlin/generalized/01_00/floor_highres_scaled.ive");
 	floors->setNodeMask(CAMERA_MASK_MAIN);
 	floors->setName("floorsNode");
 
@@ -82,13 +82,13 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	if (LODlevel == 0)
 	{
 		LODBuildings->setName("L0CityGroup");
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/full_level.ive"));
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive"));
 	}
 	else if (LODlevel == 1)
 	{
 		LODBuildings->setName("L1CityGroup");
 		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clrearly anymore ..
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/full_level.ive")); 
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); 
 	}
 
 	LODBuildings->addChild(readObstacles);

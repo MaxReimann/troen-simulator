@@ -67,8 +67,8 @@ namespace troen
 	const int VIBRATION_TIME_MS(500);
 
 	// LEVEL
-	const int LEVEL_SIZE(6000);
-	const double MAP_UNITS_PER_METER(3.79019); //by calculating building size/real size
+	const int LEVEL_SIZE(1463.38964);
+	const double MAP_UNITS_PER_METER(1.0);
 
 	// FENCE
 	// determines how accurate the fence will be

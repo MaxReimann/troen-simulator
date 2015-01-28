@@ -20,9 +20,9 @@ namespace troen {
 
 	typedef struct QSoundChar_
 	{
-		float a;
-		float f;
-		float lp;
+		float amplitude;
+		float frequency;
+		float lowpass;
 	}QSoundChar;
 
 

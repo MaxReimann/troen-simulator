@@ -10,7 +10,7 @@ in vec2 uv;
 in float scaled_height;
 
 void main() {
-	vec2 transf_uv = vec2(uv.x, 1.0 -uv.y);
+	vec2 transf_uv = vec2(uv.x, 1.0-uv.y);
 
 	vec4 diffuseColor =  vec4(texture(diffuseTexture, transf_uv).xyz, alpha);
 	// decide whether to use the original or adjusted color, based on the trueColor uniform

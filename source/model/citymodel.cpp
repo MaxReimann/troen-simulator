@@ -178,7 +178,7 @@ void CityModel::reload(std::string levelName)
 
 const btPoint CityModel::getLevelSize()
 {
-	return btPoint(13002, 11761); //from blender
+	return btPoint(3171.1653, 2868.487); //from blender
 }
 
 void CityModel::writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *markPoints, std::vector<osg::Vec2> *markPoints2)
