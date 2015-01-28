@@ -69,7 +69,9 @@ m_hasGameView(config->ownView[id])
 	m_routes = parseRoutes->routes();
 
 	m_currentRoute = 0;
-	btTransform initialTransform = m_routes.at(m_currentRoute).getTransform(0);
+	m_routeController = std::make_shared<RouteController>(this, m_routes[m_currentRoute]);
+	
+	btTransform initialTransform = m_routeController->getFirstWayPoint();
 	initialTransform.setOrigin(initialTransform.getOrigin() + btVector3(0, 0, 1.0));
 
 	m_bikeController = std::make_shared<BikeController>(
@@ -79,7 +81,6 @@ m_hasGameView(config->ownView[id])
 		game->resourcePool());
 
 
-	m_routeController = std::make_shared<RouteController>(this, initialTransform, m_routes[m_currentRoute]);
 	std::string routesPath = m_routes.at(m_currentRoute).filePath;
 	game->levelController()->addBoundaries(routesPath);
 	game->levelController()->addSpeedZones(routesPath);

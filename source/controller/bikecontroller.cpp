@@ -66,8 +66,9 @@ void BikeController::reset()
 	m_timeOfLastCollision = -1;
 	btTransform position = player()->routeController()->getLastWayPoint();
 	position.setOrigin(position.getOrigin() + btVector3(0, 0, 10.0));
+	m_bikeModel->removeRaycastVehicle();
+	m_bikeModel->constructVehicleBody(m_world);
 	moveBikeToPosition(position);
-	m_bikeModel->resetBody();
 }
 
 void BikeController::respawnAt(btTransform respawnPoint)
@@ -329,7 +330,8 @@ void BikeController::updateModel(const long double gameTime)
 	{
 	case DRIVING:
 	{
-		double speed = m_bikeModel->updateState(gameTime);
+
+		double speed =  m_bikeModel->updateState(gameTime);
 		updateFov(speed);
 		break;
 	}
@@ -460,7 +462,6 @@ long double BikeController::getTimeFactor()
 void BikeController::moveBikeToPosition(btTransform transform)
 {
 	m_bikeModel->moveBikeToPosition(transform);
-	m_player->routeController()->setLastPosition(transform.getRotation(), transform.getOrigin());
 }
 
 void BikeController::updateUniforms()

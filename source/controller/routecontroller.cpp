@@ -14,30 +14,11 @@ using namespace troen;
 
 RouteController::RouteController(
 	Player * player,
-	btTransform initialTransform) :
-AbstractController(),
-m_fenceLimitActivated(true)
-{
-	m_player = player;
-	m_model = m_routeModel = std::make_shared<RouteModel>(this);
-	m_view = m_routeView = std::shared_ptr<RouteView>(new RouteView(this, player->color(), m_model));
-
-	btVector3 position = initialTransform.getOrigin();
-	m_lastPosition = position;
-}
-
-RouteController::RouteController(
-	Player * player,
-	btTransform initialTransform,
 	Route route) 
 {
 	m_player = player;
 	m_model = m_routeModel = std::make_shared<RouteModel>(this);
 	m_view = m_routeView = std::shared_ptr<RouteView>(new RouteView(this, player->color(), m_model));
-
-	btVector3 position = initialTransform.getOrigin();
-
-	m_lastPosition = position;
 
 	createTrack(route);
 	
@@ -132,7 +113,7 @@ void RouteController::trackRouteProgress(btVector3 playerPosition)
 
 	double distanceToPoint = (next - playerPos).length();
 
-	if (distanceToPoint < 150.0 || (distanceToLine < 15.0 && distanceToPoint < 300))
+	if (distanceToPoint < 100.0 || (distanceToLine < 15.0 && distanceToPoint < 150))
 	{
 		if (m_nextPointIndex < m_subdividedPoints.size() - 1)
 			m_nextPointIndex++;
@@ -180,10 +161,6 @@ int RouteController::getFenceLimit() {
 }
 
 
-void RouteController::setLastPosition(const btQuaternion rotation, btVector3 position)
-{
-	m_lastPosition = position;
-}
 
 
 void RouteController::showFencesInRadarForPlayer(const int id)
@@ -232,10 +209,12 @@ btTransform RouteController::getLastWayPoint()
 	btTransform trans;
 	osg::Vec3 vec;
 	int index;
-	if (m_nextPointIndex > 0)
-		index = m_nextPointIndex - 1;
+	//estimate for how much the route tracking overestatimates position
+	int overdriveEstimate = 100;
+	if (m_nextPointIndex > overdriveEstimate)
+		index = m_nextPointIndex - overdriveEstimate;
 	else
-		index = m_nextPointIndex;
+		index = 0;
 
 	trans.setOrigin(osgToBtVec3((m_subdividedPoints[index])));
 
@@ -244,9 +223,9 @@ btTransform RouteController::getLastWayPoint()
 	else
 		vec = m_subdividedPoints[index] - m_subdividedPoints[index - 1];
 
-	double rotAroundZ = PI / 2 - atan(vec.y() / vec.x());
-	if (rotAroundZ < 0)
-		rotAroundZ += PI;
+	double rotAroundZ = PI +  PI / 2 - atan(vec.y() / vec.x());
+
+
 
 	btQuaternion rotation;
 	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);

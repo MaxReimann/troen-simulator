@@ -16,8 +16,7 @@ namespace troen
 	class RouteController : public AbstractController
 	{
 	public:
-		RouteController(Player * player, const btTransform initialTransform = btTransform::getIdentity());
-		RouteController(Player * player, btTransform initialTransform, Route route);
+		RouteController(Player * player, Route route);
 		void update(btVector3 position, btQuaternion rotation);
 		void attachWorld(std::shared_ptr<PhysicsWorld>& world);
 
@@ -35,8 +34,6 @@ namespace troen
 		void showFencesInRadarForPlayer(const int id);
 		void hideFencesInRadarForPlayer(const int id);
 
-		void setLastPosition(btQuaternion rotation, const btVector3 position);
-
 		void updateFadeOutFactor(float fadeOutFactor);
 		void setBendingActive(bool active);
 		btTransform getFirstWayPoint();
@@ -53,7 +50,6 @@ namespace troen
 		int findNearestPointIndex(osg::Vec3 playerPos, double &distance);
 		int findNearestPointIndex(int start, int end, osg::Vec3 playerPos, double &distance);
 		void addEndZone();
-		btVector3 m_lastPosition;
 		bool m_fenceLimitActivated;
 
 		Player * m_player;

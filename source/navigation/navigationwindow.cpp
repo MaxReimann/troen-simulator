@@ -42,6 +42,7 @@ public:
 
 			eye = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0.0, 30.0);
 			center = eye + btToOSGVec3(bikeController->getModel()->getDirection()) * 10;
+			center.set(center.x(), center.y(), 30.0);
 			up = osg::Vec3d(0.0, 0.0, 1.0);
 			m_navView->getCamera()->setViewMatrixAsLookAt(eye, center, up);
 

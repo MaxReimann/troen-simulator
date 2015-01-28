@@ -107,7 +107,7 @@ void HUDController::update(
 	}
 	hudview->updateIngameMessageTexts(m_ingameMessages);
 
-	updateRandomNumbers(currentGameloopTime);
+	updateRandomNumbers(currentGameTime);
 	
 }
 
@@ -116,9 +116,9 @@ void HUDController::setTrackNode(osg::Node* trackNode)
     m_HUDView->setTrackNode(trackNode);
 }
 
-void HUDController::updateRandomNumbers(const long double currentGameloopTime)
+void HUDController::updateRandomNumbers(const long double currentGameTime)
 {
-	if (currentGameloopTime >= m_nextRandNumStart)
+	if (currentGameTime >= m_nextRandNumStart)
 	{
 
 		int displayNum = randomNumbers[m_randNumIndex++];;
@@ -129,10 +129,10 @@ void HUDController::updateRandomNumbers(const long double currentGameloopTime)
 		m_HUDView->updateRandomNumber(std::to_string(displayNum), osg::Vec2(x/1000.0f, y/1000.f));
 
 		std::uniform_int_distribution<int> randNumDist2(-500, 500);
-		m_lastRandNumStart = currentGameloopTime;
-		m_nextRandNumStart = currentGameloopTime + RANDOM_NUMBER_INTERVAL + RANDOM_NUMBER_DURATION + randNumDist2(m_randomGenerator);
+		m_lastRandNumStart = currentGameTime;
+		m_nextRandNumStart = currentGameTime + RANDOM_NUMBER_INTERVAL + RANDOM_NUMBER_DURATION + randNumDist2(m_randomGenerator);
 	} 
-	else if (currentGameloopTime >= m_lastRandNumStart + RANDOM_NUMBER_DURATION)
+	else if (currentGameTime >= m_lastRandNumStart + RANDOM_NUMBER_DURATION)
 	{
 		m_HUDView->updateRandomNumber("", osg::Vec2(0, 0));
 	}

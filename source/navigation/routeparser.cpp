@@ -96,11 +96,9 @@ btTransform troen::Route::getTransform(int index)
 		vec = waypoints.at(index) - waypoints.at(index-1);
 
 	
-	double rotAroundZ = PI / 2 - atan(vec.y() / vec.x());
+	double rotAroundZ = PI + PI/2 - atan(vec.y() / vec.x()) ;
 	if (rotAroundZ < 0)
-	{
 		rotAroundZ += PI;
-	}
 
 	btQuaternion rotation;
 	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
