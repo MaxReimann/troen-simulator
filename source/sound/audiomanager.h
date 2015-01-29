@@ -49,6 +49,7 @@ namespace sound
 		FMOD::Channel* currentSong;
 		FMOD::Channel* engineChannel;
 		FMOD::Channel* axleChannel;
+		FMOD::DSP *m_dplowpass;
 
 		std::shared_ptr<CarSoundData> m_engineSoundData;
 

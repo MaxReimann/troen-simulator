@@ -1,13 +1,13 @@
 vehicle.log("setting values");
-vehicle.maxEngineForce = 1000.0;//1000.0 this should be engine/velocity dependent // engine/velocity dependent
-vehicle.maxBreakingForce = 250.0; // 100.0;
-vehicle.wheelRadius = 0.5; // 0.5;
+vehicle.engineEfficiency = 0.7;//0.8 --> scale for velocity
+vehicle.maxBreakingForce = 80.0; // 100.0;
+vehicle.wheelRadius = 0.4; // 0.5;
 vehicle.wheelWidth = 0.4; // 0.4;
-vehicle.wheelFriction = 1000;//BT_LARGE_ // = 1000;//BT_LARGE_
-vehicle.suspensionStiffness = 100.0; // 20.0;
-vehicle.suspensionDamping = 2.0; // 2.3;
-vehicle.suspensionCompression = 0.5; // 4.4;
+vehicle.wheelFriction = 10;//BT_LARGE_ // = 1000;//BT_LARGE_
+vehicle.suspensionStiffness = 80.0; // 20.0;
+vehicle.suspensionDamping = 2.3; // 2.3;
+vehicle.suspensionCompression = 2.0; // 4.4;
 vehicle.rollInfluence = 0.1;//1.0; //1.0;
-vehicle.suspensionRestLength = 0.6; // 0.6;
+vehicle.suspensionRestLength = 0.5; // 0.6;
 vehicle.cubeHalfExtents = 1.0; // 1.0;
-vehicle.connectionHeight = 1.2;
+vehicle.connectionHeight = 1.0;

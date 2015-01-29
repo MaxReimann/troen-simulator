@@ -8,9 +8,21 @@
 #include "../globals.h"
 #include "../constants.h"
 #include "../model/carengine.h"
+#include "fmod.hpp"
+#include <fmod_errors.h>
 
 
 using namespace troen::sound;
+
+void FmodErrorCheck(FMOD_RESULT result)	// this is an error handling function
+{						// for FMOD errors
+	if (result != FMOD_OK)
+	{
+		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+		exit(-1);
+	}
+}
+
 
 float ChangeSemitone(float frequency, float variation) {
 	static float semitone_ratio = pow(2.0f, 1.0f / 12.0f);
@@ -48,6 +60,9 @@ AudioManager::AudioManager() : currentSong(0), engineChannel(0), fade(FADE_NONE)
 	LoadSFX("data/sound/gear_change1.wav");
 	LoadEngineSound();
 
+	auto result = system->createDSPByType(FMOD_DSP_TYPE_LOWPASS, &m_dplowpass);
+	FmodErrorCheck(result);
+
 }
 
 AudioManager::~AudioManager() {
@@ -83,6 +98,14 @@ void AudioManager::PlayEngineSound()
 	if (sound == sounds[CATEGORY_ENGINE].end()) return;
 	
 	system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &engineChannel);
+	auto result = engineChannel->addDSP(m_dplowpass, 0);
+	FmodErrorCheck(result);
+	result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, 0);
+	FmodErrorCheck(result);
+
+
+
+
 	engineChannel->setChannelGroup(groups[CATEGORY_ENGINE]);
 	engineChannel->setVolume(0.9f);
 	engineChannel->setPaused(false);
@@ -164,9 +187,16 @@ void AudioManager::setMotorSpeed(troen::CarEngine * engine) {
 
 	axleChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->axle.frequency * 6000);
 	axleChannel->setVolume(m_engineSoundData->axle.amplitude);
+	//axleChannel->setLo
 
 	// For the moment, simulate LP filter by tweaking the volume
-	engineChannel->setVolume((m_engineSoundData->engine.amplitude * exp(1.3*m_engineSoundData->engine.lowpass - 1.3)));
+	engineChannel->setVolume(m_engineSoundData->engine.amplitude);
+
+	auto result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW  + m_engineSoundData->engine.lowpass);
+	FmodErrorCheck(result);
+
+
+
 }
 
 float AudioManager::getTimeSinceLastBeat()

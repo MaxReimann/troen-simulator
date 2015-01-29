@@ -12,30 +12,30 @@ using namespace troen;
 
 		Gears[0] = -3.68f;
 		Gears[1] = 0.f;
-		Gears[2] = 4.06f;
-		Gears[3] = 2.4f;
+		Gears[2] = 3.0f;
+		Gears[3] = 2.2f;
 		Gears[4] = 1.58f;
 		Gears[5] = 1.19f;
-		Gears[6] = 1.f;
-		Gears[7] = 0.87f;
+		Gears[6] = 1.03f;
+		Gears[7] = 0.89f;
 
-		Torque[0][0] = 1000.f;
-		Torque[0][1] = 260.f;
+		Torque[0][0] = 500.f;
+		Torque[0][1] = 150.0f;
 
-		Torque[1][0] = 1400.f;
-		Torque[1][1] = 340.f;
+		Torque[1][0] = 1000.f;
+		Torque[1][1] = 280.f;
 
 		Torque[2][0] = 1800.f;
-		Torque[2][1] = 400.f;
+		Torque[2][1] = 350.0f;
 
 		Torque[3][0] = 2200.f;
 		Torque[3][1] = 380.f;
 
 		Torque[4][0] = 2500.f;
-		Torque[4][1] = 340.f;
+		Torque[4][1] = 300.f;
 
 		Torque[4][0] = 2700.f;
-		Torque[4][1] = 300.f;
+		Torque[4][1] = 260.f;
 
 
 
@@ -57,7 +57,7 @@ using namespace troen;
 		//Torque[4][0] = 9500.f;
 		//Torque[4][1] = 300.f;
 
-		IdleRPM = 1000.f;
+		IdleRPM = 500.f;
 		MaxRPM = 3000.f;
 
 		RPM = 0.f;

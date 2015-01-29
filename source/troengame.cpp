@@ -108,6 +108,7 @@ void TroenGame::startGameLoop()
 	// - physics + updateViews
 	// - render;
 	m_audioManager->PlayEngineSound();
+	m_audioManager->SetMasterVolume(1.0);
 
 
 	// terminates when first viewer is closed
