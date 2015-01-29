@@ -88,7 +88,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	{
 		LODBuildings->setName("L1CityGroup");
 		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clrearly anymore ..
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); 
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive")); 
 	}
 
 	LODBuildings->addChild(readObstacles);
