@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 
+//#define LOG_OUTPUT
 
 
 
@@ -35,6 +36,13 @@ int main(int argc, char* argv[])
 
 	troen::MainWindow * mainWindow = new troen::MainWindow();
 	mainWindow->show();
+
+#ifdef LOG_OUTPUT
+	//std::ofstream log("Message.log");
+	//std::streambuf* out = std::cout.rdbuf(log.rdbuf());
+	//std::streambuf* err = std::cerr.rdbuf(log.rdbuf());
+	freopen("Message.log", "w", stdout);
+#endif
 
 	result = application->exec();
 

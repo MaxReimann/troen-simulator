@@ -2,6 +2,7 @@
 // STD
 #include <math.h>
 // OSG
+#include <osg/Notify>
 #include <osg/ImageStream>
 #include <osg/Material>
 #include <osg/MatrixTransform>
@@ -29,6 +30,7 @@ using namespace troen;
 CityView::CityView(std::shared_ptr<AbstractModel> model, std::string levelName) :
 LevelView(model, levelName)
 {
+	
 }
 
 //specific to cityview, called by LevelView()
@@ -81,8 +83,12 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 
 	if (LODlevel == 0)
 	{
-		LODBuildings->setName("L0CityGroup");
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive"));
+		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive"
+		std::cout << "reading level model.." << std::endl;
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/textured/3850_5817.ive")); // #"data/models/berlin/textured/3850_5817.obj"
+		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
+		if (readObstacles == nullptr)
+			printf("reading model failed.. \n");
 	}
 	else if (LODlevel == 1)
 	{
@@ -92,8 +98,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	}
 
 	LODBuildings->addChild(readObstacles);
-	//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/generalized/01_00/texatlas.tga", 0, true);
-	addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
+	//addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
 
 	return LODBuildings;
 }

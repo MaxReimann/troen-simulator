@@ -265,6 +265,7 @@ set(sources
 	source/util/filteredrayresultcallback.h
 	source/util/basicshapes.h
 	source/util/basicshapes.cpp
+	source/util/notify_handler.h
 
 
 
