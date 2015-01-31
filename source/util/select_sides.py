@@ -25,28 +25,20 @@ def select_vertical_faces(mesh):
     return selected,unselected
         
 def unlink_unused_textures():
-    bpy.ops.object.mode_set(mode = 'EDIT') 
     obj = bpy.context.active_object
-    #bm = bmesh.from_edit_mesh(obj.data)
-
-    selected, unselected = select_vertical_faces(obj.data)
-    unselected = sorted(unselected, key=lambda face: face.material_index)
-    #popped = []
-    slot_empty_mat = len(obj.data.materials)
-    empty = bpy.data.materials.new('empty')
-    obj.data.materials.append(empty)
-
-
-
-    for face in unselected[::-1]:
-        face.material_index = slot_empty_mat
-        # if index not in popped:
-        #     print("pop index" + str(index))
-        #     obj.data.materials.pop(index, update_data=False)
-        #     popped.append(index)
-
+    first = obj.data.materials[0].name
+    if first == "default":
+        pop_index = 1
+        first = obj.data.materials[1].name
+    else:
+        pop_index = 0
+    
+    while first.startswith("tex"):
+        obj.data.materials.pop(pop_index, update_data=True)
+        if pop_index > len(obj.data.materials) -1 :
+            break
+        first = obj.data.materials[pop_index].name
     obj.data.update()
-    bpy.ops.object.mode_set(mode = 'OBJECT')
 
 def copy_needed_textures():
     obj = bpy.context.active_object
@@ -58,5 +50,5 @@ def copy_needed_textures():
         shutil.copyfile(abspath + tex_name+".jpg", abspath + "needed/"+tex_name+".jpg")
 
 
-unlink_unused_textures()
-copy_needed_textures()
+#unlink_unused_textures()
+#copy_needed_textures()
