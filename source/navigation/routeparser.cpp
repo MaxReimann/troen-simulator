@@ -83,11 +83,16 @@ osg::Vec3 inline RouteParser::lineToPoint(QByteArray line)
 
 }
 
+
+
+
+
 btTransform troen::Route::getTransform(int index)
 {
 	osg::Vec3 waypoint = waypoints.at(index);
 	btTransform trans;
-	trans.setOrigin(osgToBtVec3(waypoint));
+	trans.setIdentity();
+	trans.setOrigin(osgToBtVec3(waypoint) + btVector3(0, 0, 10));
 	osg::Vec3 vec;
 
 	if (index != waypoints.size() - 1)
@@ -95,13 +100,13 @@ btTransform troen::Route::getTransform(int index)
 	else
 		vec = waypoints.at(index) - waypoints.at(index-1);
 
-	
-	double rotAroundZ = PI + PI/2 - atan(vec.y() / vec.x()) ;
-	if (rotAroundZ < 0)
-		rotAroundZ += PI;
-
-	btQuaternion rotation;
-	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
+	//vec.normalize();
+	auto rotation = fromTwoVectors(btVector3(0,1,0), osgToBtVec3(vec));
+	rotation.setRotation(btVector3(0, 0, 1), rotation.getAngle()- PI/4);
+	//btQuaternion::
+	//double rotAroundZ = PI + PI/2 - atan(vec.y() / vec.x()) ;
+	//btQuaternion rotation;
+	//rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
 
 	trans.setRotation(rotation);
 

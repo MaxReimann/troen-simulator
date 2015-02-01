@@ -119,3 +119,27 @@ namespace troen
 	const QString MAIN_NORMAL_NAVI_BENDED("Main:Normal Nav:Bended");
 	const QString windowSetupChoices[] { MAIN_NORMAL_NAVI_NORMAL, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
 }
+
+btQuaternion fromTwoVectors(btVector3 u, btVector3 v)
+{
+	float norm_u_norm_v = sqrt(u.dot(u) * v.dot(v));
+	float real_part = norm_u_norm_v + u.dot(v);
+	btVector3 w;
+
+	if (real_part < 1.e-6f * norm_u_norm_v)
+	{
+		/* If u and v are exactly opposite, rotate 180 degrees
+		* around an arbitrary orthogonal axis. Axis normalisation
+		* can happen later, when we normalise the quaternion. */
+		real_part = 0.0f;
+		w = abs(u.x()) > abs(u.z()) ? btVector3(-u.y(), u.x(), 0.f)
+			: btVector3(0.f, -u.z(), u.y());
+	}
+	else
+	{
+		/* Otherwise, build quaternion the standard way. */
+		w = u.cross(v);
+	}
+
+	return btQuaternion(real_part, w.x(), w.y(), w.z()).normalized();
+}

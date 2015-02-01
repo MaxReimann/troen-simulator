@@ -41,17 +41,17 @@ void CityView::initSpecifics(std::shared_ptr<AbstractModel> model)
 	osg::Vec2 levelSize = pairToVec2(getCityModel()->getLevelSize());
 	loadSpeedSigns();
 
-	auto floor = constructFloors(levelSize);
-
+	auto floor = constructFloors(levelSize,0);
 	m_node->addChild(floor);
 	m_node->addChild(constructCity(levelSize, 0));
 
+	auto naviFloor = constructFloors(levelSize, 1);
 	m_naviNode = new osg::Group();
-	m_naviNode->addChild(floor);
+	m_naviNode->addChild(naviFloor);
 	m_naviNode->addChild(constructCity(levelSize, 1));
 }
 
-osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize)
+osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 {
 	osg::ref_ptr<osg::Group> floorsGroup = new osg::Group();
 
@@ -60,7 +60,10 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize)
 	floors->setName("floorsNode");
 
 	osg::StateSet *floorStateSet = floors->getOrCreateStateSet();
-	setTexture(floorStateSet, "data/textures/berlin_ground_l1.tga", 0);
+	if (LOD == 0)
+		setTexture(floorStateSet, "data/textures/berlin_ground_l1.tga", 0);
+	else
+		setTexture(floorStateSet, "data/textures/white.tga", 1);
 
 	//will be overwritten if reflection is used
 	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node>>(floors), shaders::FLOOR_CITY, levelSize, GLOW, 1.0);
@@ -85,7 +88,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	{
 		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive"
 		std::cout << "reading level model.." << std::endl;
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/textured/3850_5817.ive")); // #"data/models/berlin/textured/3850_5817.obj"
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); // #"data/models/berlin/textured/3850_5817.obj"
 		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
 		if (readObstacles == nullptr)
 			printf("reading model failed.. \n");
@@ -98,7 +101,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	}
 
 	LODBuildings->addChild(readObstacles);
-	//addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
+	addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
 
 	return LODBuildings;
 }

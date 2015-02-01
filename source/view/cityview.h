@@ -22,7 +22,7 @@ namespace troen
 		osg::ref_ptr<osg::Group> getNaviNode() { return m_naviNode; }
 	
 	protected:
-		osg::ref_ptr<osg::Group> constructFloors(osg::Vec2 levelSize);
+		osg::ref_ptr<osg::Group> constructFloors(osg::Vec2 levelSize, int LOD);
 		osg::ref_ptr<osg::Group> constructCity(osg::Vec2 levelSize, int LODlevel);
 		std::shared_ptr<CityModel> getCityModel();
 		void loadSpeedSigns();

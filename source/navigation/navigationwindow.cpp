@@ -40,17 +40,16 @@ public:
 			osg::Vec3f gameEye, c, gameUp;
 			osg::Vec3f eye, center, up;
 
-			eye = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0.0, 20.0);
-			center = eye + btToOSGVec3(bikeController->getModel()->getDirection()) * 10;
-			center.set(center.x(), center.y(), 19.0);
+			eye = bikeController->getModel()->getPositionOSG() - btToOSGVec3(bikeController->getModel()->getDirection()) * 50 + osg::Vec3d(0.0, 0, 30.0);
+			center = bikeController->getModel()->getPositionOSG();
+			//center.set(center.x(), center.y(), 28.0);
 			up = osg::Vec3d(0.0, 0.0, 1.0);
 			m_navView->getCamera()->setViewMatrixAsLookAt(eye, center, up);
 
 
 			double fovy, aspect, znear, zfar;
-			double fovy_addition = FOVY_ADDITION_MAX / 1.5;
 			m_navView->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
-			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + fovy_addition, aspect, znear, zfar);
+			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + FOVY_ADDITION_MAX * 1.5, aspect, znear, zfar);
 
 
 		}

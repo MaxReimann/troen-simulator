@@ -277,6 +277,9 @@ namespace troen
 #define btToOSGQuat(q) \
 	osg::Quat(q.x(), q.y(), q.z(), q.w())
 
+#define OSGToBtQuat(q) \
+	btQuaternion(q.x(), q.y(), q.z(), q.w())
+
 #define toVec2(v) \
 	osg::Vec2(v.x(), v.y())
 
@@ -346,3 +349,7 @@ inline const T interpolate(
 		return linear(t);
 	}
 }
+
+/* Build a unit quaternion representing the rotation
+* from u to v. The input vectors need not be normalised. */
+btQuaternion fromTwoVectors(btVector3 u, btVector3 v);

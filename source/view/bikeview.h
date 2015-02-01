@@ -19,10 +19,9 @@ namespace troen
 
 	class BikeView : public AbstractView
 	{
+		friend class BikeController;
 	public:
 		BikeView(const osg::Vec3 color, ResourcePool* resourcePool);
-		void setTexture(osg::ref_ptr<osg::StateSet> stateset, const ResourcePool::TextureResource textureName, const int unit);
-
 		osg::ref_ptr<osg::Node> createCyclePart(
 			ResourcePool::ModelResource objName,
 			ResourcePool::TextureResource specularTexturePath,
@@ -39,7 +38,11 @@ namespace troen
 		void addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo);
 		void setWheelRotation(int index, btTransform t);
 		osg::ref_ptr<osg::Geode> getLookatGeode() { return m_lookatGeode; }
+		osg::ref_ptr<osg::MatrixTransform>  createNavigationArrow();
 	private:
+		void setTexture(osg::ref_ptr<osg::StateSet> stateset, const ResourcePool::TextureResource textureName, const int unit);
+		void setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string filePath, int unit, bool override);
+		void addShaderAndUniforms(osg::ref_ptr<osg::StateSet> stateSet, int shaderIndex, float alpha);
 		osg::Vec3 m_playerColor;
 		osg::ref_ptr<osg::Node> m_playermarkerNode;
 		ResourcePool* m_resourcePool;
@@ -47,5 +50,7 @@ namespace troen
 		std::vector<osg::ref_ptr<osg::PositionAttitudeTransform>> wheels;
 		osg::ref_ptr<osg::MatrixTransform> m_lookatPoint;
 		osg::ref_ptr<osg::Geode>  m_lookatGeode;
+		osg::ref_ptr<osg::MatrixTransform> m_navigationArrowTransform;
+		osg::ref_ptr<osg::Group> m_naviNode;
 	};
 }

@@ -549,3 +549,8 @@ bool BikeController::isFalling()
 	return m_bikeModel->getPositionBt().z() < fallThreshold && state() == BikeController::BIKESTATE::DRIVING;
 }
 
+osg::ref_ptr<osg::Group> BikeController::getNaviNode()
+{
+	return m_bikeView->m_naviNode;
+}
+

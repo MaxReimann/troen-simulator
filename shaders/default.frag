@@ -1,7 +1,6 @@
 #version 130
 uniform sampler2D diffuseTexture;
 uniform int modelID;
-uniform float glowIntensity;
 uniform float trueColor;
 uniform float alpha;
 uniform bool bendingActivated;
@@ -20,5 +19,5 @@ void main() {
 
 	/*MR: for some very akward reason, the last parameter has to be set to 1 here (although the texture is only GL_RGB..), to render the ramps
 	and blocks into the idlayer, while it does not affect other objects like the itemboxes which also use default.frag..*/
-	gl_FragData[1] = vec4(modelID, glowIntensity, 0,1);
+	gl_FragData[1] = vec4(modelID, 0, 0,1);
 }

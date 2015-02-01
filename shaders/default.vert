@@ -1,7 +1,6 @@
 #version 130
 
 uniform float objectID;
-uniform bool isReflecting;
 out vec2 uv;
 uniform bool bendingActivated;
 
@@ -21,7 +20,7 @@ void main(void)
 	//TODO: make mainDeformReflected work
 	//mainDeformReflected();
 
-	if (bendingActivated && !isReflecting) {
+	if (bendingActivated) {
 		mainDeform(gl_Vertex);}
 	
 	return;

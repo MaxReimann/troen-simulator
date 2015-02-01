@@ -24,7 +24,7 @@
 #include "../resourcepool.h"
 #include "../util/basicshapes.h"
 #include "hudview.h"
-#include "LinearMath/btQuaternion.h"
+#include "btBulletDynamicsCommon.h"
 
 using namespace troen;
 
@@ -34,70 +34,8 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_resourcePool = resourcePool;
 	m_node = new osg::Group();
 	m_pat = new osg::PositionAttitudeTransform();
+	m_naviNode = new osg::Group();
 
-#ifdef NISCHT
-	osg::Matrixd initialTransform;
-	osg::Quat rotationQuat(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
-	initialTransform.makeRotate(rotationQuat);
-
-	initialTransform *= initialTransform.scale(BIKE_VIEW_SCALE_FACTORS);
-	initialTransform *= initialTransform.translate(BIKE_VIEW_TRANSLATE_VALUES);
-
-	osg::MatrixTransform* matrixTransform = new osg::MatrixTransform(initialTransform);
-	matrixTransform->setNodeMask(CAMERA_MASK_MAIN);
-	m_pat->addChild(matrixTransform);
-
-	
-	m_MovieCycle_Body = createCyclePart(ResourcePool::MG_MovieCycle_Body_MI,
-		ResourcePool::MG_MovieCycle_Body_SPEC,
-		ResourcePool::MG_MovieCycle_BodyHeadLight_EMSS,
-		ResourcePool::MG_MovieCycle_Body_NORM, DEFAULT);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Player_Body = createCyclePart(ResourcePool::MG_MovieCycle_PlayerBody_MI,
-		ResourcePool::MG_Player_Body_SPEC,
-		ResourcePool::MG_Player_Body_EMSS,
-		ResourcePool::MG_Player_Body_NORM, GLOW, 0.5f);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Tire = createCyclePart(ResourcePool::MG_MovieCycle_Tire_MI,
-		ResourcePool::MG_MovieCycle_Tire_DIFF,
-		ResourcePool::MG_MovieCycle_Tire_EMSS,
-		ResourcePool::MG_MovieCycle_Tire_NORM, GLOW, 0.5f);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Player_Helmet = createCyclePart(ResourcePool::MG_MovieCycle_PlayerHelmet_MI,
-		ResourcePool::MG_Player_Helmet_SPEC,
-		ResourcePool::MG_Player_Helmet_EMSS,
-		ResourcePool::MG_Player_Helmet_NORM, GLOW, 0.3f);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Player_Disc = createCyclePart(ResourcePool::MG_MovieCycle_PlayerDisc_MI,
-		ResourcePool::MG_Player_Disc_SPEC,
-		ResourcePool::MG_Player_Disc_EMSS,
-		ResourcePool::MG_Player_Disc_NORM, GLOW);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Glass_MI = createCyclePart(ResourcePool::MG_MovieCycle_Glass_MI,
-		ResourcePool::Glass,
-		ResourcePool::Glass,
-		ResourcePool::None,
-		DEFAULT);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Engine = createCyclePart(ResourcePool::MG_MovieCycle_Engine_MI,
-		ResourcePool::None,
-		ResourcePool::MG_MovieCycle_Engine_EMSS,
-		ResourcePool::MG_MovieCycle_Engine_NORM, DEFAULT);
-
-	osg::ref_ptr<osg::Node> MovieCycle_Player_Baton = createCyclePart(ResourcePool::MG_MovieCycle_PlayerBaton_MI,
-		ResourcePool::MG_Player_Baton_SPEC,
-		ResourcePool::MG_Player_Baton_EMSS,
-		ResourcePool::MG_Player_Baton_NORM, GLOW);
-		
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Player_Body);
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Tire);
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Player_Helmet);
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Player_Disc);
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Glass_MI);
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Engine);
-	m_MovieCycle_Body->asGroup()->addChild(MovieCycle_Player_Baton);
-	matrixTransform->addChild(m_MovieCycle_Body);
-#else
 
 	osg::Matrixd initialTransform;
 	initialTransform *= initialTransform.scale(btToOSGVec3(BIKE_DIMENSIONS));
@@ -132,31 +70,32 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_pat->addChild(m_lookatPoint);
 
 	m_pat->addChild(matrixTransform);
-#endif
-
 	m_pat->setName("bikeGroup");
 
 
 	// create box for radar
-	osg::Vec4 color4 = osg::Vec4(m_playerColor, 1.0);
-	osg::ref_ptr<osg::ShapeDrawable> mark_shape = new osg::ShapeDrawable;
-	mark_shape->setShape(new osg::Cone(osg::Vec3(), 120, 300));
-	mark_shape->setColor(color4);
-	osg::ref_ptr<osg::Geode> mark_node = new osg::Geode;
-	mark_node->addDrawable(mark_shape.get());
+	//osg::Vec4 color4 = osg::Vec4(m_playerColor, 1.0);
+	//osg::ref_ptr<osg::ShapeDrawable> mark_shape = new osg::ShapeDrawable;
+	//mark_shape->setShape(new osg::Cone(osg::Vec3(), 120, 300));
+	//mark_shape->setColor(color4);
+	//osg::ref_ptr<osg::Geode> mark_node = new osg::Geode;
+	//mark_node->addDrawable(mark_shape.get());
 
-	osg::Matrixd radarMatrix;
-	osg::Quat radarMarkRotationQuat(osg::DegreesToRadians(90.0f), osg::X_AXIS);
-	radarMatrix.makeRotate(radarMarkRotationQuat);
+	//osg::Matrixd radarMatrix;
+	//osg::Quat radarMarkRotationQuat(osg::DegreesToRadians(90.0f), osg::X_AXIS);
+	//radarMatrix.makeRotate(radarMarkRotationQuat);
 
-	osg::MatrixTransform* radarMatrixTransform = new osg::MatrixTransform(radarMatrix);
-	radarMatrixTransform->addChild(mark_node);
-	radarMatrixTransform->setNodeMask(CAMERA_MASK_RADAR);
+	//osg::MatrixTransform* radarMatrixTransform = new osg::MatrixTransform(radarMatrix);
+	//radarMatrixTransform->addChild(mark_node);
+	//radarMatrixTransform->setNodeMask(CAMERA_MASK_RADAR);
 
-	m_pat->addChild(radarMatrixTransform);
+	//m_pat->addChild(radarMatrixTransform);
+
 	
 	m_pat->addChild(PlayerMarker(color).getNode());
 	m_node->addChild(m_pat);
+
+	m_naviNode->addChild(createNavigationArrow());
 }
 
 osg::ref_ptr<osg::Node> BikeView::createCyclePart(ResourcePool::ModelResource objName, ResourcePool::TextureResource specularTexturePath,
@@ -255,9 +194,88 @@ void BikeView::setTexture(osg::ref_ptr<osg::StateSet> stateset, ResourcePool::Te
 
 }
 
+void BikeView::setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string filePath, int unit, bool override)
+{
+
+	osg::Image* image = osgDB::readImageFile(filePath);
+	if (!image)
+		std::cout << "[TroenGame::levelView]  File \"" << filePath << "\" not found." << std::endl;
+	else
+	{
+		osg::Texture2D* texture = new osg::Texture2D;
+		texture->setImage(image);
+		texture->setResizeNonPowerOfTwoHint(false);
+		texture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+		texture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+		if (override)
+			stateset->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+		else
+			stateset->setTextureAttributeAndModes(unit, texture, osg::StateAttribute::ON);
+	}
+}
+
 void BikeView::update()
 {
 	m_MovieCycle_Body->getStateSet()->addUniform(new osg::Uniform("transform", m_pat->asMatrixTransform()->getMatrix()));
+}
+
+class CopyPAT : public osg::NodeCallback
+{
+public:
+	CopyPAT(osg::PositionAttitudeTransform *pat) : m_copy_pat(pat) {}
+
+	virtual void operator()(osg::Node* node,
+		osg::NodeVisitor* nv)
+	{
+		if (!nv)
+			return;
+
+		osg::MatrixTransform *transform = static_cast<osg::MatrixTransform*>(node);
+		
+		float zoffset = 4.0;
+
+		btMatrix3x3 rotMat(OSGToBtQuat((m_copy_pat->getAttitude())));
+		float y, p, r;
+		rotMat.getEulerYPR(y, p, r);
+		btQuaternion zRot(btVector3(0, 0, 1), y);
+
+		osg::Matrixd m(btToOSGQuat(zRot));
+		m.setTrans(m_copy_pat->getPosition() + osg::Vec3(0,0,zoffset));
+		transform->setMatrix(m);
+
+
+
+		// Continue traversing so that OSG can process
+		//   any other nodes with callbacks.
+		traverse(node, nv);
+	}
+
+protected:
+	osg::PositionAttitudeTransform *m_copy_pat;
+};
+
+osg::ref_ptr<osg::MatrixTransform> BikeView::createNavigationArrow()
+{
+	m_navigationArrowTransform = new osg::MatrixTransform();
+	osg::ref_ptr<osg::Node> navi_arrow = osgDB::readNodeFile("data/models/navi_arrow.ive");
+	m_navigationArrowTransform->addChild(navi_arrow);
+	m_navigationArrowTransform->setUpdateCallback(new CopyPAT(m_pat));
+	osg::ref_ptr<osg::StateSet> state = navi_arrow->getOrCreateStateSet();
+	state->setMode(GL_BLEND, osg::StateAttribute::ON);
+	state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+	addShaderAndUniforms(state, shaders::DEFAULT, 1.0);
+	setTexture(state, "data/textures/naviarrow.tga", 0, true);
+
+
+	return m_navigationArrowTransform;
+}
+
+
+void BikeView::addShaderAndUniforms(osg::ref_ptr<osg::StateSet> stateSet, int shaderIndex, float alpha)
+{
+	stateSet->setAttributeAndModes(shaders::m_allShaderPrograms[shaderIndex], osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+	stateSet->addUniform(new osg::Uniform("alpha", alpha));
 }
 
 

@@ -202,8 +202,6 @@ void RouteController::addEndZone()
 }
 
 
-
-
 btTransform RouteController::getLastWayPoint()
 {
 	btTransform trans;
@@ -223,12 +221,15 @@ btTransform RouteController::getLastWayPoint()
 	else
 		vec = m_subdividedPoints[index] - m_subdividedPoints[index - 1];
 
-	double rotAroundZ = PI +  PI / 2 - atan(vec.y() / vec.x());
+	//double rotAroundZ = PI +  PI / 2 - atan(vec.y() / vec.x());
+	vec.normalize();
+	auto rotation = fromTwoVectors(btVector3(0, 1, 0), osgToBtVec3(vec));
+	rotation.setRotation(btVector3(0, 0, 1), rotation.getAngle());
 
 
 
-	btQuaternion rotation;
-	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
+	//btQuaternion rotation;
+	//rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
 
 	trans.setRotation(rotation);
 

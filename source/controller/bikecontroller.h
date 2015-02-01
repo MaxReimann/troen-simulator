@@ -82,6 +82,8 @@ namespace troen
 		bool isFalling();
 		void reloadVehicle();
 
+		osg::ref_ptr<osg::Group> getNaviNode();
+
 	private:
 		std::shared_ptr<BikeView> m_bikeView;
 		std::shared_ptr<BikeModel> m_bikeModel;
