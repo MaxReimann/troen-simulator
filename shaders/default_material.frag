@@ -11,7 +11,5 @@ void main() {
 	
 	vec4 ambient_color = gl_FrontMaterial.ambient * gl_LightSource[0].ambient + gl_LightModel.ambient * gl_FrontMaterial.ambient;
 	
-	gl_FragData[0] = vec4(1.0,0.5,0.5,0.5);// gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
-	//2 float channels: select_group, attribute (f.e glowintensity for glow group)
-	gl_FragData[1] = vec4(modelID,1.0,0,0);
+	gl_FragColor = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
 }

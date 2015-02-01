@@ -51,10 +51,7 @@ void main()
 	//blend farther away grid to black if bending
 	reflectionTextureColor = mix(reflectionTextureColor, vec4(0.0), bending_blend);
 	//vec4(skybox_blend,0.0,1.0);//
-	gl_FragData[0] = mix(grid * 2.0, reflectionTextureColor, 0.5 - (1 - bendingFactor) / 4);
-	// gl_FragData[0] = vec4(bendingFactor);
-	// 2 channels: select_group, attribute (f.e glowintensity for glow group
-	gl_FragData[1] = vec4(modelID, glowIntensity, 0, 0);
+	gl_FragColor = mix(grid * 2.0, reflectionTextureColor, 0.5 - (1 - bendingFactor) / 4);
 
 	return;
 }
