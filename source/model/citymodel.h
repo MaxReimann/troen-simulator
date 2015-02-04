@@ -33,6 +33,9 @@ namespace troen
 		void reload(std::string levelName);
 		const inline btPoint getLevelSize();
 
+
+		CityModel::~CityModel();
+
 		static void callbackWrapper(void* pObject);
 		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
 

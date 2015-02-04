@@ -273,10 +273,13 @@ void GameLogic::handleNavigationBoundaryCollision(BikeController* bike)
 void GameLogic::handleSpeedZone(BikeController* bike, LevelController* levelController, btGhostObject *ghost)
 {
 	Speedzone zone = levelController->findSpeedZone(ghost);
+	if (zone.maxSpeed == 0)
+		printf("speedzone not valid\n");
+
 	bike->player()->setCurrentSpeedLimit(zone.maxSpeed);
 
 #ifdef VERBOSE
-	printf("just entered speedzone with limit %d km/h", zone.maxSpeed);
+	printf("just entered speedzone with limit %d km/h\n", zone.maxSpeed);
 #endif
 
 }

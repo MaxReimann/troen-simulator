@@ -109,11 +109,12 @@ void CityModel::addSpeedZone(btTransform position, int speedLimit)
 
 	ObjectInfo* info = new ObjectInfo(m_levelController, SPEEDZONETYPE);
 	ghostObject->setUserPointer(info);
+	ghostObject->setUserIndex(SPEEDZONETYPE);
 
 
 	m_collisionShapes.push_back(boxShape);
 	m_ghostObjectList.push_back(ghostObject);
-	m_speedZoneList.push_back({ m_speedZoneList.size(), speedLimit });
+	m_speedZoneList.push_back({ m_speedZoneList.size(), speedLimit, (btCollisionObject*) ghostObject.get()});
 }
 
 
@@ -139,14 +140,16 @@ void CityModel::addBoxesAsGhosts(std::vector<BoxModel> &boxes, COLLISIONTYPE typ
 
 Speedzone CityModel::findSpeedZone(btGhostObject *collided)
 {
-	int i = 0;
-	for (auto speedZone : m_ghostObjectList)
+	for (auto obj : m_ghostObjectList)
 	{
-		if (speedZone.get() == collided)
+		if (obj->getUserIndex() == SPEEDZONETYPE)
 		{
-			return m_speedZoneList[i];
+			for (auto speedzone : m_speedZoneList)
+				if (obj.get() == speedzone.sensorObject)
+				{
+					return speedzone;
+				}
 		}
-		i++;
 	}
 
 	return { 0, 0 };
@@ -172,7 +175,10 @@ void CityModel::reload(std::string levelName)
 }
 
 
-
+CityModel::~CityModel()
+{
+	removeGhosts();
+}
 
 
 

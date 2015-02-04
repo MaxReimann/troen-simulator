@@ -23,30 +23,34 @@ def get_faces_for_material(ob, bm, mat_name):
     return faces_mat
 
 
-atlas_path = "D:\\Blender\\troensimulator\\Berlin3ds\\Berlin3ds\\packed\\"
+root_dir = "D:\\Blender\\troensimulator\\Berlin3ds\\complete\\"
+FILENAME = "3850_5819"
+atlas_path = root_dir + FILENAME + "\\"
+
 
 
 def make_material(obj, name_trimmed, image):
     textlas_material = obj.data.materials.get(name_trimmed+"-mat")
     if textlas_material is None:
         slot_texatlas_mat = len(obj.data.materials)
-        global_mat = bpy.data.materials.get(name_trimmed+"-mat")
-        if global_mat == None:
-            textlas_material =  bpy.data.materials.new(name_trimmed+"-mat")
-            obj.data.materials.append(textlas_material)
 
-            cTex = bpy.data.textures.new(name_trimmed, type = 'IMAGE')
-            cTex.image = image
+        textlas_material =  bpy.data.materials.new(name_trimmed+"-mat")
+        obj.data.materials.append(textlas_material)
 
-            # Add texture slot for color texture
-            mtex = textlas_material.texture_slots.add()
-            mtex.texture = cTex
-            mtex.texture_coords = 'UV'
-            mtex.use_map_color_diffuse = True 
-            mtex.mapping = 'FLAT'
-            mtex.uv_layer = 'texatlas'
-        else:
-            obj.data.materials.append(global_mat)
+        cTex = bpy.data.textures.new(name_trimmed, type = 'IMAGE')
+        cTex.image = image
+
+
+        
+
+        # Add texture slot for color texture           
+        mtex = textlas_material.texture_slots.add()
+        mtex.texture = cTex
+        mtex.texture_coords = 'UV'
+        mtex.use_map_color_diffuse = True 
+        mtex.mapping = 'FLAT'
+        mtex.uv_layer = 'texatlas'
+
     else:
         for i, slot in enumerate(obj.material_slots):
             if trimmed(slot.material.name) == textlas_material.name:
@@ -78,6 +82,7 @@ def trimmed(name):
     return name.split(".")[0]
 
 def process_part(name, obj):
+    global atlas_path
     with open(atlas_path+name) as fp:
         value_dict = json.load(fp)
 
@@ -101,6 +106,9 @@ def process_part(name, obj):
         image = bpy.data.images.load(atlas_path+filename)  
 
     slot_texatlas_mat = None
+    
+    if obj.data.uv_textures.active.name != "texatlas":
+        obj.data.uv_textures.new("texatlas")
 
 
     bm = bmesh.new()
@@ -109,7 +117,7 @@ def process_part(name, obj):
     standard_uv_tex = bm.loops.layers.uv["UVMap"]
     atlas_uv_tex = bm.loops.layers.uv["texatlas"]#obj.data.uv_textures["texatlas"]
     layer = bm.faces.layers.tex.get("texatlas")
-    
+
     for frame, mat_name in gen_iterable(value_dict):
 
         faces = get_faces_for_material(obj, bm, mat_name)
@@ -153,20 +161,44 @@ def unlink_unused_textures(obj):
     pop_index = 0
 
     while pop_index < len(obj.data.materials): 
-        first = obj.data.materials[pop_index].name
-        if first.startswith("tex") and "packed" not in first:
+        first = obj.data.materials[pop_index]
+        if first.name.startswith("tex") and "packed" not in first.name:
             obj.data.materials.pop(pop_index, update_data=True)
+            bpy.data.materials.remove(first)
         else:
             pop_index += 1
   
     obj.data.update()
 
+def import_3ds():
+    global atlas_path
+    global FILENAME
+    print("importing " + FILENAME)
+    bpy.ops.import_scene.autodesk_3ds(filepath=atlas_path +  "3DS_ELEM.3ds", constrain_size=0,
+        use_image_search=True, axis_forward='Y',axis_up="Z")
+    obj = bpy.context.scene.objects.get("0")
+    bpy.context.scene.objects.active = obj  
+    bpy.context.active_object.select = True  
+    bpy.ops.object.join()
+    obj.name = FILENAME
+    return obj
+
+    
 
 
-for obj in bpy.context.selected_objects:
+names = ["3840_5816","3840_5817","3840_5818","3840_5819","3850_5816",
+"3850_5817","3850_5818","3850_5819", "3860_5816","3860_5818",
+"3870_5816","3870_5817","3870_5818"]
+
+for name in names:
+    global FILENAME
+    FILENAME = name
+    global atlas_path
+    atlas_path = root_dir + FILENAME + "\\"
+    obj = import_3ds()
     jsons = [ f for f in listdir(atlas_path) if isfile(join(atlas_path,f)) and f.split(".")[1] == "json" ]
-    filtered = [j for j in jsons if "3860_5818" in j]
-    for name in filtered:
+    #filtered = [j for j in jsons if "3860_5818" in j]
+    for name in jsons:
         process_part(name, obj)
         
     unlink_unused_textures(obj)

@@ -63,7 +63,7 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 	if (LOD == 0)
 		setTexture(floorStateSet, "data/textures/berlin_ground_l1.tga", 0);
 	else
-		setTexture(floorStateSet, "data/textures/white.tga", 1);
+		setTexture(floorStateSet, "data/textures/grey.tga", 0);
 
 	//will be overwritten if reflection is used
 	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node>>(floors), shaders::FLOOR_CITY, levelSize, GLOW, 1.0);
@@ -86,7 +86,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 
 	if (LODlevel == 0)
 	{
-		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive"
+		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive""D:/Blender/troensimulator/Berlin3ds/Berlin3ds/all_merge_texattempt.ive"
 		std::cout << "reading level model.." << std::endl;
 		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); // #"data/models/berlin/textured/3850_5817.obj"
 		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);

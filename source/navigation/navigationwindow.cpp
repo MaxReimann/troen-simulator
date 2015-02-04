@@ -40,8 +40,8 @@ public:
 			osg::Vec3f gameEye, c, gameUp;
 			osg::Vec3f eye, center, up;
 
-			eye = bikeController->getModel()->getPositionOSG() - btToOSGVec3(bikeController->getModel()->getDirection()) * 50 + osg::Vec3d(0.0, 0, 30.0);
-			center = bikeController->getModel()->getPositionOSG();
+			eye = bikeController->getModel()->getPositionOSG() - btToOSGVec3(bikeController->getModel()->getDirection()) * 50 + osg::Vec3d(0.0, 0, 40.0);
+			center = bikeController->getModel()->getPositionOSG() + osg::Vec3d(0.0, 0, 20.0);
 			//center.set(center.x(), center.y(), 28.0);
 			up = osg::Vec3d(0.0, 0.0, 1.0);
 			m_navView->getCamera()->setViewMatrixAsLookAt(eye, center, up);

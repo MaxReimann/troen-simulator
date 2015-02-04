@@ -259,12 +259,12 @@ osg::ref_ptr<osg::MatrixTransform> BikeView::createNavigationArrow()
 	m_navigationArrowTransform = new osg::MatrixTransform();
 	osg::ref_ptr<osg::Node> navi_arrow = osgDB::readNodeFile("data/models/navi_arrow.ive");
 	m_navigationArrowTransform->addChild(navi_arrow);
-	m_navigationArrowTransform->setUpdateCallback(new CopyPAT(m_pat));
+	m_navigationArrowTransform->setCullCallback(new CopyPAT(m_pat));
 	osg::ref_ptr<osg::StateSet> state = navi_arrow->getOrCreateStateSet();
 	state->setMode(GL_BLEND, osg::StateAttribute::ON);
 	state->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-	addShaderAndUniforms(state, shaders::DEFAULT, 1.0);
+	addShaderAndUniforms(state, shaders::DEFAULT, 0.5);
 	setTexture(state, "data/textures/naviarrow.tga", 0, true);
 
 

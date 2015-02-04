@@ -18,6 +18,7 @@ namespace troen
 	{
 		int speedZoneIndex;
 		int maxSpeed;
+		btCollisionObject *sensorObject;
 	};
 
 	class LevelController : public AbstractController
