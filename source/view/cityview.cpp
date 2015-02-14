@@ -24,6 +24,8 @@
 #include "shaders.h"
 #include "../constants.h"
 
+#define TEXTURED_MODEL
+
 using namespace troen;
 
 
@@ -82,13 +84,40 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 {
 
 	osg::ref_ptr<osg::Group> LODBuildings = new osg::Group();
-	osg::ref_ptr<osg::Group> readObstacles;
+	osg::ref_ptr<osg::Group> readObstacles = new osg::Group();
+
+	std::string cityParts[] = { "L11.ive", "L12.ive", "L12_up.ive", "L13.ive", "L13_up.ive", 
+		"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive" };
+
+	float heightAdjusts[] = { /*L11*/37, 40, 37, 37, 37,
+		/*L21*/37, 37, 37, 37,
+		10, 37, 37, 37 };
 
 	if (LODlevel == 0)
 	{
 		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive""D:/Blender/troensimulator/Berlin3ds/Berlin3ds/all_merge_texattempt.ive"
 		std::cout << "reading level model.." << std::endl;
+
+#ifdef TEXTURED_MODEL
+		int i = 0;
+		for (auto part : cityParts)
+		{
+			osg::ref_ptr<osg::MatrixTransform> partTransform = new osg::MatrixTransform();
+			osg::Matrix trans = osg::Matrix::translate(osg::Vec3(0, 0, -heightAdjusts[i])); //transform in blender
+			partTransform->setMatrix(trans);
+
+			std::cout << "reading " << part << std::endl;
+			osg::Group *geode = static_cast<osg::Group*>(osgDB::readNodeFile(std::string("data/models/berlin/ive/")+part));
+			partTransform->addChild(geode);
+			readObstacles->addChild(partTransform);
+			i++;
+		}
+
+		readObstacles->getOrCreateStateSet()->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+
+#else
 		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); // #"data/models/berlin/textured/3850_5817.obj"
+#endif
 		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
 		if (readObstacles == nullptr)
 			printf("reading model failed.. \n");
@@ -99,6 +128,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clrearly anymore ..
 		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive")); 
 	}
+
 
 	LODBuildings->addChild(readObstacles);
 	addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);

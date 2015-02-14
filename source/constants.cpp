@@ -32,7 +32,7 @@ namespace troen
 	const btVector3 DEFAULT_GRAVITY(0,0,-10);
 
 	// BIKE
-	const btVector3 BIKE_DIMENSIONS(1.9, 4.0, 1.2);
+	const btVector3 BIKE_DIMENSIONS(1.9 / 2.0, 4.0 / 2.0, 1.2 / 2.0);
 	const float BIKE_VIEW_SCALE_FACTOR(1.f / 5.f * BIKE_DIMENSIONS.y());
 	const osg::Vec3f BIKE_VIEW_SCALE_FACTORS(BIKE_VIEW_SCALE_FACTOR, BIKE_VIEW_SCALE_FACTOR, BIKE_VIEW_SCALE_FACTOR);
 	const osg::Vec3f BIKE_VIEW_TRANSLATE_VALUES(0,0,-BIKE_DIMENSIONS.z() * 4.9f / 12.5);

@@ -78,10 +78,12 @@ using namespace troen;
 			RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear);
 			btScalar torque = Throttle * getTorque(RPM) / mVehicle->m_wheelInfo[0].m_wheelsRadius;
 			EngineForce = torque * Efficiency * Gears[CurGear] * MainGear;
-
-			for (int i = 0; i < 4; i++)
-			if (mVehicle->getWheelInfo(i).m_bIsFrontWheel == false)
-				mVehicle->applyEngineForce(EngineForce, i);
+			if (RPM < MaxRPM)
+			{
+				for (int i = 0; i < 4; i++)
+					if (mVehicle->getWheelInfo(i).m_bIsFrontWheel == false)
+						mVehicle->applyEngineForce(EngineForce, i);
+			}
 		}
 		if (CurGear == 1 && Throttle > 0.1)
 			CurGear = 2;
