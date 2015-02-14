@@ -24,7 +24,7 @@
 #include "shaders.h"
 #include "../constants.h"
 
-#define TEXTURED_MODEL
+//#define TEXTURED_MODEL
 
 using namespace troen;
 

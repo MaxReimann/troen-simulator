@@ -210,6 +210,8 @@ set(sources
 	source/model/carengine.h
 	source/model/heightfield128x128.cpp
 	source/model/customfriction.h
+	source/model/vehicle.cpp
+	source/model/vehicle.h
 
 	source/controller/bikecontroller.h
 	source/controller/bikecontroller.cpp

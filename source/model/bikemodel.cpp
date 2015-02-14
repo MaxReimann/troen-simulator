@@ -15,6 +15,7 @@
 #include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
 #include "physicsworld.h"
 #include "../util/scriptwatcher.h"
+#include "vehicle.h"
 
 #include "../view/bikeview.h"
 
@@ -107,7 +108,7 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	double wheelRadius = m_vehicleParameters.wheelRadius;
 	double wheelWidth = m_vehicleParameters.wheelWidth;
 	double wheelFriction = m_vehicleParameters.wheelFriction;
-	double suspensionStiffness = m_vehicleParameters.suspensionStiffness;
+	double suspensionStiffness =  m_vehicleParameters.suspensionStiffness;
 	double suspensionDamping = m_vehicleParameters.suspensionDamping;
 	double suspensionCompression = m_vehicleParameters.suspensionCompression;
 	double rollInfluence = m_vehicleParameters.rollInfluence;
@@ -116,30 +117,35 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	double connectionHeight = m_vehicleParameters.connectionHeight;
 	double engineEfficiency = m_vehicleParameters.engineEfficiency;
 
+	m_tuning.m_suspensionStiffness = suspensionStiffness;
+	m_tuning.m_suspensionCompression = suspensionCompression;
+	m_tuning.m_suspensionDamping = m_vehicleParameters.suspensionDamping;
+	m_tuning.m_frictionSlip = wheelFriction;
 
 	//m_carChassis->setDamping(0.0,0.0);
 	m_wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
 
 	m_vehicleRayCaster = new btDefaultVehicleRaycaster(discreteWorld);
-	m_vehicle =  new btRaycastVehicle(m_tuning, m_carChassis.get(), m_vehicleRayCaster);
+	m_vehicle =  new Vehicle(m_carChassis.get(), m_vehicleRayCaster, this);
 	discreteWorld->addAction(m_vehicle);
 	m_engine = std::make_shared<CarEngine>(m_vehicle, engineEfficiency);
 
 
 
 
+
 	//choose coordinate system
-	m_vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex);
+	//m_vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex);
 	btVector3 halfCH = btVector3(0, 0, connectionHeight / 2 );
 	btVector3 viewOffset = wheelAxleCS / 2.0 + halfCH;
 
 	bool isFrontWheel = true;
 	btVector3 connectionPointCS0(CUBE_HALF_EXTENTS - (0.3*wheelWidth), 2 * CUBE_HALF_EXTENTS - wheelRadius, connectionHeight);
-	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
+	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning,  isFrontWheel);
 	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - viewOffset)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2 - halfCH)));
 	
 	connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3*wheelWidth), 2 * CUBE_HALF_EXTENTS - wheelRadius, connectionHeight);
-	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
+	m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning,  isFrontWheel);
 	m_bikeController->getView()->addWheel(wheelRadius, btToOSGVec3((connectionPointCS0 - viewOffset)), btToOSGVec3((connectionPointCS0 + wheelAxleCS / 2 - halfCH)));
 
 	
@@ -155,17 +161,17 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 
 	
 	btVector3 wheelColor(1, 0, 0);
-	for (int i = 0; i < m_vehicle->getNumWheels(); i++)
-	{
-		btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
-		wheel.m_suspensionStiffness = suspensionStiffness;
-		wheel.m_wheelsDampingRelaxation = suspensionDamping;
-		wheel.m_wheelsDampingCompression = suspensionCompression;
-		wheel.m_frictionSlip = wheelFriction;
-		wheel.m_rollInfluence = rollInfluence;
-		wheel.m_maxSuspensionForce = 50000.f;
-	}
-	world->drawVehicle = m_vehicle;
+	//for (int i = 0; i < m_vehicle->getNumWheels(); i++)
+	//{
+	//	btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
+	//	wheel.m_suspensionStiffness = suspensionStiffness;
+	//	wheel.m_wheelsDampingRelaxation = suspensionDamping;
+	//	wheel.m_wheelsDampingCompression = suspensionCompression;
+	//	wheel.m_frictionSlip = wheelFriction;
+	//	wheel.m_rollInfluence = rollInfluence;
+	//	wheel.m_maxSuspensionForce = 50000.f;
+	//}
+	//world->drawVehicle = m_vehicle;
 
 	m_vehicle->resetSuspension();
 	
@@ -266,11 +272,7 @@ float BikeModel::updateState(long double time)
 		m_vehicle->setSteeringValue(m_vehicleSteering, 1);
 
 		//m_vehicle->applyEngineForce(m_engineForce, 2);
-		m_vehicle->setBrake(m_breakingForce, 0);
-		m_vehicle->setBrake(m_breakingForce, 1);
-		//m_vehicle->applyEngineForce(m_engineForce, 3);
-		m_vehicle->setBrake(m_breakingForce, 2);
-		m_vehicle->setBrake(m_breakingForce, 3);
+		m_vehicle->setAllBrakes(m_breakingForce);
 	}
 
 	m_engine->update(timeFactor);
@@ -295,7 +297,7 @@ float BikeModel::updateState(long double time)
 	}
 	//m_vehicle->updateVehicle(timeFactor/10);
 
-	float speed = m_vehicle->getCurrentSpeedKmHour() / 2.0;
+	float speed = m_engine->getRPM() *  m_vehicleParameters.wheelRadius * 2 * PI * 60.0 / 1000.0;
 	m_oldVelocity = speed;
 	//std::cout << "speed" << speed << std::endl;
 
@@ -480,3 +482,4 @@ void VehiclePhysicSettings::loadVehicleParameters()
 {
 	m_scriptContext.evaluate(m_scriptWatcher.getContent());
 }
+

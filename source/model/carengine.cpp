@@ -1,9 +1,10 @@
 
 #include "carengine.h"
+#include "vehicle.h"
 
 using namespace troen;
 
-	CarEngine::CarEngine(btRaycastVehicle *_mVehicle, float effiency)
+	CarEngine::CarEngine(Vehicle *_mVehicle, float effiency)
 	{
 		mVehicle = _mVehicle;
 
@@ -76,7 +77,7 @@ using namespace troen;
 		if (CurGear > 1)
 		{
 			RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear);
-			btScalar torque = Throttle * getTorque(RPM) / mVehicle->m_wheelInfo[0].m_wheelsRadius;
+			btScalar torque = Throttle * getTorque(RPM) / mVehicle->getWheelInfo(0).m_wheelsRadius;
 			EngineForce = torque * Efficiency * Gears[CurGear] * MainGear;
 			if (RPM < MaxRPM)
 			{
@@ -104,9 +105,9 @@ using namespace troen;
 		btScalar wheel_angular_velocity = 0;
 		btScalar btswheel_rpm = 0;
 
-		for (int i = 0; i < mVehicle->m_wheelInfo.size(); i++)
+		for (int i = 0; i < mVehicle->getNumWheels(); i++)
 		{
-			btWheelInfo& wheel = mVehicle->m_wheelInfo[i];
+			btWheelInfo& wheel = mVehicle->getWheelInfo(i);
 			btVector3 relpos = wheel.m_raycastInfo.m_hardPointWS - mVehicle->getRigidBody()->getCenterOfMassPosition();
 			btVector3 vel = mVehicle->getRigidBody()->getVelocityInLocalPoint(relpos);
 

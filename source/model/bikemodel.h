@@ -13,6 +13,7 @@
 #include "customfriction.h"
 
 #include "../util/scriptwatcher.h"
+#include "vehicle.h"
 using namespace reflectionzeug;
 
 namespace troen
@@ -149,9 +150,9 @@ namespace troen
 		std::shared_ptr<btRigidBody> m_carChassis;
 		int m_forwardAxis;
 
-		btRaycastVehicle::btVehicleTuning	m_tuning;
+		troen::Vehicle::btVehicleTuning	m_tuning;
 		btVehicleRaycaster*	m_vehicleRayCaster;
-		btRaycastVehicle*	m_vehicle;
+		Vehicle*	m_vehicle;
 		btCollisionShape*	m_wheelShape;
 		float m_engineForce;
 		float m_breakingForce;

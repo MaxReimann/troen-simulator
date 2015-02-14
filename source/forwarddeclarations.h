@@ -85,6 +85,7 @@ namespace troen
 	class AbstractModel;
 	class PhysicsWorld;
 	class CarEngine;
+	class Vehicle;
 
 	class BikeController;
 	class LevelController;

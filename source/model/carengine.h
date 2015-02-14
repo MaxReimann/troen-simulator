@@ -10,8 +10,8 @@ namespace troen
 	{
 		friend class CarSoundData;
 	public:
-		CarEngine(btRaycastVehicle *_mVehicle);
-		CarEngine(btRaycastVehicle *_mVehicle, float effiency);
+		CarEngine(Vehicle *_mVehicle);
+		CarEngine(Vehicle *_mVehicle, float effiency);
 		~CarEngine();
 
 		void update(float deltat)				{ _computeAxisTorque(deltat); }
@@ -41,7 +41,7 @@ namespace troen
 		btScalar computeMotorRpm(btScalar rpm);
 		int changeGears();
 
-		btRaycastVehicle* mVehicle;
+		Vehicle* mVehicle;
 		btScalar RPM;
 		float EngineForce;
 		btScalar Efficiency;
