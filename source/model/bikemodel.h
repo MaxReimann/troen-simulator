@@ -36,6 +36,7 @@ namespace troen
 		double suspensionRestLength = 00.0;
 		double cubeHalfExtents = 0.0;
 		double connectionHeight = 0.0;
+		double maxSpeed = 0.0;
 		bool *changesPending;
 
 
@@ -66,6 +67,8 @@ namespace troen
 		void setCubeHalfExtents(const double & val) { cubeHalfExtents = val; }
 		double ConnectionHeight() const { return connectionHeight; }
 		void setConnectionHeight(const double & val) { connectionHeight = val; }
+		double MaxSpeed() const { return maxSpeed; }
+		void setMaxSpeed(const double & val) { maxSpeed = val; }
 
 
 		void log(std::string message) {
@@ -160,6 +163,8 @@ namespace troen
 		std::shared_ptr<CarEngine> m_engine;
 		CustomFrictionConstraint *mfrictionContraint;
 		btTransform m_lastTransform;
+
+		int m_skidCount;
 	};
 
 

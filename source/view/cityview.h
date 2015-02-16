@@ -16,7 +16,7 @@ namespace troen
 	class CityView : public LevelView
 	{
 	public:
-		CityView(std::shared_ptr<AbstractModel> model, std::string levelName);
+		CityView(std::shared_ptr<AbstractModel> model, std::string levelName, bool texturedModel);
 		void initSpecifics(std::shared_ptr<AbstractModel> model);
 		void addSpeedZone(osg::Vec3 position, osg::Quat rotation, int speedLimit);
 		osg::ref_ptr<osg::Group> getNaviNode() { return m_naviNode; }
@@ -31,5 +31,6 @@ namespace troen
 		osg::ref_ptr<osg::Node> m_zone50;
 		osg::ref_ptr<osg::Group> m_signsGroup;
 		osg::ref_ptr<osg::Group> m_naviNode;
+		bool m_texturedModel;
 	};
 }

@@ -44,6 +44,7 @@ namespace troen
 		int participantNumber;
 		QString studySetup;
 		bool exportCSV;
+		bool isTextured;
 		// TODO: add Destructor to avoid memory leak
 	};
 }

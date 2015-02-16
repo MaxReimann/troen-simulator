@@ -20,25 +20,26 @@
 
 using namespace troen;
 
-LevelController::LevelController(TroenGame* troenGame, std::string levelName) : m_levelName(levelName)
+LevelController::LevelController(TroenGame* troenGame, std::string levelName, bool texturedModel) : m_levelName(levelName)
 {
 	AbstractController();
 
 
 	m_levelType = BERLIN;
-	initSpecifics();
+	initSpecifics(texturedModel);
 
 	m_troenGame = troenGame;
+
 
 	initializeSpawnPoints();
 }
 
-void LevelController::initSpecifics()
+void LevelController::initSpecifics(bool texturedModel)
 {
 	if (m_levelType == BERLIN)
 	{
 		m_model = m_levelModel = std::make_shared<CityModel>(this, m_levelName);
-		m_view = m_levelView = std::make_shared<CityView>(m_levelModel, m_levelName);
+		m_view = m_levelView = std::make_shared<CityView>(m_levelModel, m_levelName, texturedModel);
 
 	}
 	else

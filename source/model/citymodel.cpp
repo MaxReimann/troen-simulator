@@ -99,17 +99,17 @@ void CityModel::attachWorld(std::shared_ptr<PhysicsWorld> &world)
 
 void CityModel::addSpeedZone(btTransform position, int speedLimit)
 {
-	std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
+	std::shared_ptr<btGhostObject> ghostObject = std::make_shared<btGhostObject>();
 	position.setOrigin(position.getOrigin());
 	ghostObject->setWorldTransform(position);
 
 	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(50, 2, 2));
 	ghostObject->setCollisionShape(boxShape.get());
-	ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	ghostObject->setCollisionFlags(ghostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
 	ObjectInfo* info = new ObjectInfo(m_levelController, SPEEDZONETYPE);
-	ghostObject->setUserPointer(info);
 	ghostObject->setUserIndex(SPEEDZONETYPE);
+	ghostObject->setUserPointer(info); //switching these two somehow results in an error (userpointer points to invalid adress). no clue why..
 
 
 	m_collisionShapes.push_back(boxShape);
@@ -122,15 +122,16 @@ void CityModel::addBoxesAsGhosts(std::vector<BoxModel> &boxes, COLLISIONTYPE typ
 {
 	for (auto box : boxes)
 	{
-		std::shared_ptr<btPairCachingGhostObject> ghostObject = std::make_shared<btPairCachingGhostObject>();
+		std::shared_ptr<btGhostObject> ghostObject = std::make_shared<btGhostObject>();
 		ghostObject->setWorldTransform(btTransform(box.rotation, box.center));
 
 		std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(box.dimensions / 2);
+		ghostObject->setCollisionFlags(ghostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 		ghostObject->setCollisionShape(boxShape.get());
-		ghostObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
 		ObjectInfo* info;
 		info = new ObjectInfo(m_levelController, type);
+		ghostObject->setUserIndex(type);
 		ghostObject->setUserPointer(info);
 
 		m_collisionShapes.push_back(boxShape);
@@ -140,16 +141,13 @@ void CityModel::addBoxesAsGhosts(std::vector<BoxModel> &boxes, COLLISIONTYPE typ
 
 Speedzone CityModel::findSpeedZone(btGhostObject *collided)
 {
-	for (auto obj : m_ghostObjectList)
-	{
-		if (obj->getUserIndex() == SPEEDZONETYPE)
+
+		for (auto speedzone : m_speedZoneList)
 		{
-			for (auto speedzone : m_speedZoneList)
-				if (obj.get() == speedzone.sensorObject)
-				{
-					return speedzone;
-				}
-		}
+			if (collided == speedzone.sensorObject)
+			{
+				return speedzone;
+			}
 	}
 
 	return { 0, 0 };

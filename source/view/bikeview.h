@@ -39,6 +39,7 @@ namespace troen
 		void setWheelRotation(int index, btTransform t);
 		osg::ref_ptr<osg::Geode> getLookatGeode() { return m_lookatGeode; }
 		osg::ref_ptr<osg::MatrixTransform>  createNavigationArrow();
+		void removeWheels();
 	private:
 		void setTexture(osg::ref_ptr<osg::StateSet> stateset, const ResourcePool::TextureResource textureName, const int unit);
 		void setTexture(osg::ref_ptr<osg::StateSet> stateset, std::string filePath, int unit, bool override);

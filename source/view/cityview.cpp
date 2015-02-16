@@ -24,26 +24,25 @@
 #include "shaders.h"
 #include "../constants.h"
 
-#define TEXTURED_MODEL
+//#define TEXTURED_MODEL
 
 using namespace troen;
 
 
-CityView::CityView(std::shared_ptr<AbstractModel> model, std::string levelName) :
-LevelView(model, levelName)
+CityView::CityView(std::shared_ptr<AbstractModel> model, std::string levelName, bool texturedModel) :
+LevelView(model, levelName), m_texturedModel(texturedModel)
 {
-	
 }
 
 //specific to cityview, called by LevelView()
 void CityView::initSpecifics(std::shared_ptr<AbstractModel> model)
 {
 	m_model = model;
-	 //freom blender file
+	//freom blender file
 	osg::Vec2 levelSize = pairToVec2(getCityModel()->getLevelSize());
 	loadSpeedSigns();
 
-	auto floor = constructFloors(levelSize,0);
+	auto floor = constructFloors(levelSize, 0);
 	m_node->addChild(floor);
 	m_node->addChild(constructCity(levelSize, 0));
 
@@ -86,38 +85,42 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	osg::ref_ptr<osg::Group> LODBuildings = new osg::Group();
 	osg::ref_ptr<osg::Group> readObstacles = new osg::Group();
 
-	std::string cityParts[] = { "L11.ive", "L12.ive", "L12_up.ive", "L13.ive", "L13_up.ive", 
-		"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive" };
-
-	float heightAdjusts[] = { /*L11*/37, 40, 37, 37, 37,
-		/*L21*/37, 37, 37, 37,
-		10, 37, 37, 37 };
-
 	if (LODlevel == 0)
 	{
+
 		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive""D:/Blender/troensimulator/Berlin3ds/Berlin3ds/all_merge_texattempt.ive"
 		std::cout << "reading level model.." << std::endl;
 
-#ifdef TEXTURED_MODEL
-		int i = 0;
-		for (auto part : cityParts)
+		if (m_texturedModel)
 		{
-			osg::ref_ptr<osg::MatrixTransform> partTransform = new osg::MatrixTransform();
-			osg::Matrix trans = osg::Matrix::translate(osg::Vec3(0, 0, -heightAdjusts[i])); //transform in blender
-			partTransform->setMatrix(trans);
 
-			std::cout << "reading " << part << std::endl;
-			osg::Group *geode = static_cast<osg::Group*>(osgDB::readNodeFile(std::string("data/models/berlin/ive/")+part));
-			partTransform->addChild(geode);
-			readObstacles->addChild(partTransform);
-			i++;
+			std::string cityParts[] = { "L11.ive", "L12.ive", "L12_up.ive", "L13.ive", "L13_up.ive",
+				"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive" };
+
+			float heightAdjusts[] = { /*L11*/37, 40, 37, 37, 37,
+				/*L21*/37, 37, 37, 37,
+				/*L31*/10, 37, 37, 37 };
+
+			int i = 0;
+			for (auto part : cityParts)
+			{
+				osg::ref_ptr<osg::MatrixTransform> partTransform = new osg::MatrixTransform();
+				osg::Matrix trans = osg::Matrix::translate(osg::Vec3(0, 0, -heightAdjusts[i])); //transform in blender
+				partTransform->setMatrix(trans);
+
+				std::cout << "reading " << part << std::endl;
+				osg::Group *geode = static_cast<osg::Group*>(osgDB::readNodeFile(std::string("data/models/berlin/ive/") + part));
+				partTransform->addChild(geode);
+				readObstacles->addChild(partTransform);
+				i++;
+			}
+
+			readObstacles->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 		}
-
-		readObstacles->getOrCreateStateSet()->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-
-#else
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); // #"data/models/berlin/textured/3850_5817.obj"
-#endif
+		else
+		{
+			readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); // #"data/models/berlin/textured/3850_5817.obj"
+		}
 		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
 		if (readObstacles == nullptr)
 			printf("reading model failed.. \n");
@@ -126,7 +129,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	{
 		LODBuildings->setName("L1CityGroup");
 		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clrearly anymore ..
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive")); 
+		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive"));
 	}
 
 
@@ -149,7 +152,7 @@ void CityView::loadSpeedSigns()
 	std::string filePath("data/models/signs/");
 	m_zone30 = osgDB::readNodeFile(filePath + "30Zone.ive");
 	m_zone50 = osgDB::readNodeFile(filePath + "50Zone.ive");
-	
+
 	m_signsGroup = new osg::Group();
 	m_signsGroup->setName("signsGroup");
 	m_node->addChild(m_signsGroup);
@@ -158,7 +161,7 @@ void CityView::loadSpeedSigns()
 	setTexture(m_signsGroup->getOrCreateStateSet(), "data/models/signs/speedlimits.tga", 0);
 	addShaderAndUniforms(m_signsGroup, shaders::DEFAULT, osg::Vec2f(LEVEL_SIZE, LEVEL_SIZE), DEFAULT, 1.0);
 
-	
+
 }
 
 void CityView::addSpeedZone(osg::Vec3 position, osg::Quat rotation, int speedLimit)

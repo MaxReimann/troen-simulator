@@ -299,6 +299,11 @@ void BikeView::addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo)
 	m_wheelGroup->addChild(wheelTransform);
 }
 
+void BikeView::removeWheels()
+{
+	m_wheelGroup->removeChildren(0, 4);
+	wheels.clear();
+}
 
 
 

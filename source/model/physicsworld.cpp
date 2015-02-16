@@ -226,7 +226,7 @@ void PhysicsWorld::initializeWorld()
 	// 1st (other) parameter.
 	// Simply adding ghost objects "world->addCollisionObject(new btPairCachingHostObject(),...)" will automatically
 	// enable aabb collision pair maintenance for objects.  
-	m_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
+	//m_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	
 	//using callbacks is the preffered way to handle collision events, 
 	//the bullet wiki promises, that are no invalid pointers when using this callback

@@ -119,7 +119,6 @@ void TroenGame::startGameLoop()
 		
 
 		QCoreApplication::processEvents();
-
 		for (auto player : m_playersWithView)
 		{
 			player->viewer()->frame();

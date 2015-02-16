@@ -63,6 +63,7 @@ namespace troen
 		QCheckBox*		m_testPerformanceCheckBox;
 		QCheckBox*		m_debugViewCheckBox;
 		QCheckBox*		m_reflectionCheckBox;
+		QCheckBox*		m_texturedModel;
 		QLabel*			m_statusLabel;
 		QCheckBox*  m_exportCSV;
 		

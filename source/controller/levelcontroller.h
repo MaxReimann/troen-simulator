@@ -25,7 +25,7 @@ namespace troen
 	{
 		friend class LevelModel;
 	public:
-		LevelController(TroenGame* troenGame, std::string levelName);
+		LevelController(TroenGame* troenGame, std::string levelName, bool texturedModel);
 
 		btTransform getSpawnPointForBikeWithIndex(const int index);
 		void attachWorld(std::shared_ptr<PhysicsWorld> &world);
@@ -56,7 +56,7 @@ namespace troen
 		std::shared_ptr<LevelModel> m_levelModel;
 		std::vector<btTransform> m_initialBikePositionTransforms;
 		void initializeSpawnPoints();
-		void initSpecifics();
+		void initSpecifics(bool texturedModel);
 		std::weak_ptr<PhysicsWorld> m_world;
 
 		std::string m_levelName;

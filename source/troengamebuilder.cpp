@@ -103,7 +103,7 @@ bool TroenGameBuilder::build()
 	////////////////////////////////////////////////////////////////////////////////
 	std::cout << "[TroenGame::build] controllers (models & views) ..." << std::endl;
 	{ // controllers
-		t->m_levelController = std::make_shared<LevelController>(t, t->m_gameConfig->levelName);
+		t->m_levelController = std::make_shared<LevelController>(t, t->m_gameConfig->levelName, t->m_gameConfig->isTextured);
 		for (int i = 0; i < t->m_gameConfig->numberOfPlayers; i++)
 		{
 			std::shared_ptr<Player> player = std::make_shared<Player>(t, t->m_gameConfig, i);

@@ -35,7 +35,8 @@ AbstractModel(),
 m_lastUpdateTime(0),
 m_bikeController(bikeController),
 m_currentSteeringTilt(0),
-m_currentWheelyTilt(0)
+m_currentWheelyTilt(0),
+m_skidCount(0)
 {
 	resetState();
 
@@ -124,6 +125,7 @@ void BikeModel::constructVehicleBody(std::shared_ptr<PhysicsWorld> world)
 	m_vehicle =  new btRaycastVehicle(m_tuning, m_carChassis.get(), m_vehicleRayCaster);
 	discreteWorld->addAction(m_vehicle);
 	m_engine = std::make_shared<CarEngine>(m_vehicle, engineEfficiency);
+	m_engine->setMaxSpeed(m_vehicleParameters.maxSpeed);
 
 
 
@@ -176,7 +178,12 @@ void BikeModel::removeRaycastVehicle()
 	m_world->getDrawShapes().clear();
 
 	m_world->getDiscreteWorld()->removeVehicle(m_vehicle);
+	m_engine.reset();
 	delete m_vehicle;
+	delete m_vehicleRayCaster;
+	delete m_wheelShape;
+
+	m_bikeController->getView()->removeWheels();
 }
 
 
@@ -265,15 +272,19 @@ float BikeModel::updateState(long double time)
 		m_vehicle->setSteeringValue(m_vehicleSteering, 0);
 		m_vehicle->setSteeringValue(m_vehicleSteering, 1);
 
-		//m_vehicle->applyEngineForce(m_engineForce, 2);
 		m_vehicle->setBrake(m_breakingForce, 0);
 		m_vehicle->setBrake(m_breakingForce, 1);
-		//m_vehicle->applyEngineForce(m_engineForce, 3);
 		m_vehicle->setBrake(m_breakingForce, 2);
 		m_vehicle->setBrake(m_breakingForce, 3);
+
+		if (m_bikeInputState->getBrakeForce() > 0.5)
+			m_engine->setBrake(true);
+		else
+			m_engine->setBrake(false);
 	}
 
 	m_engine->update(timeFactor);
+
 
 
 
@@ -281,6 +292,10 @@ float BikeModel::updateState(long double time)
 	{
 		//synchronize the wheels with the (interpolated) chassis worldtransform
 		m_vehicle->updateWheelTransform(i, true);
+
+
+		if (m_vehicle->m_wheelInfo[i].m_skidInfo == 0)
+			m_skidCount++;
 
 
 		btTransform localTrans = m_carChassis->getWorldTransform().inverse() * m_vehicle->getWheelInfo(i).m_worldTransform;
@@ -293,11 +308,10 @@ float BikeModel::updateState(long double time)
 
 		m_bikeController->getView()->setWheelRotation(i, localTrans);
 	}
-	//m_vehicle->updateVehicle(timeFactor/10);
 
 	float speed = m_vehicle->getCurrentSpeedKmHour() / 2.0;
 	m_oldVelocity = speed;
-	//std::cout << "speed" << speed << std::endl;
+
 
 	return speed;
 }
@@ -464,6 +478,7 @@ VehiclePhysicSettings::VehiclePhysicSettings() : reflectionzeug::Object("vehicle
 	addProperty<double>("suspensionRestLength", *this, &VPS::SuspensionRestLength, &VPS::setSuspensionRestLength);
 	addProperty<double>("suspensionCompression", *this, &VPS::SuspensionCompression, &VPS::setSuspensionCompression);
 	addProperty<double>("cubeHalfExtents", *this, &VPS::CubeHalfExtents, &VPS::setCubeHalfExtents);
+	addProperty<double>("maxSpeed", *this, &VPS::MaxSpeed, &VPS::setMaxSpeed);
 	//addProperty<int>("forwardAxis", *this, &VPS::ForwardAxis, &VPS::setForwardAxis);
 	addProperty<double>("connectionHeight", *this, &VPS::ConnectionHeight, &VPS::setConnectionHeight);
 

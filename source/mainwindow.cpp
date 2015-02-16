@@ -228,6 +228,10 @@ MainWindow::MainWindow(QWidget * parent)
 	m_exportCSV = new QCheckBox("Export trajectories to csv");
 	vBoxLayoutUserStudy->addWidget(m_exportCSV);
 
+
+	m_texturedModel = new QCheckBox("Textured Model");
+	vBoxLayoutUserStudy->addWidget(m_texturedModel);
+
 	vBoxLayoutUserStudy->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 	vBoxLayoutUserStudy->addWidget(m_gameStartButton);
 
@@ -322,6 +326,7 @@ GameConfig MainWindow::getGameConfig()
 	config.studySetup = windowSetupChoices[m_studySetupComboBox->currentIndex()];
 	config.participantNumber = m_participantNumberSpinBox->value();
 	config.exportCSV = m_exportCSV->isChecked();
+	config.isTextured = m_texturedModel->isChecked();
 	return config;
 
 }
@@ -398,6 +403,7 @@ void MainWindow::loadSettings()
 	m_difficultyComboBox->setCurrentIndex(settings.value("difficulty").toInt());
 	m_studySetupComboBox->setCurrentIndex(settings.value("studySetup").toInt());
 	m_exportCSV->setChecked(settings.value("exportCSV").toBool());
+	m_texturedModel->setChecked(settings.value("texturedModel").toBool());
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{
@@ -437,6 +443,7 @@ void MainWindow::saveSettings()
 	settings.setValue("studySetup", QString::number(m_studySetupComboBox->currentIndex()));
 	settings.setValue("difficulty", QString::number(m_difficultyComboBox->currentIndex()));
 	settings.setValue("exportCSV", QString::number(m_exportCSV->isChecked()));
+	settings.setValue("texturedModel", QString::number(m_texturedModel->isChecked()));
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{

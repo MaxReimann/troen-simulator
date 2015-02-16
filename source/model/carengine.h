@@ -22,6 +22,11 @@ namespace troen
 		btScalar getClutch()				{ return Clutch; }
 		void	 setClutch(btScalar cl)		{ Clutch = cl; }
 
+		void setBrake(bool br)				{ Brake = br; }
+
+		void setMaxSpeed(float speed)	{ MaxSpeed = speed; }
+
+
 		btScalar getRPM()					{ return RPM; }
 		btScalar getEngineForce()			{ return EngineForce; }
 		int		 getGear()					{ return CurGear; }
@@ -47,6 +52,7 @@ namespace troen
 		btScalar Efficiency;
 
 		unsigned int CurGear;
+		bool Brake;
 
 		btScalar Gears[8];
 		btScalar MainGear;
@@ -54,6 +60,7 @@ namespace troen
 		btScalar MaxRPM;
 
 		btScalar Torque[10][2];
+		btScalar MaxSpeed;
 	};
 }
 #endif
