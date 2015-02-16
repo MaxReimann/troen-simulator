@@ -66,7 +66,7 @@ NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeControlle
 	m_view->setSceneData(m_rootNode);
 	m_view->addEventHandler(eventHandler.get());
 	m_view->setUserValue("window_type", (int) NAVIGATION_WINDOW);
-	bikeController->player()->cameras()->push_back(m_view->getCamera());
+	
 
 #ifdef WIN32
 	m_view->apply(new osgViewer::SingleWindow(800, 200, DEFAULT_WINDOW_WIDTH / 2, DEFAULT_WINDOW_HEIGHT / 2));

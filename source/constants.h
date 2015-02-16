@@ -299,6 +299,9 @@ namespace troen
 #define vecToString(v) \
 	(std::to_string(v.x()) + " " + std::to_string(v.y()) + " " + std::to_string(v.z()))
 
+#define Cout(str) \
+	(std::cout << str << std::endl)
+
 // Several interpolation methods in action: http://sol.gfxile.net/interpolation/
 
 enum InterpolationMethod

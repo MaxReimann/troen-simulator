@@ -231,6 +231,7 @@ void TroenGame::handleBending(double interpolationSkalar)
 		currentBending += bendedStep;
 	currentBending = clamp(BENDED_VIEWS_ACTIVATED, BENDED_VIEWS_DEACTIVATED, currentBending);
 
+
 	m_deformationRendering->setDeformationStartEnd(0.05, currentBending);
 	m_levelController->setBendingFactor(1.0 - currentBending / BENDED_VIEWS_DEACTIVATED);
 	

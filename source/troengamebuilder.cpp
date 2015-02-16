@@ -79,7 +79,7 @@ bool TroenGameBuilder::build()
 
 	//t->m_audioManager->PlaySong("data/sound/theGameHasChanged.mp3");
 	//t->m_audioManager->PlayEngineSound();
-	t->m_audioManager->SetMasterVolume(0.f);
+	t->m_audioManager->SetMasterVolume(0.0f);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -164,7 +164,7 @@ bool TroenGameBuilder::composeSceneGraph()
 	QString studySetup = t->m_gameConfig->studySetup;
 	auto localPlayer = t->m_playersWithView.at(0);
 
-	//t->m_rootNode = composePostprocessing();
+	t->m_rootNode = composePostprocessing();
 	t->m_rootNode->addChild(t->m_skyDome.get());
 
 	NavigationWindow *navWindow = localPlayer->navigationWindow().get();
@@ -178,12 +178,13 @@ bool TroenGameBuilder::composeSceneGraph()
 		
 		navWindow->addElements(naviScene);
 
-		if (studySetup == MAIN_NORMAL_NAVI_BENDED /*|| studySetup == MAIN_NORMAL_NAVI_MAP  map not supported anymore*/)
+		if (studySetup.compare(MAIN_NORMAL_NAVI_BENDED) == 0 /*|| studySetup == MAIN_NORMAL_NAVI_MAP  map not supported anymore*/)
 		{
+			std::cout << "bended" << std::endl;
 			localPlayer->setBendingUniform(NAVIGATION_WINDOW, true);
 			t->use_bendedViews = true;
 		}
-		else if (studySetup == MAIN_NORMAL_NAVI_NORMAL)
+		else if (studySetup.compare(MAIN_NORMAL_NAVI_NORMAL)==0)
 		{
 			localPlayer->setBendingUniform(NAVIGATION_WINDOW, false);
 			t->use_bendedViews = false;

@@ -115,9 +115,9 @@ namespace troen
 
 	// study setup
 	const QString MAIN_NORMAL_NAVI_NORMAL("Main:Normal Nav:Normal");
-	const QString MAIN_NORMAL_NAVI_MAP("Main:Normal Nav:Map");
 	const QString MAIN_NORMAL_NAVI_BENDED("Main:Normal Nav:Bended");
-	const QString windowSetupChoices[] { MAIN_NORMAL_NAVI_NORMAL, MAIN_NORMAL_NAVI_MAP, MAIN_NORMAL_NAVI_BENDED };
+	const QString MAIN_NORMAL_NAVI_MAP("Main:Normal Nav:Map");
+	const QString windowSetupChoices[] { MAIN_NORMAL_NAVI_NORMAL, MAIN_NORMAL_NAVI_BENDED, MAIN_NORMAL_NAVI_MAP };
 }
 
 btQuaternion fromTwoVectors(btVector3 u, btVector3 v)

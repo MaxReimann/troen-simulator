@@ -89,6 +89,9 @@ bool GameEventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	case osgGA::GUIEventAdapter::KEY_Q:
 		m_troenGame->levelController()->debugSnapShot();
 		break;
+	case osgGA::GUIEventAdapter::KEY_M:
+		m_troenGame->switchSoundVolumeEvent();
+		return true;
 	default:
 		return false;
 	}

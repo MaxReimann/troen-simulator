@@ -95,6 +95,7 @@ m_hasGameView(config->ownView[id])
 	//
 	////////////////////////////////////////////////////////////////////////////////
 	m_cameras = std::make_shared<std::vector<osg::Camera*>>();
+	m_cameras->resize(2);
 	if (config->ownView[m_id])
 	{
 		m_playerNode = new osg::Group();
@@ -108,7 +109,7 @@ m_hasGameView(config->ownView[id])
 			m_gameView->getCamera()->setCullingMode(osg::CullStack::NO_CULLING); //culling results in strong framerate loss at sudden peaks..
 
 		m_gameView->setSceneData(m_playerNode);
-		m_cameras->push_back(m_gameView->getCamera());
+		m_cameras->at(MAIN_WINDOW) = m_gameView->getCamera();
 
 		osg::ref_ptr<NodeFollowCameraManipulator> manipulator
 			= new NodeFollowCameraManipulator();
@@ -123,6 +124,7 @@ m_hasGameView(config->ownView[id])
 
 		//second window with navigation infos (map/bended views)
 		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler());
+		m_cameras->at(NAVIGATION_WINDOW) = m_navigationWindow->mapView()->getCamera();
 
 		//must be called after all 3d cameras have been setup
 		setCameraSpecificUniforms();
@@ -218,6 +220,7 @@ bool Player::isDead()
 void Player::setBendingUniform(troen::windowType window, bool value)
 {
 	m_bendingActivatedUs[window]->set(value);
+	m_bendingActivatedUs[window]->dirty();
 }
 
 osg::ref_ptr<SampleOSGViewer> Player::navigationViewer()
@@ -230,15 +233,18 @@ void  Player::setCameraSpecificUniforms()
 	m_bendingActivatedUs = uniformVec();
 	m_isReflectingUs = uniformVec();
 
-	for (int i = 0; i < m_cameras->size(); i++)
+	for (int i : {MAIN_WINDOW, NAVIGATION_WINDOW})
 	{
 		osg::StateSet* state = m_cameras->at(i)->getOrCreateStateSet();
-		
-		m_bendingActivatedUs.push_back(new osg::Uniform("bendingActivated", false));
-		m_isReflectingUs.push_back(new osg::Uniform("isReflecting", false));
 
-		state->addUniform(m_bendingActivatedUs.back());
-		state->addUniform(m_isReflectingUs.back());
+		osg::Uniform *bending = new osg::Uniform("bendingActivated", false);
+		osg::Uniform *reflecting = new osg::Uniform("isReflecting", false);
+		
+		m_bendingActivatedUs.push_back(bending);
+		m_isReflectingUs.push_back(reflecting);
+
+		state->addUniform(bending);
+		state->addUniform(reflecting);
 	}
 }
 
