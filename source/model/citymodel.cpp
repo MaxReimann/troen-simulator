@@ -57,10 +57,13 @@ inline T posMod(T a, T b)
 	return (a%b + b) % b;
 }
 
-CityModel::CityModel(LevelController* levelController, std::string levelName) :
+CityModel::CityModel(LevelController* levelController, std::string levelName, bool texturedModel) :
 LevelModel(levelController, levelName)
 {
-	m_collisionImage = QImage("data/textures/berlin_binary_detailed.png");
+	if (texturedModel)
+		m_collisionImage = QImage("data/textures/berlin_binary_textured_model.png");
+	else
+		m_collisionImage = QImage("data/textures/berlin_binary_detailed.png");
 	//m_collisionImage.load()
 	m_count = 0;
 	m_started = false;

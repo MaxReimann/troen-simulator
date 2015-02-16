@@ -229,8 +229,8 @@ bool TroenGameBuilder::composeSceneGraph()
 	//	// disbled optimizer for now, takes a lot of time to execute
 	//	std::cout << "[TroenGameBuilder::composeSceneGraph] starting Optimizer" << std::endl;
 	//	osgUtil::Optimizer optimizer;
-	//	optimizer.optimize(t->m_rootNode, optimizer.CHECK_GEOMETRY | optimizer.TRISTRIP_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS |
-	//		optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH);
+	//	optimizer.optimize(t->m_rootNode, optimizer.CHECK_GEOMETRY | optimizer.OPTIMIZE_TEXTURE_SETTINGS | optimizer.MERGE_GEODES | 
+	//		optimizer.VERTEX_POSTTRANSFORM | optimizer.INDEX_MESH | optimizer.SHARE_DUPLICATE_STATE | optimizer.MERGE_GEOMETRY | optimizer.ALL_OPTIMIZATIONS);
 	//	std::cout << "[TroenGameBuilder::composeSceneGraph] done optimizing" << std::endl;
 	//}
 

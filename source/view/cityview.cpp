@@ -79,6 +79,55 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 	return floorsGroup;
 }
 
+
+class OptimizeVisitor : public osg::NodeVisitor
+{
+public:
+	OptimizeVisitor()
+		: osg::NodeVisitor( // Traverse all children.
+		osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+	{
+	}
+
+	// This method gets called for every node in the scene
+	//   graph. 
+	virtual void apply(osg::Node& node)
+	{
+		node.getOrCreateStateSet()->setDataVariance(osg::Object::STATIC);
+		node.setDataVariance(osg::Object::STATIC);
+		node.setCullingActive(false);
+
+		// Keep traversing the rest of the scene graph.
+		traverse(node);
+	}
+
+	virtual void apply(osg::Geode& geode)
+	{
+
+		for (unsigned int i = 0; i < geode.getNumDrawables(); i++)
+		{
+			osg::Drawable* dr = geode.getDrawable(i);
+			int numTextures = dr->getOrCreateStateSet()->getNumTextureAttributeLists();
+			for (auto attribs : dr->getOrCreateStateSet()->getTextureAttributeList())
+			{
+				for (auto texattrib : attribs)
+				{
+					//delete textures after upload to gpu to save main memory
+					if (texattrib.second.first != NULL)
+					{
+						osg::Texture *tex = texattrib.second.first->asTexture();
+						tex->setUnRefImageDataAfterApply(true);
+					}
+
+				}
+			}
+		}
+
+	}
+
+};
+
+
 osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlevel)
 {
 
@@ -116,6 +165,13 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 			}
 
 			readObstacles->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+			//readObstacles->setCullingActive(false);
+			readObstacles->getOrCreateStateSet()->setDataVariance(osg::Object::STATIC);
+			readObstacles->setDataVariance(osg::Object::STATIC);
+
+			//set all subNodes to static Data Variance
+			OptimizeVisitor *staticMaker = new OptimizeVisitor();
+			readObstacles->accept(*staticMaker);
 		}
 		else
 		{

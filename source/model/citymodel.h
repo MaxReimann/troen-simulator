@@ -29,7 +29,7 @@ namespace troen
 	{
 		friend LevelController;
 	public:
-		CityModel(LevelController* levelController, std::string levelName);
+		CityModel(LevelController* levelController, std::string levelName, bool texturedModel);
 		void reload(std::string levelName);
 		const inline btPoint getLevelSize();
 

@@ -102,6 +102,11 @@ m_hasGameView(config->ownView[id])
 
 		m_gameView = new osgViewer::View();
 		m_gameView->getCamera()->setCullMask(CAMERA_MASK_MAIN);
+
+		//osg::CullStack::NO_CULLING
+		if (config->isTextured)
+			m_gameView->getCamera()->setCullingMode(osg::CullStack::NO_CULLING); //culling results in strong framerate loss at sudden peaks..
+
 		m_gameView->setSceneData(m_playerNode);
 		m_cameras->push_back(m_gameView->getCamera());
 

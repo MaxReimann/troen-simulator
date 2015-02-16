@@ -80,10 +80,10 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 
 	initializeText(
 		m_speedText,
-		osg::Vec3(offset, offset, 0),
+		osg::Vec3(m_width / 2, offset, 0),
 		m_fontColor,
-		osgText::Text::AlignmentType::LEFT_BOTTOM,
-		DEFAULT_WINDOW_HEIGHT / 6);
+		osgText::Text::AlignmentType::CENTER_BOTTOM,
+		DEFAULT_WINDOW_HEIGHT / 4);
 	setSpeedText(0);
 	m_savedGeode->addDrawable(m_speedText);
 
@@ -186,8 +186,8 @@ void HUDView::resize(const int width,const int height)
 
 void HUDView::resizeHudComponents(const int width, const int height)
 {
-	m_speedText->setCharacterSize(height / 15);
-	m_speedText->setFontResolution(height / 15, height / 15);
+	m_speedText->setCharacterSize(height / 12);
+	m_speedText->setFontResolution(height / 12, height / 12);
 
 	m_countdownText->setCharacterSize(height / 3);
 	m_countdownText->setFontResolution(height / 3, height / 3);

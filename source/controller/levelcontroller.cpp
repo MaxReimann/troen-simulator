@@ -38,7 +38,7 @@ void LevelController::initSpecifics(bool texturedModel)
 {
 	if (m_levelType == BERLIN)
 	{
-		m_model = m_levelModel = std::make_shared<CityModel>(this, m_levelName);
+		m_model = m_levelModel = std::make_shared<CityModel>(this, m_levelName, texturedModel);
 		m_view = m_levelView = std::make_shared<CityView>(m_levelModel, m_levelName, texturedModel);
 
 	}
