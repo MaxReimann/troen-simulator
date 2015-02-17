@@ -14,7 +14,7 @@
 #include "GetTime.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
 #include "physicsworld.h"
-#include "../util/scriptwatcher.h"
+#include "../scriptable/scriptwatcher.h"
 
 #include "../view/bikeview.h"
 
@@ -462,7 +462,7 @@ btTransform BikeModel::getLastTransform()
 }
 
 
-VehiclePhysicSettings::VehiclePhysicSettings() : reflectionzeug::Object("vehicle")
+VehiclePhysicSettings::VehiclePhysicSettings() : AbstractScript("vehicle")
 {
 	typedef VehiclePhysicSettings VPS;
 
@@ -482,13 +482,11 @@ VehiclePhysicSettings::VehiclePhysicSettings() : reflectionzeug::Object("vehicle
 	//addProperty<int>("forwardAxis", *this, &VPS::ForwardAxis, &VPS::setForwardAxis);
 	addProperty<double>("connectionHeight", *this, &VPS::ConnectionHeight, &VPS::setConnectionHeight);
 
-	addFunction("log", this, &VPS::log);
-
 	changesPending = new bool;
 	*changesPending = false;
 	
 	m_scriptContext.registerObject(this);
-	m_scriptWatcher.watchAndLoad("scripts/vehiclephysics.js", &m_scriptContext, changesPending);
+	m_scriptWatcher.watchAndLoad("scripts/vehiclephysics.js", this, changesPending);
 }
 
 void VehiclePhysicSettings::loadVehicleParameters()

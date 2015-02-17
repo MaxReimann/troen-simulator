@@ -170,6 +170,7 @@ set(sources
 	source/gamelogic.cpp
 	source/player.h
 	source/player.cpp
+	
 
 	source/resourcepool.h
 	source/resourcepool.cpp
@@ -261,7 +262,6 @@ set(sources
 	source/util/countdowntimer.cpp
 	source/util/gldebugdrawer.h
 	source/util/gldebugdrawer.cpp
-	source/util/scriptwatcher.h
 	source/util/filteredrayresultcallback.h
 	source/util/basicshapes.h
 	source/util/basicshapes.cpp
@@ -273,6 +273,12 @@ set(sources
 	source/tracking/tracker.h
 	source/tracking/trackbike.cpp
 	source/tracking/trackbike.h
+
+	source/scriptable/configscript.h
+	source/scriptable/configscript.cpp
+	source/scriptable/abstractscript.h
+	source/scriptable/scriptwatcher.h
+
 
 
 

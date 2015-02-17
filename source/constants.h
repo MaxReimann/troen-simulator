@@ -13,6 +13,23 @@
 
 namespace troen
 {
+	enum trackDifficulty
+	{
+		DIFFICULTY_EASY,
+		DIFFICULTY_HARD
+	};
+
+
+	enum windowType
+	{
+		MAIN_WINDOW,
+		NAVIGATION_WINDOW,
+		BOTH_WINDOWS
+	};
+
+	typedef std::pair<btScalar, btScalar> btPoint;
+
+
 	// GENERAL
 
 	// GAME
@@ -105,10 +122,6 @@ namespace troen
 	extern const int ENGINE_FREQUENCY_LOW;
 	extern const int ENGINE_FREQUENCY_HIGH;
 
-	// BENDED VIEWS
-	extern const int BENDED_VIEWS_ACTIVATED;
-	extern const int BENDED_VIEWS_DEACTIVATED;
-	extern const int TIME_TO_ACTIVATE_BENDED_VIEWS;
 
 	//study Setup
 	extern const QString MAIN_BENDED_NAVI_MAP;
@@ -118,21 +131,19 @@ namespace troen
 
 	extern const QString windowSetupChoices[];
 
-	enum trackDifficulty
-	{
-		DIFFICULTY_EASY,
-		DIFFICULTY_HARD
-	};
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////#Script Modifiable #////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	// BENDED VIEWS
+	extern int BENDED_VIEWS_ACTIVATED;
+	extern int BENDED_VIEWS_DEACTIVATED;
+	extern int TIME_TO_ACTIVATE_BENDED_VIEWS;
+	extern int BENDED_STYLING_PRESET;
+	extern int BENDED_DEFORMATION_END;
+	extern double BENDED_DEFORMATION_START;
 
 
-	enum windowType
-	{
-		MAIN_WINDOW,
-		NAVIGATION_WINDOW,
-		BOTH_WINDOWS
-	};
 
-	typedef std::pair<btScalar, btScalar> btPoint;
 
 }
 

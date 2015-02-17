@@ -12,14 +12,16 @@
 #include "carengine.h"
 #include "customfriction.h"
 
-#include "../util/scriptwatcher.h"
+#include "../scriptable/abstractscript.h"
+#include "../scriptable/scriptwatcher.h"
+
 using namespace reflectionzeug;
 
 namespace troen
 {
 
 
-	class VehiclePhysicSettings : public reflectionzeug::Object
+	class VehiclePhysicSettings : public AbstractScript
 	{
 	public:
 
@@ -70,18 +72,10 @@ namespace troen
 		double MaxSpeed() const { return maxSpeed; }
 		void setMaxSpeed(const double & val) { maxSpeed = val; }
 
-
-		void log(std::string message) {
-			std::cout << "script log:   " << message << std::endl;
-		}
-
-
-
 		void loadVehicleParameters();
 		VehiclePhysicSettings();
-
 	private:
-		scriptzeug::ScriptContext m_scriptContext;
+		bool awaiting_update;
 		ScriptWatcher m_scriptWatcher;
 
 	};

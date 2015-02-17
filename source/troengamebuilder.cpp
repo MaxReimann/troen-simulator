@@ -10,6 +10,7 @@
 #include "gamelogic.h"
 #include "sampleosgviewer.h"
 #include "gameeventhandler.h"
+#include "scriptable/configscript.h"
 
 #include "controller/levelcontroller.h"
 #include "controller/bikecontroller.h"
@@ -54,6 +55,7 @@ bool TroenGameBuilder::build()
 	t->m_sceneNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
 
 	std::cout << "[TroenGame::build] building game ..." << std::endl;
+
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
@@ -154,6 +156,8 @@ bool TroenGameBuilder::build()
 	buildPhysicsWorld();
 	t->m_physicsWorld->stepSimulation(0);
 
+	t->m_configScript = std::make_shared<ConfigScript>(t);
+
 	std::cout << "[TroenGameBuilder::build] successfully built TroenGame !" << std::endl;
 	return true;
 }
@@ -220,10 +224,13 @@ bool TroenGameBuilder::composeSceneGraph()
 	{
 		const osg::BoundingSphere& bs = t->m_sceneNode->getBound();
 		t->m_deformationRendering = new SplineDeformationRendering(naviScene);
-		t->m_deformationRendering->setDeformationStartEnd(0.1, 100000);
-		t->m_deformationRendering->setPreset(4);
+		t->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
+		t->m_deformationRendering->setPreset(BENDED_STYLING_PRESET);
 		t->enableBendedViews();
 	}
+
+	
+	//t->m_configScript->evaluate();
 
 	// optimizer
 	//{

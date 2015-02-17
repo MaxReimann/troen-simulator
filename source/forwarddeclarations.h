@@ -66,6 +66,8 @@ class btGhostObject;
 namespace scriptzeug {
 	class ScriptEnvironment;
 }
+class ScriptWatcher;
+
 
 // own classes
 namespace troen
@@ -77,6 +79,7 @@ namespace troen
 	class GameLogic;
 	class GameConfig;
 	class Player;
+
 
 	class BikeModel;
 	class LevelModel;
@@ -112,7 +115,13 @@ namespace troen
 		class ChronoTimer;
 		class GLDebugDrawer;
 		class CountdownTimer;
+		
 	}
+
+	class AbstractScript;
+	class ConfigScript;
+	
+
 	namespace input
 	{
 		class Keyboard;

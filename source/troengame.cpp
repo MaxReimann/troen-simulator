@@ -30,6 +30,7 @@
 #include "util/gldebugdrawer.h"
 #include "util/countdowntimer.h"
 #include "sound/audiomanager.h"
+#include "scriptable/configscript.h"
 
 #include "tracking/trackbike.h"
 
@@ -159,6 +160,8 @@ void TroenGame::startGameLoop()
 
 			handleBending(double(bikeSpeed / maxSpeed));
 
+			m_configScript->executePending();
+
 			// do we have extra time (to draw the frame) or did we skip too many frames already?
 			if (g_gameLoopTime < nextTime || (skippedFrames > maxSkippedFrames))
 			{
@@ -223,7 +226,7 @@ void TroenGame::handleBending(double interpolationSkalar)
 
 	double currentBending = m_deformationRendering->getDeformationEnd();
 	const double targetBending = m_deformationEnd;
-	const double bendedStep = (BENDED_VIEWS_DEACTIVATED - BENDED_VIEWS_ACTIVATED) / 100;
+	const double bendedStep = (BENDED_VIEWS_DEACTIVATED - BENDED_VIEWS_ACTIVATED) / TIME_TO_ACTIVATE_BENDED_VIEWS;
 	
 	if (targetBending == BENDED_VIEWS_ACTIVATED)
 		currentBending -= bendedStep;

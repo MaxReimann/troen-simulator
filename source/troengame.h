@@ -58,6 +58,7 @@ namespace troen
 
 		friend class TroenGameBuilder;
 		friend class GameLogic;
+		friend class ConfigScript;
 
 	public:
 		TroenGame(QThread* thread = nullptr);
@@ -169,6 +170,7 @@ namespace troen
 		std::shared_ptr<sound::AudioManager>		m_audioManager;
 		std::shared_ptr<tracking::TrackBike>		m_bikeTracker;
 		std::shared_ptr<util::CountdownTimer>		m_countdownTimers;
+		std::shared_ptr<ConfigScript>				m_configScript;
 
 		ResourcePool m_resourcePool;
 

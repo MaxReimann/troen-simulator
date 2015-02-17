@@ -107,10 +107,6 @@ namespace troen
 	const int ENGINE_FREQUENCY_HIGH(120000);
 
 
-	// BENDED VIEWS
-	const int BENDED_VIEWS_ACTIVATED(3000);
-	const int BENDED_VIEWS_DEACTIVATED(12000);
-	const int TIME_TO_ACTIVATE_BENDED_VIEWS(10000);
 
 
 	// study setup
@@ -118,6 +114,19 @@ namespace troen
 	const QString MAIN_NORMAL_NAVI_BENDED("Main:Normal Nav:Bended");
 	const QString MAIN_NORMAL_NAVI_MAP("Main:Normal Nav:Map");
 	const QString windowSetupChoices[] { MAIN_NORMAL_NAVI_NORMAL, MAIN_NORMAL_NAVI_BENDED, MAIN_NORMAL_NAVI_MAP };
+
+
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////#Script Modifiable #////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+
+	// BENDED VIEWS
+	int BENDED_VIEWS_ACTIVATED(3000);
+	int BENDED_VIEWS_DEACTIVATED(12000);
+	int TIME_TO_ACTIVATE_BENDED_VIEWS(10000);
+	int BENDED_STYLING_PRESET(4);
+	double BENDED_DEFORMATION_START(0.1);
+	int BENDED_DEFORMATION_END(20000);
 }
 
 btQuaternion fromTwoVectors(btVector3 u, btVector3 v)
