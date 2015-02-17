@@ -31,7 +31,7 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 	changesPending = new bool;
 	*changesPending = false;
 
-	m_scriptContext.registerObject(this);
+	m_scriptContext->registerObject(this);
 	m_scriptWatcher.watchAndLoad("scripts/gameconstants.js", this, changesPending);
 
 }
@@ -40,7 +40,7 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 void ConfigScript::executePending()
 {
 	if (awaiting_update)
-		m_scriptContext.evaluate(pendingContent);
+		m_scriptContext->evaluate(pendingContent);
 	awaiting_update = false;
 }
 

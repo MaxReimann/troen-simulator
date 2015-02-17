@@ -100,7 +100,7 @@ void CarEngine::_computeAxisTorque(float time)
 	{
 		if (Brake)
 		{
-			EngineForce = Torque[0][0] / mVehicle->m_wheelInfo[0].m_wheelsRadius * Efficiency * Gears[CurGear];
+			EngineForce = Torque[0][0] / mVehicle->m_wheelInfo[0].m_wheelsRadius * Efficiency * Gears[0];
 			if (EngineForce > 0) //sanity
 				EngineForce = -EngineForce;
 
@@ -114,7 +114,7 @@ void CarEngine::_computeAxisTorque(float time)
 	}
 
 	if (speed > 5)
-		EngineForce -= 1000; //damping
+		EngineForce -= 2000; //damping
 
 
 	for (int i = 0; i < 4; i++)

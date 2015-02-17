@@ -56,7 +56,7 @@ bool TroenGameBuilder::build()
 
 	std::cout << "[TroenGame::build] building game ..." << std::endl;
 
-
+	g_scripting = new scriptzeug::ScriptContext(); //define global
 	////////////////////////////////////////////////////////////////////////////////
 	//
 	// timers & shaders
@@ -156,6 +156,7 @@ bool TroenGameBuilder::build()
 	buildPhysicsWorld();
 	t->m_physicsWorld->stepSimulation(0);
 
+	
 	t->m_configScript = std::make_shared<ConfigScript>(t);
 
 	std::cout << "[TroenGameBuilder::build] successfully built TroenGame !" << std::endl;

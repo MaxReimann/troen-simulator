@@ -2,7 +2,9 @@
 // OSG
 #include <osg/BoundingBox>
 // STD
+#include <exception>
 #include <cmath>
+#include <iostream>
 // troen
 #include <reflectionzeug/Object.h>
 #include <scriptzeug/ScriptContext.h>
@@ -197,7 +199,7 @@ void BikeModel::resetBody()
 	world->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(m_carChassis->getBroadphaseHandle(), world->getDispatcher());
 	if (m_vehicle)
 	{
-		m_vehicleParameters.loadVehicleParameters();
+		//m_vehicleParameters.loadVehicleParameters();
 		m_vehicle->resetSuspension();
 		for (int i = 0; i < m_vehicle->getNumWheels(); i++)
 		{
@@ -485,11 +487,18 @@ VehiclePhysicSettings::VehiclePhysicSettings() : AbstractScript("vehicle")
 	changesPending = new bool;
 	*changesPending = false;
 	
-	m_scriptContext.registerObject(this);
+	m_scriptContext->registerObject(this);
 	m_scriptWatcher.watchAndLoad("scripts/vehiclephysics.js", this, changesPending);
 }
 
 void VehiclePhysicSettings::loadVehicleParameters()
 {
-	m_scriptContext.evaluate(m_scriptWatcher.getContent());
+	try
+	{
+		m_scriptContext->evaluate(m_scriptWatcher.getContent());
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what() << '\n';
+	}
 }
