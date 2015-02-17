@@ -155,3 +155,4 @@ btQuaternion fromTwoVectors(btVector3 u, btVector3 v)
 
 	return btQuaternion(real_part, w.x(), w.y(), w.z()).normalized();
 }
+

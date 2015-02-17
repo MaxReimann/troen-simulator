@@ -64,7 +64,6 @@ void CarEngine::_computeAxisTorque(float time)
 	btScalar speed = mVehicle->getCurrentSpeedKmHour() / SPEED_TOREAL_RATIO;
 	EngineForce = 0.0;
 	RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear / SPEED_TOREAL_RATIO);
-	std::cout << "gear:" << CurGear << std::endl;
 	if (CurGear > 1)
 	{
 		btScalar torque = Throttle * getTorque(RPM) / mVehicle->m_wheelInfo[0].m_wheelsRadius;
