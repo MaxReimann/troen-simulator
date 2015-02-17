@@ -129,7 +129,7 @@ void GameLogic::collisionEvent(btRigidBody * pBody0, btRigidBody * pBody1, btPer
 		collisionBodyControllers[1] = objectInfos[1]->getUserPointer();
 	}
 	catch (int e) {
-		std::cout << "RigidBody invalid, but pointer was not 0xfeeefeeefeeefeee: " << e << std::endl;
+		std::cout << "[GameLogic::collisionEvent] RigidBody invalid, but pointer was not 0xfeeefeeefeeefeee: " << e << std::endl;
 		return;
 	}
 
@@ -204,7 +204,7 @@ void GameLogic::triggerEvent(btCollisionObject *obj1, btCollisionObject *obj2)
 			handleNavigationBoundaryCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
 			break;
 		default:
-			std::cout << "unknown zone" << std::endl;
+			std::cout << "[GameLogic::triggerEvent] unknown zone" << std::endl;
 			break;
 		}
 	}
@@ -248,7 +248,7 @@ void GameLogic::handleEndZoneCollision(BikeController* bike)
 {
 	m_troenGame->bikeTracker()->exportTaskStats(g_gameTime);
 	bike->player()->routeController()->removeAllFencesFromModel();
-	std::cout << "in endzone" << std::endl;
+	std::cout << "[GameLogic] in endzone" << std::endl;
 
 
 	bike->setState(BikeController::BIKESTATE::RESPAWN_NEWTRACK, g_gameTime);
@@ -409,7 +409,7 @@ void GameLogic::checkForTossedPlayers()
 			btVector3 ypr = bike->getModel()->getEulerYPR();
 			if (abs(ypr.getZ()) > PI_2)
 			{
-				std::cout << "vehicle crashed and rolled to its death" << std::endl;
+				std::cout << "[GameLogic] vehicle crashed and rolled to its death" << std::endl;
 				player->increaseHealth(-1 * 1000); //die
 				handlePlayerDeath(bike);
 			}
@@ -427,7 +427,7 @@ void GameLogic::checkForFallenPlayers()
 		BikeController* bike = player->bikeController().get();
 		if (bike->isFalling())
 		{
-			std::cout << "player is falling, this should not happen.." << std::endl;
+			std::cout << "[GameLogic] player is falling, this should not happen.." << std::endl;
 		}
 	}
 }

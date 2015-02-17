@@ -179,8 +179,6 @@ osg::ref_ptr<osg::Group> LevelView::constructObstacles(osg::Vec2  levelSize, std
 	obstaclesGroup->addChild(radarObstacles);
 	obstaclesGroup->addChild(mainGroup);
 
-	std::cout << "Obstacles radius" << obstaclesGroup->getBound().radius() << std::endl;
-
 	return obstaclesGroup;
 }
 

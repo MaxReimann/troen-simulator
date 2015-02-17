@@ -44,7 +44,7 @@ PlayerMarker::PlayerMarker(osg::Vec3 color)
 
 	if (arrowNode==NULL)
 	{
-		std::cout  << "data/models/arrow.obj could not be loaded" << std::endl;
+		std::cout  << "[TroenGame::playerMarker] data/models/arrow.obj could not be loaded" << std::endl;
 		return;
 	}
 

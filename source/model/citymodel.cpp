@@ -229,7 +229,7 @@ void CityModel::writeDebugImage(int x_pix, int y_pix, std::vector<osg::Vec2> *ma
 
 	m_image->dirty();
 	if (!osgDB::writeImageFile(*(m_image.get()), "data/test/result.tga"))
-		std::cout << "fail" << std::endl;
+		std::cout << "failed writing debug image file" << std::endl;
 
 	btVector3 pos = m_levelController->m_troenGame->activeBikeModel()->getPositionBt();
 
@@ -472,7 +472,7 @@ osg::Vec2 CityModel::findCollisionEdge(std::vector<osg::Vec2> &points, std::vect
 		};
 		writeDebugImage(pix1.x(), pix1.y(), &redPoints, &markPoints2);
 		resultVector.set((p2 - p1).x(), (p2 - p1).y());
-		std::cout << resultVector.x() << " " << resultVector.y() << std::endl;
+		std::cout << "[CityModel] resultVector" << resultVector.x() << " " << resultVector.y() << std::endl;
 		while (1);
 	}
 

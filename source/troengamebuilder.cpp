@@ -185,12 +185,13 @@ bool TroenGameBuilder::composeSceneGraph()
 
 		if (studySetup.compare(MAIN_NORMAL_NAVI_BENDED) == 0 /*|| studySetup == MAIN_NORMAL_NAVI_MAP  map not supported anymore*/)
 		{
-			std::cout << "bended" << std::endl;
+			std::cout << "[TroenGameBuilder::composeSceneGraph] using bendedviews for navi" << std::endl;
 			localPlayer->setBendingUniform(NAVIGATION_WINDOW, true);
 			t->use_bendedViews = true;
 		}
 		else if (studySetup.compare(MAIN_NORMAL_NAVI_NORMAL)==0)
 		{
+			std::cout << "[TroenGameBuilder::composeSceneGraph] using normal view for navi" << std::endl;
 			localPlayer->setBendingUniform(NAVIGATION_WINDOW, false);
 			t->use_bendedViews = false;
 		}
@@ -229,9 +230,6 @@ bool TroenGameBuilder::composeSceneGraph()
 		t->m_deformationRendering->setPreset(BENDED_STYLING_PRESET);
 		t->enableBendedViews();
 	}
-
-	
-	//t->m_configScript->evaluate();
 
 	// optimizer
 	//{

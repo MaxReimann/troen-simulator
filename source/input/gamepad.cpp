@@ -55,7 +55,6 @@ bool Gamepad::checkConnection()
 	if (m_controllerId == -1) {
 		for (auto i : *freePorts)
 		{
-			std::cout << i << std::endl;
 			XINPUT_STATE state;
 			ZeroMemory(&state, sizeof(XINPUT_STATE));
 

@@ -29,7 +29,7 @@ RouteParser::RouteParser()
 		if (!fileName.endsWith(".route"))
 			continue;
 		QString filePath = myDir.path() + myDir.separator() + fileName;
-		std::cout << (filePath).toStdString() << std::endl;
+		std::cout << "[RouteParser] reading route " << (filePath).toStdString() << std::endl;
 		QFile routeFile(filePath);
 		if (routeFile.open(QFile::ReadOnly))
 		{
@@ -58,7 +58,7 @@ bool RouteParser::parse(QByteArray& contents, Route& currentRoute)
 			currentRoute.waypoints.push_back(val);
 		}
 		catch (char* exception){
-			std::cout << "error parsing line :" << QString(line).toStdString() << std::endl;
+			std::cout << "[RouteParser] error parsing line :" << QString(line).toStdString() << std::endl;
 		}
 
 	}

@@ -30,7 +30,7 @@ namespace troen
 		}
 
 		virtual void log(std::string message) {
-			std::cout << "script log:   " << message << std::endl;
+			std::cout << "["<<name()<<"]" << "script log:   " << message << std::endl;
 		}
 
 		

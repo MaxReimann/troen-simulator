@@ -58,11 +58,12 @@ bool FFBWheel::checkConnection()
 	if (m_controllerId == -1) {
 		for (auto i : *freePorts)
 		{
-			std::cout << i << std::endl;
+			
 			XINPUT_STATE state;
 			ZeroMemory(&state, sizeof(XINPUT_STATE));
 
 			if (Custom_XInputGetState(i, &state) == ERROR_SUCCESS) {
+				std::cout << "succesfull ffb connection no port " << i << std::endl;
 				m_controllerId = i;
 				m_isConnected = true;
 				// remove element with value i from vector

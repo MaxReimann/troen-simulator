@@ -138,7 +138,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 	{
 
 		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive""D:/Blender/troensimulator/Berlin3ds/Berlin3ds/all_merge_texattempt.ive"
-		std::cout << "reading level model.." << std::endl;
+		std::cout << "[CityView] reading level model.." << std::endl;
 
 		if (m_texturedModel)
 		{
@@ -157,7 +157,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 				osg::Matrix trans = osg::Matrix::translate(osg::Vec3(0, 0, -heightAdjusts[i])); //transform in blender
 				partTransform->setMatrix(trans);
 
-				std::cout << "reading " << part << std::endl;
+				std::cout << "[CityView] reading " << part << std::endl;
 				osg::Group *geode = static_cast<osg::Group*>(osgDB::readNodeFile(std::string("data/models/berlin/ive/") + part));
 				partTransform->addChild(geode);
 				readObstacles->addChild(partTransform);
@@ -222,7 +222,6 @@ void CityView::loadSpeedSigns()
 
 void CityView::addSpeedZone(osg::Vec3 position, osg::Quat rotation, int speedLimit)
 {
-	std::cout << position.x() << std::endl;
 	osg::ref_ptr<osg::MatrixTransform> mxt = new osg::MatrixTransform;
 	osg::Matrixd mat = osg::Matrix::translate(position);
 	mat.setRotate(rotation);

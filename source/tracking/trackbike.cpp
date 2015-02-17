@@ -14,14 +14,13 @@ m_controller(controller), m_frequency(frequency), m_participantNumber(participan
 	if (m_exportCSV)
 	{
 		QString fileDir("export" + QString(QDir::separator()) + "user" + QString::number(m_participantNumber));
-		std::cout << fileDir.toStdString() << std::endl;
 		bool success = true;
 		if (!QDir(fileDir).exists())
 			success = QDir().mkpath(fileDir);
 
 		if (!success)
 		{
-			std::cout << "couldnt create export directory" << std::endl;
+			std::cout << "[TrackBike] couldnt create export directory" << std::endl;
 			return;
 		}
 
@@ -100,14 +99,14 @@ TrackBike::~TrackBike()
 void TrackBike::exportTaskStats(long time)
 {
 	QString fileDir("export" + QString(QDir::separator()) + "user" + QString::number(m_participantNumber));
-	std::cout << "exporting task stats" << std::endl;
+	std::cout << "[TrackBike] exporting task stats" << std::endl;
 	bool success = true;
 	if (!QDir(fileDir).exists())
 		success = QDir().mkpath(fileDir);
 
 	if (!success)
 	{
-		std::cout << "couldnt create export directory" << std::endl;
+		std::cout << "[TrackBike] couldnt create export directory" << std::endl;
 		return;
 	}
 

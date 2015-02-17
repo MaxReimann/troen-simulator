@@ -84,13 +84,13 @@ bool shaders::loadShaderSource(osg::Shader* obj, const std::string& fileName)
 	std::string fqFileName = osgDB::findDataFile(fileName);
 	if (fqFileName.length() == 0)
 	{
-		std::cout << "[TroenGame::abstractView]  File \"" << fileName << "\" not found." << std::endl;
+		std::cout << "[TroenGame::shaders]  File \"" << fileName << "\" not found." << std::endl;
 		return false;
 	}
 	bool success = obj->loadShaderSourceFromFile(fqFileName.c_str());
 	if (!success)
 	{
-		std::cout << "Couldn't load file: " << fileName << std::endl;
+		std::cout << "[TroenGame::shaders] Couldn't load file: " << fileName << std::endl;
 		return false;
 	}
 	else
