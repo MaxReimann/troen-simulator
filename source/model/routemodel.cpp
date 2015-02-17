@@ -19,13 +19,21 @@ RouteModel::RouteModel(RouteController* routeController)
 void RouteModel::attachWorld(std::shared_ptr<PhysicsWorld>& world)
 {
 	m_world = world;
-	addRigidBodiesToWorld();
+	addSensorsToWorld();
+
 }
 
-void RouteModel::addRigidBodiesToWorld()
+void RouteModel::addSensorsToWorld()
 {
 	for (auto boundary : m_rigidBodyDeque)
 		m_world.lock()->addRigidBody(boundary.get());
+
+
+	for (auto waypoint : m_ghostObjectList)
+	{
+		m_world.lock()->getDiscreteWorld()->addCollisionObject(waypoint.get(), btBroadphaseProxy::SensorTrigger,
+			btBroadphaseProxy::DefaultFilter & ~btBroadphaseProxy::SensorTrigger);
+	}
 
 }
 
@@ -39,6 +47,12 @@ void RouteModel::removeAllFences()
 	m_motionStateDeque.clear();
 	m_collisionShapeDeque.clear();
 
+	for (auto ghostObject : m_ghostObjectList)
+	{
+		m_world.lock()->removeCollisionObject(ghostObject.get());
+	}
+	m_ghostObjectList.clear();
+
 
 }
 
@@ -50,6 +64,26 @@ void RouteModel::removeFirstFencePart()
 	m_motionStateDeque.pop_front();
 	m_collisionShapeDeque.pop_front();
 }
+
+void RouteModel::addWaypointGhost(btTransform position)
+{
+	std::shared_ptr<btGhostObject> ghostObject = std::make_shared<btGhostObject>();
+	position.setOrigin(position.getOrigin());
+	ghostObject->setWorldTransform(position);
+
+	std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(40, 2, 2));
+	ghostObject->setCollisionShape(boxShape.get());
+	ghostObject->setCollisionFlags(ghostObject->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+	ObjectInfo* info = new ObjectInfo(m_routeController, WAYPOINTTYPE);
+	ghostObject->setUserIndex(WAYPOINTTYPE);
+	ghostObject->setUserPointer(info); //switching these two somehow results in an error (userpointer points to invalid adress). no clue why..
+
+
+	m_collisionShapes.push_back(boxShape);
+	m_ghostObjectList.push_back(ghostObject);
+}
+
 
 
 void RouteModel::addEndZoneCylinder(btVector3 origin, double radius, double height)

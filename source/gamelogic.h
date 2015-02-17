@@ -68,6 +68,7 @@ namespace troen
 		void handleEndZoneCollision(BikeController* bike);
 		void handleNavigationBoundaryCollision(BikeController* bike);
 		void handleSpeedZone(BikeController* bike, LevelController* levelController, btGhostObject *ghost);
+		void handleWaypoint(RouteController* route, btGhostObject *ghost);
 		// helper
 		float impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike);
 		void playCollisionSound(float impulse);

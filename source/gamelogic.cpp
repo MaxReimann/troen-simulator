@@ -203,6 +203,10 @@ void GameLogic::triggerEvent(btCollisionObject *obj1, btCollisionObject *obj2)
 		case NAVIGATION_BOUNDARY:
 			handleNavigationBoundaryCollision(dynamic_cast<BikeController*>(collisionBodyControllers[bikeIndex]));
 			break;
+
+		case WAYPOINTTYPE:
+			handleWaypoint(dynamic_cast<RouteController*>(collisionBodyControllers[otherIndex]), dynamic_cast<btGhostObject*>(otherIndex == 0 ? obj1 : obj2));
+			break;
 		default:
 			std::cout << "[GameLogic::triggerEvent] unknown zone" << std::endl;
 			break;
@@ -284,6 +288,15 @@ void GameLogic::handleSpeedZone(BikeController* bike, LevelController* levelCont
 
 }
 
+void GameLogic::handleWaypoint(RouteController* route, btGhostObject *ghost)
+{
+	route->registerWaypointCollision(ghost);
+#ifdef VERBOSE
+	printf("just crossed waypoint");
+#endif
+}
+
+
 btScalar GameLogic::impulseFromContactManifold(btPersistentManifold* contactManifold, BikeController* bike)
 {
 	btScalar impulse = 0;
@@ -361,6 +374,7 @@ void GameLogic::resetBikePositions()
 	for (auto player : m_troenGame->m_players)
 	{
 		btTransform position = player->routeController()->getFirstWayPoint();
+		position.setOrigin(position.getOrigin() + btVector3(0, 0, 10));
 		player->bikeController()->moveBikeToPosition(position);
 	}
 }

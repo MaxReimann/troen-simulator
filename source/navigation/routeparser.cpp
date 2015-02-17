@@ -92,7 +92,7 @@ btTransform troen::Route::getTransform(int index)
 	osg::Vec3 waypoint = waypoints.at(index);
 	btTransform trans;
 	trans.setIdentity();
-	trans.setOrigin(osgToBtVec3(waypoint) + btVector3(0, 0, 10));
+	trans.setOrigin(osgToBtVec3(waypoint));
 	osg::Vec3 vec;
 
 	if (index != waypoints.size() - 1)

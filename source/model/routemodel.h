@@ -19,8 +19,8 @@ namespace troen
 		void removeFirstFencePart();
 		void removeAllFences();
 		void addEndZoneCylinder(btVector3 origin, double radius, double height);
-		void addRigidBodiesToWorld();
-
+		void addSensorsToWorld();
+		void addWaypointGhost(btTransform position);
 	private:
 		RouteController* m_routeController;
 		std::weak_ptr<PhysicsWorld> m_world;
@@ -28,6 +28,8 @@ namespace troen
 		std::deque<std::shared_ptr<btRigidBody>>		m_rigidBodyDeque;
 		std::deque<std::shared_ptr<btMotionState>>		m_motionStateDeque;
 		std::deque<std::shared_ptr<btCollisionShape>>	m_collisionShapeDeque;
+
+		std::vector<std::shared_ptr<btGhostObject>>		m_ghostObjectList;
 
 
 	};

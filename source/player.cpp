@@ -72,7 +72,7 @@ m_hasGameView(config->ownView[id])
 	m_routeController = std::make_shared<RouteController>(this, m_routes[m_currentRoute]);
 	
 	btTransform initialTransform = m_routeController->getFirstWayPoint();
-	initialTransform.setOrigin(initialTransform.getOrigin() + btVector3(0, 0, 1.0));
+	initialTransform.setOrigin(initialTransform.getOrigin() + btVector3(0, 0, 11));
 
 	m_bikeController = std::make_shared<BikeController>(
 		this,

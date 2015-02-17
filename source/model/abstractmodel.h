@@ -21,7 +21,8 @@ namespace troen
 		ITEMTYPE,
 		ENDZONETYPE,
 		SPEEDZONETYPE,
-		NAVIGATION_BOUNDARY
+		NAVIGATION_BOUNDARY,
+		WAYPOINTTYPE,
 	} COLLISIONTYPE;
 
 	// max 15 collision groups (enum -> short int)

@@ -39,16 +39,15 @@ namespace troen
 		btTransform getFirstWayPoint();
 		btTransform getLastWayPoint();
 		void createTrack(Route route);
+		void registerWaypointCollision(btGhostObject *waypointZone);
 
 
 	private:
 		std::shared_ptr<RouteView> m_routeView;
 		std::shared_ptr<RouteModel> m_routeModel;
 
-		void trackRouteProgress(btVector3 playerPosition);
 		double getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 playerPosition);
-		int findNearestPointIndex(osg::Vec3 playerPos, double &distance);
-		int findNearestPointIndex(int start, int end, osg::Vec3 playerPos, double &distance);
+		int findNearestPointIndex(btVector3 findPoint);
 		void addEndZone();
 		bool m_fenceLimitActivated;
 
@@ -57,5 +56,6 @@ namespace troen
 		Route m_Route;
 		std::vector<osg::Vec3> m_subdividedPoints;
 		int m_nextPointIndex;
+		btVector3 m_lastTouchedWaypoint;
 	};
 }

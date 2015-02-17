@@ -8,6 +8,7 @@
 #include "../model/routemodel.h"
 #include "../model/physicsworld.h"
 #include "../model/levelmodel.h"
+#include <assert.h>
 
 
 using namespace troen;
@@ -31,6 +32,12 @@ void RouteController::createTrack(Route route)
 	m_subdividedPoints = m_routeView->subdivide(m_Route.waypoints, 8);
 	m_routeView->setupStrips(m_subdividedPoints.size());
 
+	m_lastTouchedWaypoint = osgToBtVec3((m_Route.waypoints[0]));
+	for (int i = 0; i < m_Route.waypoints.size(); i++)
+	{
+		m_routeModel->addWaypointGhost(m_Route.getTransform(i));
+	}
+
 	for (int i = 1; i < m_subdividedPoints.size(); i++)
 	{
 		m_routeView->addFencePart(m_subdividedPoints[i - 1], m_subdividedPoints[i], false);
@@ -38,10 +45,10 @@ void RouteController::createTrack(Route route)
 
 	addEndZone();
 
-	if (m_world.use_count()>0)
+	if (m_world.use_count()>0) //world already attached
 	{
-		std::cout << "adding rigidbobdies" << std::endl;
-		m_routeModel->addRigidBodiesToWorld();
+		std::cout << "adding rigidbodies" << std::endl;
+		m_routeModel->addSensorsToWorld();
 	}
 
 	osg::Vec3 p = m_subdividedPoints[100];
@@ -52,7 +59,7 @@ void RouteController::createTrack(Route route)
 
 void RouteController::update(btVector3 position, btQuaternion rotation)
 {
-	trackRouteProgress(position);
+	//trackRouteProgress(position);
 	m_routeView->m_playerPositionUniform->set(btToOSGVec3(position));
 }
 
@@ -80,54 +87,28 @@ double RouteController::getDistanceToRouteNormalAt(int curPointIndex, osg::Vec3 
 	return distanceToLine;
 }
 
-int RouteController::findNearestPointIndex(osg::Vec3 playerPos, double &distance)
+//find index of point in subdivided points nearest to findpoint
+int RouteController::findNearestPointIndex(btVector3 findPoint)
 {
-	int start = m_nextPointIndex;
-	int end = m_subdividedPoints.size() - 1;
-
-	const double threshold = 50.0;
-
-	for (int res = 100; res >= 1; res /= 2)
+	float minDist = 10000000000000000;
+	int findIndex = -1;
+	
+	for (int i = 0; i< m_subdividedPoints.size(); i++)
 	{
-		for (int i = start; i <= end; i += res)
+		float dist = (m_subdividedPoints[i] - btToOSGVec3(findPoint)).length();
+		if (dist < minDist)
 		{
-			if (i % (res * 2) == 0) //already checked
-				continue;
-
-			distance = (m_subdividedPoints[i] - playerPos).length();
-			if (distance < threshold)
-			{
-				return i;
-			}
+			findIndex = i;
+			minDist = dist;
 		}
 	}
-	return -1;
+
+	return findIndex;
 }
 
-
-void RouteController::trackRouteProgress(btVector3 playerPosition)
+void RouteController::registerWaypointCollision(btGhostObject *waypointZone)
 {
-	osg::Vec3 next = m_subdividedPoints[m_nextPointIndex];
-	osg::Vec3 playerPos = btToOSGVec3(playerPosition);
-	double distanceToLine = getDistanceToRouteNormalAt(m_nextPointIndex, playerPos );
-
-	double distanceToPoint = (next - playerPos).length();
-
-	if (distanceToPoint < 100.0 || (distanceToLine < 15.0 && distanceToPoint < 150))
-	{
-		if (m_nextPointIndex < m_subdividedPoints.size() - 1)
-			m_nextPointIndex++;
-		//else
-			//std::cout << "finished this route!" << std::endl;
-	}
-	else{
-		double dist;
-		int i = findNearestPointIndex(playerPos, dist);
-		if (i!=-1)
-			m_nextPointIndex = i;
-
-	}
-
+	m_lastTouchedWaypoint = waypointZone->getWorldTransform().getOrigin();
 }
 
 
@@ -206,13 +187,8 @@ btTransform RouteController::getLastWayPoint()
 {
 	btTransform trans;
 	osg::Vec3 vec;
-	int index;
-	//estimate for how much the route tracking overestatimates position
-	int overdriveEstimate = 100;
-	if (m_nextPointIndex > overdriveEstimate)
-		index = m_nextPointIndex - overdriveEstimate;
-	else
-		index = 0;
+	int index = findNearestPointIndex(m_lastTouchedWaypoint);
+	assert(index != -1);
 
 	trans.setOrigin(osgToBtVec3((m_subdividedPoints[index])));
 
