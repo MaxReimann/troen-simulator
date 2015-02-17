@@ -26,7 +26,8 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 	addProperty<int>("BENDED_STYLING_PRESET", *this, &ConfigScript::BendedStylingPreset, &ConfigScript::setBendedStylingPreset);
 	addProperty<int>("BENDED_DEFORMATION_END", *this, &ConfigScript::BendedDeformationEnd, &ConfigScript::setBendedDeformationEnd);
 	addProperty<double>("BENDED_DEFORMATION_START", *this, &ConfigScript::BendedDeformationStart, &ConfigScript::setBendedDeformationStart);
-
+	addProperty<double>("SPEED_TOREAL_RATIO", *this, &ConfigScript::SpeedToRealRatio, &ConfigScript::setSpeedToRealRatio);
+	
 
 	changesPending = new bool;
 	*changesPending = false;

@@ -120,6 +120,9 @@ namespace troen
 	//////////////////////#Script Modifiable #////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
+	//Carengine
+	double SPEED_TOREAL_RATIO(2.0);
+
 	// BENDED VIEWS
 	int BENDED_VIEWS_ACTIVATED(3000);
 	int BENDED_VIEWS_DEACTIVATED(12000);

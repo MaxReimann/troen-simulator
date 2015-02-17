@@ -1,9 +1,10 @@
 
 #include "carengine.h"
 #include <algorithm>
+#include "../constants.h"
 using namespace troen;
 
-#define SPEEDTOREALRATIO  2.0
+
 
 CarEngine::CarEngine(btRaycastVehicle *_mVehicle, float effiency)
 {
@@ -81,9 +82,9 @@ CarEngine::~CarEngine()
 }
 void CarEngine::_computeAxisTorque(float time)
 {
-	btScalar speed = mVehicle->getCurrentSpeedKmHour() / SPEEDTOREALRATIO;
+	btScalar speed = mVehicle->getCurrentSpeedKmHour() / SPEED_TOREAL_RATIO;
 	EngineForce = 0.0;
-	RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear / SPEEDTOREALRATIO);
+	RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear / SPEED_TOREAL_RATIO);
 	if (CurGear > 1)
 	{
 		btScalar torque = Throttle * getTorque(RPM) / mVehicle->m_wheelInfo[0].m_wheelsRadius;
@@ -123,9 +124,9 @@ void CarEngine::_computeAxisTorque(float time)
 		//	mVehicle->getWheelInfo(i).
 
 		if (mVehicle->getWheelInfo(i).m_bIsFrontWheel == false)
-			mVehicle->applyEngineForce(EngineForce * SPEEDTOREALRATIO, i);
+			mVehicle->applyEngineForce(EngineForce * SPEED_TOREAL_RATIO, i);
 		else if (EngineForce < 0)
-			mVehicle->applyEngineForce(EngineForce * SPEEDTOREALRATIO, i);
+			mVehicle->applyEngineForce(EngineForce * SPEED_TOREAL_RATIO, i);
 		else
 			mVehicle->applyEngineForce(0, i); //reset back wheel if not going backwards
 	}

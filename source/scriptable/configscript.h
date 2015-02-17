@@ -51,7 +51,9 @@ namespace troen
 			BENDED_DEFORMATION_START = val;
 			m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
 		}
-		
+		double SpeedToRealRatio() const { return SPEED_TOREAL_RATIO; }
+		void setSpeedToRealRatio(const double & val){SPEED_TOREAL_RATIO = val;}
+
 
 
 	private:

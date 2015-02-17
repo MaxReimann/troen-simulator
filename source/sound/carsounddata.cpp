@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "carsounddata.h"
+#include "../constants.h"
 
 using namespace troen;
 
@@ -90,7 +91,7 @@ void CarSoundData::update (CarEngine* car)
 /// Calculate characteristics of the engine sound.
 void CarSoundData::calculateEngineSound (CarEngine* car)
 {
-    float mpitch = (base_frequency * car->getRPM() / 600.0);
+	float mpitch = (base_frequency * car->getRPM() / 800.0 / SPEED_TOREAL_RATIO);
     engine.frequency = mpitch;
     engine.amplitude = 1.0f;
     //if (car->_state & RM_CAR_STATE_NO_SIMU) {
