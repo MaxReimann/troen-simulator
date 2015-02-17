@@ -15,54 +15,33 @@ CarEngine::CarEngine(btRaycastVehicle *_mVehicle, float effiency)
 
 	Gears[0] = -3.68;
 	Gears[1] = 0.;
-	Gears[2] = 4.06;
-	Gears[3] = 2.4;
+	Gears[2] = 2.6;
+	Gears[3] = 1.8;
 	Gears[4] = 1.58;
 	Gears[5] = 1.19;
 	Gears[6] = 1.;
 	Gears[7] = 0.87;
 
-
-	//Torque[0][0] = 500.f;
-	//Torque[0][1] = 150.0f;
-
-	//Torque[1][0] = 1000.f;
-	//Torque[1][1] = 280.f;
-
-	//Torque[2][0] = 1800.f;
-	//Torque[2][1] = 350.0f;
-
-	//Torque[3][0] = 2200.f;
-	//Torque[3][1] = 380.f;
-
-	//Torque[4][0] = 2500.f;
-	//Torque[4][1] = 300.f;
-
-	//Torque[4][0] = 2700.f;
-	//Torque[4][1] = 260.f;
-
-
-
-	Torque[0][0] = 1000.f;
+	Torque[0][0] = 1000.f * SPEED_TOREAL_RATIO;
 	Torque[0][1] = 260.f;
 
-	Torque[1][0] = 2000.f;
+	Torque[1][0] = 2000.f * SPEED_TOREAL_RATIO;
 	Torque[1][1] = 340.f;
 
-	Torque[2][0] = 3500.f;
+	Torque[2][0] = 3500.f * SPEED_TOREAL_RATIO ;
 	Torque[2][1] = 400.f;
 
-	Torque[3][0] = 7500.f;
+	Torque[3][0] = 7500.f * SPEED_TOREAL_RATIO;
 	Torque[3][1] = 380.f;
 
-	Torque[4][0] = 8500.f;
+	Torque[4][0] = 8500.f * SPEED_TOREAL_RATIO;
 	Torque[4][1] = 340.f;
 
-	Torque[4][0] = 9500.f;
+	Torque[4][0] = 9500.f * SPEED_TOREAL_RATIO ;
 	Torque[4][1] = 300.f;
 
-	IdleRPM = 1000.f;
-	MaxRPM = 8300.f;
+	IdleRPM = 1000.f * SPEED_TOREAL_RATIO ;
+	MaxRPM = 8300.f * SPEED_TOREAL_RATIO;
 
 	RPM = 0.f;
 
@@ -85,6 +64,7 @@ void CarEngine::_computeAxisTorque(float time)
 	btScalar speed = mVehicle->getCurrentSpeedKmHour() / SPEED_TOREAL_RATIO;
 	EngineForce = 0.0;
 	RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear / SPEED_TOREAL_RATIO);
+	std::cout << "gear:" << CurGear << std::endl;
 	if (CurGear > 1)
 	{
 		btScalar torque = Throttle * getTorque(RPM) / mVehicle->m_wheelInfo[0].m_wheelsRadius;
@@ -101,7 +81,7 @@ void CarEngine::_computeAxisTorque(float time)
 	{
 		if (Brake)
 		{
-			EngineForce = Torque[0][0] / mVehicle->m_wheelInfo[0].m_wheelsRadius * Efficiency * Gears[0];
+			EngineForce = Torque[0][1] / mVehicle->m_wheelInfo[0].m_wheelsRadius * Efficiency * Gears[0];
 			if (EngineForce > 0) //sanity
 				EngineForce = -EngineForce;
 
@@ -213,9 +193,9 @@ int CarEngine::changeGears()
 {
 	if (Throttle == 1 && CurGear < 2)
 		CurGear = 2;
-	if (RPM > 7100 && CurGear < 7)
+	if (RPM > 7100 * SPEED_TOREAL_RATIO && CurGear < 7)
 		return 1;
-	else if (RPM < 3000 && CurGear > 2)
+	else if (RPM < 3000 * SPEED_TOREAL_RATIO && CurGear > 2)
 		return -1;
 	else
 		return 0;
