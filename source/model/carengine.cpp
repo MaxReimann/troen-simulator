@@ -83,9 +83,9 @@ void CarEngine::_computeAxisTorque(float time)
 {
 	btScalar speed = mVehicle->getCurrentSpeedKmHour() / SPEEDTOREALRATIO;
 	EngineForce = 0.0;
+	RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear / SPEEDTOREALRATIO);
 	if (CurGear > 1)
 	{
-		RPM = computeMotorRpm(computeRpmFromWheels(btScalar(time)) * Gears[CurGear] * MainGear / SPEEDTOREALRATIO);
 		btScalar torque = Throttle * getTorque(RPM) / mVehicle->m_wheelInfo[0].m_wheelsRadius;
 		EngineForce = torque * Efficiency * Gears[CurGear] * MainGear;
 
@@ -118,8 +118,17 @@ void CarEngine::_computeAxisTorque(float time)
 
 
 	for (int i = 0; i < 4; i++)
+	{
+		//if (EngineForce < 0 )
+		//	mVehicle->getWheelInfo(i).
+
 		if (mVehicle->getWheelInfo(i).m_bIsFrontWheel == false)
 			mVehicle->applyEngineForce(EngineForce * SPEEDTOREALRATIO, i);
+		else if (EngineForce < 0)
+			mVehicle->applyEngineForce(EngineForce * SPEEDTOREALRATIO, i);
+		else
+			mVehicle->applyEngineForce(0, i); //reset back wheel if not going backwards
+	}
 
 
 	if (CurGear == 1 && Throttle > 0.1)
@@ -190,7 +199,7 @@ btScalar CarEngine::computeMotorRpm(btScalar rpm)
 		else if (change == -1)
 			CurGear--;
 
-	if (rpm < IdleRPM)
+	if (rpm <= IdleRPM)
 		if (Brake)
 			CurGear = 0;
 		else
