@@ -292,7 +292,7 @@ void GameLogic::handleWaypoint(RouteController* route, btGhostObject *ghost)
 {
 	route->registerWaypointCollision(ghost);
 #ifdef VERBOSE
-	printf("just crossed waypoint");
+	printf("just crossed waypoint\n");
 #endif
 }
 

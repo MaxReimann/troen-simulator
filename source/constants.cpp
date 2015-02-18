@@ -9,24 +9,75 @@
 
 namespace troen
 {
+
+
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////#Script Modifiable #////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	// LOGIC
+	double RESPAWN_DURATION(4000);
+	double GAME_START_COUNTDOWN_DURATION(3000);
+	double RANDOM_NUMBER_DURATION(800);
+	double RANDOM_NUMBER_INTERVAL(8000);
+
+
+	//Field of view
+	double FOVY_INITIAL(29.1484f);
+	double FOVY_ADDITION_MAX(30.f);
+	double FOVY_INITIAL_NAVI(29.1484f);
+
+
+	//Carengine
+	double SPEED_TOREAL_RATIO(2.0);
+	double DAMPING_FORCE(1000.0);
+
+	//STEERING
+	double BIKE_STEERING_INCREMENT(0.02f);
+	double BIKE_STEERINGCLAMP(0.2f);
+
+	// BENDED VIEWS
+	int BENDED_VIEWS_ACTIVATED(3000);
+	int BENDED_VIEWS_DEACTIVATED(12000);
+	int TIME_TO_ACTIVATE_BENDED_VIEWS(10000);
+	int BENDED_STYLING_PRESET(4);
+	double BENDED_DEFORMATION_START(0.1);
+	int BENDED_DEFORMATION_END(1000);
+
+	// AUDIO
+	int ENGINE_FREQUENCY_LOW(10000);
+	double AUDIO_PITCH_FACTOR(120000);
+
+	double CAMERA_POSITION_OFFSET_X(0);
+	double CAMERA_POSITION_OFFSET_Y(0);
+	double CAMERA_POSITION_OFFSET_Z(0);
+
+	double CAMERA_EYE_POSITION_X(0);
+	double CAMERA_EYE_POSITION_Y(-2);
+	double CAMERA_EYE_POSITION_Z(0);
+
+
+
+
+
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////////Constant/////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+
+
 	// GENERAL
+
+	const int NUM_MULTISAMPLES(8);
 
 	// GAME
 	const int DEFAULT_WINDOW_WIDTH(1024);
 	const int DEFAULT_WINDOW_HEIGHT(768);
 	const float DEFAULT_SOUND_VOLUME(1.f);
 
-	const float FOVY_INITIAL(29.1484f);
-	const float FOVY_ADDITION_MAX(30.f);
-	const float FOVY_DELTA_MAX(.7f);
 
-	const int NUM_MULTISAMPLES(8);
+	const double FOVY_DELTA_MAX(.7f);
 
-	// LOGIC
-	const double RESPAWN_DURATION(4000);
-	const double GAME_START_COUNTDOWN_DURATION(3000);
-	const double RANDOM_NUMBER_DURATION(800);
-	const double RANDOM_NUMBER_INTERVAL(8000);
+
+
 
 	//PHYSIS
 	const btVector3 DEFAULT_GRAVITY(0,0,-10);
@@ -47,10 +98,7 @@ namespace troen
 	const float BIKE_TURN_FACTOR_MAX(15);
 	const float BIKE_ANGULAR_DAMPENING_TERM(0.001f);
 	const float BIKE_VIEWING_ANGLE_DAMPENING_TERM(0.1f);
-	const float BIKE_STEERING_INCREMENT(0.02f);
-	const float BIKE_STEERINGCLAMP(0.2f);
 
-	const float TURBO_PHASE_LENGTH(2000);
 
 	// BIKE_TILT_DAMPENING = 1 would lead to immediate/unsmooth tilt
 	// 1 / BIKE_TILT_MAX specifies angle in radiant
@@ -82,11 +130,13 @@ namespace troen
 
 
 	// CAMERA
-	const osg::Vec3 CAMERA_POSITION_OFFSET(0, 0, 0);
-	const float CAMERA_ROTATION_OFFSET(0);
-	const osg::Vec3 CAMERA_EYE_POSITION(0.f,/*-BIKE_DIMENSIONS.y()*5.5f*/-2,0);
+
 	const float CAMERA_TILT_FACTOR(4.f);
 	const int HUD_PROJECTION_SIZE(1000);
+
+	osg::Vec3 CAMERA_POSITION_OFFSET(CAMERA_POSITION_OFFSET_X, CAMERA_EYE_POSITION_Y, CAMERA_EYE_POSITION_Z);
+	osg::Vec3 CAMERA_EYE_POSITION(CAMERA_EYE_POSITION_X, CAMERA_EYE_POSITION_Y, CAMERA_EYE_POSITION_Z);
+	const float CAMERA_ROTATION_OFFSET(0);
 
 
 	const unsigned int CAMERA_MASK_MAIN(1 << 0);
@@ -102,9 +152,7 @@ namespace troen
 
 	const float BIKE_DEFAULT_HEALTH(BIKE_FENCE_IMPACT_THRESHOLD_LOW);
 
-	// AUDIO
-	const int ENGINE_FREQUENCY_LOW(10000);
-	const int ENGINE_FREQUENCY_HIGH(120000);
+
 
 
 
@@ -116,20 +164,7 @@ namespace troen
 	const QString windowSetupChoices[] { MAIN_NORMAL_NAVI_NORMAL, MAIN_NORMAL_NAVI_BENDED, MAIN_NORMAL_NAVI_MAP };
 
 
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////#Script Modifiable #////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
 
-	//Carengine
-	double SPEED_TOREAL_RATIO(2.0);
-
-	// BENDED VIEWS
-	int BENDED_VIEWS_ACTIVATED(3000);
-	int BENDED_VIEWS_DEACTIVATED(12000);
-	int TIME_TO_ACTIVATE_BENDED_VIEWS(10000);
-	int BENDED_STYLING_PRESET(4);
-	double BENDED_DEFORMATION_START(0.1);
-	int BENDED_DEFORMATION_END(20000);
 }
 
 btQuaternion fromTwoVectors(btVector3 u, btVector3 v)

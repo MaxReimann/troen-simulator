@@ -62,6 +62,9 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 	m_mainNode->addChild(m_savedGeode);
 
 	m_font = osgText::readFontFile("data/fonts/arial.ttf");
+	//use to make 
+	m_font->setMinFilterHint(osg::Texture::NEAREST);
+	m_font->setMagFilterHint(osg::Texture::NEAREST);
 
 	m_fontColor = osg::Vec4(1.0, 1.0, 1.0, 1.0);
 
@@ -193,7 +196,7 @@ void HUDView::resizeHudComponents(const int width, const int height)
 	m_countdownText->setFontResolution(height / 3, height / 3);
 
 	m_randomNumberText->setCharacterSize(height / 10);
-	m_randomNumberText->setFontResolution(height / 10, height / 10);
+	m_randomNumberText->setFontResolution(height / 5, height / 5);
 
 	//m_timeText->setCharacterSize(height / 8);
 	//m_timeText->setFontResolution(height / 8, height / 8);

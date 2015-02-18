@@ -22,7 +22,7 @@ namespace input
 
 		BikeInputState();
 		float getAngle();
-		float getAcceleration();
+		float getThrottle();
 		void setAngle(const float angle);
 		void setAcceleration(const float acceleration);
 		void setTurboPressed(const bool pressed);

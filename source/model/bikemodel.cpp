@@ -264,10 +264,13 @@ float BikeModel::updateState(long double time)
 	m_lastTransform.setOrigin(positionSmoothed);
 	m_lastTransform.setRotation(rotationSmoothed);
 
+	if (m_vehicleParameters.changed())
+		m_vehicleParameters.loadVehicleParameters();
+
 	m_vehicleSteering = m_bikeInputState->getSteering();
 
 	m_breakingForce = m_bikeInputState->getBrakeForce() * m_vehicleParameters.maxBreakingForce;
-	float throttle = m_bikeInputState->getAcceleration();// *2.0;
+	float throttle = m_bikeInputState->getThrottle();// *2.0;
 	m_engine->setThrottle(throttle);
 
 	{
@@ -364,7 +367,7 @@ float BikeModel::getVelocity()
 
 float BikeModel::getInputAcceleration()
 {
-	return m_bikeInputState->getAcceleration();
+	return m_bikeInputState->getThrottle();
 }
 
 float BikeModel::getInputAngle()
@@ -496,6 +499,7 @@ void VehiclePhysicSettings::loadVehicleParameters()
 	try
 	{
 		m_scriptContext->evaluate(m_scriptWatcher.getContent());
+		*changesPending = false;
 	}
 	catch (std::exception& e)
 	{

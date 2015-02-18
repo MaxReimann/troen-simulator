@@ -101,8 +101,12 @@ btTransform troen::Route::getTransform(int index)
 		vec = waypoints.at(index) - waypoints.at(index-1);
 
 	//vec.normalize();
-	auto rotation = fromTwoVectors(btVector3(0,1,0), osgToBtVec3(vec));
-	rotation.setRotation(btVector3(0, 0, 1), rotation.getAngle()- PI/4);
+	//auto rotation = fromTwoVectors(btVector3(0,1,0), osgToBtVec3(vec));
+	//rotation.setRotation(btVector3(0, 0, 1), rotation.getAngle()- PI/2);
+	
+	btQuaternion rotation;
+	double rotAroundZ = atan2(vec.y(), vec.x()) - PI / 2;
+	rotation.setRotation(btVector3(0, 0, 1), rotAroundZ);
 	//btQuaternion::
 	//double rotAroundZ = PI + PI/2 - atan(vec.y() / vec.x()) ;
 	//btQuaternion rotation;

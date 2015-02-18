@@ -49,7 +49,7 @@ public:
 
 			double fovy, aspect, znear, zfar;
 			m_navView->getCamera()->getProjectionMatrixAsPerspective(fovy, aspect, znear, zfar);
-			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL + FOVY_ADDITION_MAX * 1.5, aspect, znear, zfar);
+			m_navView->getCamera()->setProjectionMatrixAsPerspective(FOVY_INITIAL_NAVI + FOVY_ADDITION_MAX * 1.5, aspect, znear, zfar);
 
 
 		}

@@ -72,7 +72,7 @@ namespace troen
 		QSpinBox*		m_participantNumberSpinBox;
 		QComboBox*		m_levelComboBox;
 		QComboBox*		m_studySetupComboBox;
-		QComboBox*		m_difficultyComboBox;
+		QComboBox*		m_studyMode;
 
 		TroenGame*	m_troenGame;
 		QThread*	m_gameThread;

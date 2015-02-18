@@ -29,6 +29,58 @@ namespace troen
 
 	typedef std::pair<btScalar, btScalar> btPoint;
 
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////#Script Modifiable #////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+
+
+	extern double FOVY_INITIAL;
+	extern double FOVY_ADDITION_MAX;
+	extern double FOVY_INITIAL_NAVI;
+	extern const double FOVY_DELTA_MAX;
+
+	// LOGIC
+	extern double RESPAWN_DURATION;
+	extern double RANDOM_NUMBER_DURATION;
+	extern double RANDOM_NUMBER_INTERVAL;
+	extern double GAME_START_COUNTDOWN_DURATION;
+
+	// AUDIO
+	extern int ENGINE_FREQUENCY_LOW;
+	extern double AUDIO_PITCH_FACTOR;
+
+
+	//car engine
+	extern double SPEED_TOREAL_RATIO;
+	extern double DAMPING_FORCE;
+
+	//STEERING
+	extern double BIKE_STEERING_INCREMENT;
+	extern double BIKE_STEERINGCLAMP;
+
+
+	// BENDED VIEWS
+	extern int BENDED_VIEWS_ACTIVATED;
+	extern int BENDED_VIEWS_DEACTIVATED;
+	extern int TIME_TO_ACTIVATE_BENDED_VIEWS;
+	extern int BENDED_STYLING_PRESET;
+	extern int BENDED_DEFORMATION_END;
+	extern double BENDED_DEFORMATION_START;
+
+	//CAMERA
+	extern double CAMERA_POSITION_OFFSET_X;
+	extern double CAMERA_POSITION_OFFSET_Y;
+	extern double CAMERA_POSITION_OFFSET_Z;
+
+	extern double CAMERA_EYE_POSITION_X;
+	extern double CAMERA_EYE_POSITION_Y;
+	extern double CAMERA_EYE_POSITION_Z;
+
+
+	/////////////////////////////////////////////////////////////
+	////////////////////Constant ////////////////////////////////
+	/////////////////////////////////////////////////////////////
+
 
 	// GENERAL
 
@@ -38,16 +90,6 @@ namespace troen
 	extern const float DEFAULT_SOUND_VOLUME;
 
 	extern const int NUM_MULTISAMPLES;
-
-	extern const float FOVY_INITIAL;
-	extern const float FOVY_ADDITION_MAX;
-	extern const float FOVY_DELTA_MAX;
-
-	// LOGIC
-	extern const double RESPAWN_DURATION;
-	extern const double RANDOM_NUMBER_DURATION;
-	extern const double RANDOM_NUMBER_INTERVAL;
-	extern const double GAME_START_COUNTDOWN_DURATION;
 
 	//PHYSIS
 	extern const btVector3 DEFAULT_GRAVITY;
@@ -69,8 +111,7 @@ namespace troen
 	extern const float THRESHOLD_FOR_ABRUPT_VELOCITY_CHANGE;
 	extern const float BIKE_VIEWING_ANGLE_DAMPENING_TERM;
 
-	extern const float BIKE_STEERING_INCREMENT;
-	extern const float BIKE_STEERINGCLAMP;
+
 
 	extern const float TURBO_PHASE_LENGTH;
 
@@ -101,9 +142,10 @@ namespace troen
 	extern const int FENCE_TO_MINIMAP_PARTS_RATIO;
 
 	// CAMERA
-	extern const osg::Vec3 CAMERA_POSITION_OFFSET;
+	extern osg::Vec3 CAMERA_POSITION_OFFSET;
+	extern osg::Vec3 CAMERA_EYE_POSITION;
 	extern const float CAMERA_ROTATION_OFFSET;
-	extern const osg::Vec3 CAMERA_EYE_POSITION;
+
 	extern const float CAMERA_TILT_FACTOR;
 	extern const int HUD_PROJECTION_SIZE;
 
@@ -118,9 +160,6 @@ namespace troen
 
 	extern const float BIKE_DEFAULT_HEALTH;
 
-	// AUDIO
-	extern const int ENGINE_FREQUENCY_LOW;
-	extern const int ENGINE_FREQUENCY_HIGH;
 
 
 	//study Setup
@@ -130,24 +169,6 @@ namespace troen
 	extern const QString MAIN_NORMAL_NAVI_BENDED;
 
 	extern const QString windowSetupChoices[];
-
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////#Script Modifiable #////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	//car engine
-	extern double SPEED_TOREAL_RATIO;
-
-
-	// BENDED VIEWS
-	extern int BENDED_VIEWS_ACTIVATED;
-	extern int BENDED_VIEWS_DEACTIVATED;
-	extern int TIME_TO_ACTIVATE_BENDED_VIEWS;
-	extern int BENDED_STYLING_PRESET;
-	extern int BENDED_DEFORMATION_END;
-	extern double BENDED_DEFORMATION_START;
-
-
-
 
 }
 

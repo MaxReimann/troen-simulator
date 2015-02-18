@@ -43,6 +43,7 @@ namespace troen
 		{
 			BENDED_DEFORMATION_END = val;
 			m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
+			m_game->m_deformationRendering->reloadShaders();
 		}
 
 		double BendedDeformationStart() const { return BENDED_DEFORMATION_END; }
@@ -50,10 +51,47 @@ namespace troen
 		{
 			BENDED_DEFORMATION_START = val;
 			m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
+			m_game->m_deformationRendering->reloadShaders();
 		}
+		double RespawnDuration() const { return RESPAWN_DURATION; }
+		void setRespawnDuration(const double & val){RESPAWN_DURATION = val;}
+		double GameStartCountDownDuration() const { return GAME_START_COUNTDOWN_DURATION; }
+		void setGameStartCountDownDuration(const double & val){GAME_START_COUNTDOWN_DURATION = val;}
+		double RandomNumberDuration() const { return RANDOM_NUMBER_DURATION; }
+		void setRandomNumberDuration(const double & val){RANDOM_NUMBER_DURATION = val;}
+		double RandomNumberInterval() const { return RANDOM_NUMBER_INTERVAL; }
+		void setRandomNumberInterval(const double & val){RANDOM_NUMBER_INTERVAL = val;}
+		double FovyInitial() const { return FOVY_INITIAL; }
+		void setFovyInitial(const double & val){FOVY_INITIAL = val;}
+		double FovyAdditionMax() const { return FOVY_ADDITION_MAX; }
+		void setFovyAdditionMax(const double & val){FOVY_ADDITION_MAX = val;}
+		double FovyInitialNavi() const { return FOVY_INITIAL_NAVI; }
+		void setFovyInitialNavi(const double & val){ FOVY_INITIAL_NAVI = val; }
+		double EngineFrequencyLow() const { return ENGINE_FREQUENCY_LOW; }
+		void setEngineFrequencyLow(const double & val){ENGINE_FREQUENCY_LOW = val;}
+		double AudioPitchFactor() const { return AUDIO_PITCH_FACTOR; }
+		void setAduioPitchFactor(const double & val){AUDIO_PITCH_FACTOR = val;}
 		double SpeedToRealRatio() const { return SPEED_TOREAL_RATIO; }
-		void setSpeedToRealRatio(const double & val){SPEED_TOREAL_RATIO = val;}
-
+		void setSpeedToRealRatio(const double & val){ SPEED_TOREAL_RATIO = val; }
+		double BikeSteeringIncrement() const { return BIKE_STEERING_INCREMENT; }
+		void setBikeSteeringIncrement(const double & val) { BIKE_STEERING_INCREMENT = val; }
+		double SteeringClamp() const { return BIKE_STEERINGCLAMP; }
+		void setSteeringClamp(const double & val) { BIKE_STEERINGCLAMP = val; }
+		double CameraPositionOffsetX() const { return CAMERA_POSITION_OFFSET_X; }
+		void setCameraPositionOffsetX(const double & val) { CAMERA_POSITION_OFFSET_X = val; }
+		double CameraPositionOffsetY() const { return CAMERA_POSITION_OFFSET_Y; }
+		void setCameraPositionOffsetY(const double & val) { CAMERA_POSITION_OFFSET_Y = val; }
+		double CameraPositionOffsetZ() const { return CAMERA_POSITION_OFFSET_Z; }
+		void setCameraPositionOffsetZ(const double & val) { CAMERA_POSITION_OFFSET_Z = val; }
+		double CameraEyePositionX() const { return CAMERA_EYE_POSITION_X; }
+		void setCameraEyePositionX(const double & val) { CAMERA_EYE_POSITION_X = val; }
+		double CameraEyePositionY() const { return CAMERA_EYE_POSITION_Y; }
+		void setCameraEyePositionY(const double & val) { CAMERA_EYE_POSITION_Y = val; }
+		double CameraEyePositionZ() const { return CAMERA_EYE_POSITION_Z; }
+		void setCameraEyePositionZ(const double & val) { CAMERA_EYE_POSITION_Z = val; }
+		double DampingForce() const { return DAMPING_FORCE; }
+		void setDampingForce(const double & val) { DAMPING_FORCE = val; }
+		
 
 
 	private:

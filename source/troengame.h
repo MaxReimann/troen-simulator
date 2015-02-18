@@ -40,7 +40,7 @@ namespace troen
 		bool ownView[MAX_BIKES];
 		std::string levelName;
 		//user study
-		int difficulty;
+		int studyMode;
 		int participantNumber;
 		QString studySetup;
 		bool exportCSV;

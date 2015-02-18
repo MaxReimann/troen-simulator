@@ -74,6 +74,8 @@ namespace troen
 
 		void loadVehicleParameters();
 		VehiclePhysicSettings();
+
+		bool changed() { return *changesPending; }
 	private:
 		bool awaiting_update;
 		ScriptWatcher m_scriptWatcher;

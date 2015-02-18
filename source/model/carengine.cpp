@@ -80,6 +80,7 @@ void CarEngine::_computeAxisTorque(float time)
 	{
 		if (Brake)
 		{
+
 			EngineForce = Torque[0][1] / mVehicle->m_wheelInfo[0].m_wheelsRadius * Efficiency * Gears[0];
 			if (EngineForce > 0) //sanity
 				EngineForce = -EngineForce;
@@ -93,8 +94,11 @@ void CarEngine::_computeAxisTorque(float time)
 
 	}
 
+	double damping;
 	if (speed > 5)
-		EngineForce -= 2000; //damping
+		damping = DAMPING_FORCE; 
+	else
+		damping = 0;
 
 
 	for (int i = 0; i < 4; i++)
@@ -103,11 +107,14 @@ void CarEngine::_computeAxisTorque(float time)
 		//	mVehicle->getWheelInfo(i).
 
 		if (mVehicle->getWheelInfo(i).m_bIsFrontWheel == false)
-			mVehicle->applyEngineForce(EngineForce * SPEED_TOREAL_RATIO, i);
+		{ 
+			mVehicle->applyEngineForce((EngineForce-damping) * SPEED_TOREAL_RATIO, i);
+		}
 		else if (EngineForce < 0)
+			//apply for to back wheels
 			mVehicle->applyEngineForce(EngineForce * SPEED_TOREAL_RATIO, i);
 		else
-			mVehicle->applyEngineForce(0, i); //reset back wheel if not going backwards
+			mVehicle->applyEngineForce(0, i); //reset back wheels if not going backwards
 	}
 
 

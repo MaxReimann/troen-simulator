@@ -1,7 +1,7 @@
 vehicle.log("setting values");
 vehicle.engineEfficiency = 0.8;//0.8 --> scale for velocity
 vehicle.maxSpeed = 80.0;
-vehicle.maxBreakingForce = 300.0; // 100.0;
+vehicle.maxBreakingForce = 200.0; // 100.0;
 vehicle.wheelRadius = 0.4; // 0.5;
 vehicle.wheelWidth = 0.4; // 0.4;
 vehicle.wheelFriction = 10;//BT_LARGE_ // = 1000;//BT_LARGE_

@@ -91,7 +91,7 @@ void CarSoundData::update (CarEngine* car)
 /// Calculate characteristics of the engine sound.
 void CarSoundData::calculateEngineSound (CarEngine* car)
 {
-	float mpitch = (base_frequency * car->getRPM() / 800.0 / SPEED_TOREAL_RATIO);
+	float mpitch = (base_frequency * car->getRPM() / 600.0 / SPEED_TOREAL_RATIO * AUDIO_PITCH_FACTOR);
     engine.frequency = mpitch;
     engine.amplitude = 1.0f;
     //if (car->_state & RM_CAR_STATE_NO_SIMU) {
@@ -126,7 +126,7 @@ void CarSoundData::calculateEngineSound (CarEngine* car)
 void CarSoundData::calculateBackfireSound (CarEngine* car)
 {               
 
-    engine_backfire.frequency = (car->getRPM() / 600.0);
+	engine_backfire.frequency = (car->getRPM() / 600.0 / SPEED_TOREAL_RATIO);
     engine_backfire.amplitude *= (.9*.5+.5*exp(-engine_backfire.frequency));
 }
 

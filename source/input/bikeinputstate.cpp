@@ -32,7 +32,7 @@ float BikeInputState::getSteering()
 	return m_vehicleSteering;
 }
 
-float BikeInputState::getAcceleration()
+float BikeInputState::getThrottle()
 {
 	// deceleration is stronger than acceleration
 	return m_acceleration < 0 ? m_acceleration * BIKE_DECELERATION_FACTOR : m_acceleration;

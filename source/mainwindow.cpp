@@ -220,10 +220,10 @@ MainWindow::MainWindow(QWidget * parent)
 		vBoxLayoutUserStudy->addWidget(participantNumberWidget);
 	}
 
-	m_difficultyComboBox = new QComboBox;
-	m_difficultyComboBox->addItem(QString("Easy"));
-	m_difficultyComboBox->addItem(QString("Hard"));
-	vBoxLayoutUserStudy->addWidget(m_difficultyComboBox);
+	m_studyMode = new QComboBox;
+	m_studyMode->addItem(QString("Training"));
+	m_studyMode->addItem(QString("Study"));
+	vBoxLayoutUserStudy->addWidget(m_studyMode);
 
 	m_exportCSV = new QCheckBox("Export trajectories to csv");
 	vBoxLayoutUserStudy->addWidget(m_exportCSV);
@@ -322,7 +322,7 @@ GameConfig MainWindow::getGameConfig()
 	config.usePostProcessing = m_postProcessingCheckBox->isChecked();
 	config.useDebugView = m_debugViewCheckBox->isChecked();
 	config.testPerformance = m_testPerformanceCheckBox->isChecked();
-	config.difficulty = m_difficultyComboBox->currentIndex();
+	config.studyMode = m_studyMode->currentIndex();
 	config.studySetup = windowSetupChoices[m_studySetupComboBox->currentIndex()];
 	config.participantNumber = m_participantNumberSpinBox->value();
 	config.exportCSV = m_exportCSV->isChecked();
@@ -400,7 +400,7 @@ void MainWindow::loadSettings()
 	m_debugViewCheckBox->setChecked(settings.value("debugView").toBool());
 	m_levelComboBox->setCurrentIndex(settings.value("level").toInt());
 	m_participantNumberSpinBox->setValue(settings.value("participants").toInt());
-	m_difficultyComboBox->setCurrentIndex(settings.value("difficulty").toInt());
+	m_studyMode->setCurrentIndex(settings.value("difficulty").toInt());
 	m_studySetupComboBox->setCurrentIndex(settings.value("studySetup").toInt());
 	m_exportCSV->setChecked(settings.value("exportCSV").toBool());
 	m_texturedModel->setChecked(settings.value("texturedModel").toBool());
@@ -441,7 +441,7 @@ void MainWindow::saveSettings()
 	settings.setValue("level", QString::number(m_levelComboBox->currentIndex()));
 	settings.setValue("participants", QString::number(m_participantNumberSpinBox->value()));
 	settings.setValue("studySetup", QString::number(m_studySetupComboBox->currentIndex()));
-	settings.setValue("difficulty", QString::number(m_difficultyComboBox->currentIndex()));
+	settings.setValue("difficulty", QString::number(m_studyMode->currentIndex()));
 	settings.setValue("exportCSV", QString::number(m_exportCSV->isChecked()));
 	settings.setValue("texturedModel", QString::number(m_texturedModel->isChecked()));
 
