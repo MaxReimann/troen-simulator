@@ -76,6 +76,9 @@ namespace troen
 	extern double CAMERA_EYE_POSITION_Y;
 	extern double CAMERA_EYE_POSITION_Z;
 
+	extern double CAMERA_NAVI_EYE_POSITION_Z;
+	extern double CAMERA_NAVI_CENTER_POSITION_Z;
+
 
 	/////////////////////////////////////////////////////////////
 	////////////////////Constant ////////////////////////////////

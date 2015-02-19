@@ -55,6 +55,9 @@ namespace troen
 	double CAMERA_EYE_POSITION_Y(-2);
 	double CAMERA_EYE_POSITION_Z(0);
 
+	double CAMERA_NAVI_EYE_POSITION_Z(40.0);
+	double CAMERA_NAVI_CENTER_POSITION_Z(20.0);
+
 
 
 

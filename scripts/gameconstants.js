@@ -1,14 +1,16 @@
 configScript.log("setting scriptable gameconfig");
-configScript.BENDED_DEFORMATION_END = 10000;
+configScript.BENDED_DEFORMATION_END = 1000;
 configScript.BENDED_DEFORMATION_START = 0.01;
-configScript.TIME_TO_ACTIVATE_BENDED_VIEWS=1;
-configScript.BENDED_STYLING_PRESET =2;
+configScript.BENDED_STYLING_PRESET =1;
 configScript.SPEED_TOREAL_RATIO=2.0;
-configScript.FOVY_INITIAL = 20;
+configScript.FOVY_INITIAL = 30;
 configScript.FOVY_ADDITION_MAX = 20;
 configScript.ENGINE_FREQUENCY_LOW =5000;
 configScript.AUDIO_PITCH_FACTOR=0.5;
-configScript.DAMPING_FORCE = 2000.0;
+configScript.DAMPING_FORCE = 1500.0;
+configScript.CAMERA_NAVI_EYE_POSITION_Z = 20.0;
+configScript.CAMERA_NAVI_CENTER_POSITION_Z = 20.0; 
+//configScript.CAMERA_EYE_POSITION_Z = 0.0;
 
 // SETTINGS
 //<int> BENDED_VIEWS_ACTIVATED
@@ -36,3 +38,5 @@ configScript.DAMPING_FORCE = 2000.0;
 //<double> CAMERA_EYE_POSITION_Y
 //<double> CAMERA_EYE_POSITION_Z
 //<double> DAMPING_FORCE
+//<double> CAMERA_NAVI_EYE_POSITION_Z
+//double> CAMERA_NAVI_CENTER_POSITION_Z

@@ -45,6 +45,10 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 	addProperty<double>("CAMERA_EYE_POSITION_Y", *this, &ConfigScript::CameraEyePositionY, &ConfigScript::setCameraEyePositionY);
 	addProperty<double>("CAMERA_EYE_POSITION_Z", *this, &ConfigScript::CameraEyePositionZ, &ConfigScript::setCameraEyePositionZ);
 	addProperty<double>("DAMPING_FORCE", *this, &ConfigScript::DampingForce, &ConfigScript::setDampingForce);
+	addProperty<double>("CAMERA_NAVI_EYE_POSITION_Z", *this, &ConfigScript::CameraNaviEyePositionZ, &ConfigScript::setCameraNaviEyePositionZ);
+	addProperty<double>("CAMERA_NAVI_CENTER_POSITION_Z", *this, &ConfigScript::CameraNaviPositionZ, &ConfigScript::setCameraNaviPositionZ);
+
+
 
 	
 

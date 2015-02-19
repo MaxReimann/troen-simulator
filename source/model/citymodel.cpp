@@ -61,7 +61,10 @@ CityModel::CityModel(LevelController* levelController, std::string levelName, bo
 LevelModel(levelController, levelName)
 {
 	if (texturedModel)
+	{
+		Cout("using textured model ground image");
 		m_collisionImage = QImage("data/textures/berlin_binary_textured_model.png");
+	}
 	else
 		m_collisionImage = QImage("data/textures/berlin_binary_detailed.png");
 	//m_collisionImage.load()

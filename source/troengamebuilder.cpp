@@ -57,6 +57,7 @@ bool TroenGameBuilder::build()
 	std::cout << "[TroenGame::build] building game ..." << std::endl;
 
 	g_scripting = new scriptzeug::ScriptContext(); //define global
+	t->m_configScript = std::make_shared<ConfigScript>(t); //config scripts, loads all constants defined in gameconstants.js
 	////////////////////////////////////////////////////////////////////////////////
 	//
 	// timers & shaders
@@ -143,6 +144,7 @@ bool TroenGameBuilder::build()
 
 
 
+
 	////////////////////////////////////////////////////////////////////////////////
 	//
 	// PostProcessing, SceneGraph, Input, PhysicsWorld in individual methods
@@ -157,7 +159,6 @@ bool TroenGameBuilder::build()
 	t->m_physicsWorld->stepSimulation(0);
 
 	
-	t->m_configScript = std::make_shared<ConfigScript>(t);
 
 	std::cout << "[TroenGameBuilder::build] successfully built TroenGame !" << std::endl;
 	return true;

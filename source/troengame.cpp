@@ -223,20 +223,21 @@ void TroenGame::handleBending(double interpolationSkalar)
 		return;
 
 	m_deformationRendering->setInterpolationSkalar(1.0);
+	m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
 
-	double currentBending = m_deformationRendering->getDeformationEnd();
-	const double targetBending = m_deformationEnd;
-	const double bendedStep = (BENDED_VIEWS_DEACTIVATED - BENDED_VIEWS_ACTIVATED) / TIME_TO_ACTIVATE_BENDED_VIEWS;
-	
-	if (targetBending == BENDED_VIEWS_ACTIVATED)
-		currentBending -= bendedStep;
-	else
-		currentBending += bendedStep;
-	currentBending = clamp(BENDED_VIEWS_ACTIVATED, BENDED_VIEWS_DEACTIVATED, currentBending);
+	//double currentBending = m_deformationRendering->getDeformationEnd();
+	//const double targetBending = m_deformationEnd;
+	//const double bendedStep = (BENDED_VIEWS_DEACTIVATED - BENDED_VIEWS_ACTIVATED) / TIME_TO_ACTIVATE_BENDED_VIEWS;
+	//
+	//if (targetBending == BENDED_VIEWS_ACTIVATED)
+	//	currentBending -= bendedStep;
+	//else
+	//	currentBending += bendedStep;
+	//currentBending = clamp(BENDED_VIEWS_ACTIVATED, BENDED_VIEWS_DEACTIVATED, currentBending);
 
 
-	m_deformationRendering->setDeformationStartEnd(0.05, currentBending);
-	m_levelController->setBendingFactor(1.0 - currentBending / BENDED_VIEWS_DEACTIVATED);
+	//m_deformationRendering->setDeformationStartEnd(0.05, currentBending);
+	m_levelController->setBendingFactor(1.0 - BENDED_DEFORMATION_END / BENDED_VIEWS_DEACTIVATED);
 	
 
 }

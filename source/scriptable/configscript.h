@@ -16,7 +16,9 @@ using namespace reflectionzeug;
 
 namespace troen
 {
-
+	// Sets constants in game, the constants should be defined in constants.cpp
+	// Can only set non-const variables
+	// Script is executed for first time before anything is initialized, so check for nullptrs !
 	class ConfigScript : public AbstractScript
 	{
 	public:
@@ -36,22 +38,27 @@ namespace troen
 		void setBendedStylingPreset(const int & val) 
 		{ 
 			BENDED_STYLING_PRESET = val; 
-			m_game->m_deformationRendering->setPreset(val);
+			if (m_game->m_deformationRendering != nullptr)
+				m_game->m_deformationRendering->setPreset(val);
 		}
 		int BendedDeformationEnd() const { return BENDED_DEFORMATION_END; }
 		void setBendedDeformationEnd(const int & val)
 		{
 			BENDED_DEFORMATION_END = val;
-			m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
-			m_game->m_deformationRendering->reloadShaders();
+			if (m_game->m_deformationRendering != nullptr){
+				m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
+				m_game->m_deformationRendering->reloadShaders();
+			}
 		}
 
 		double BendedDeformationStart() const { return BENDED_DEFORMATION_END; }
 		void setBendedDeformationStart(const double & val)
 		{
 			BENDED_DEFORMATION_START = val;
-			m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
-			m_game->m_deformationRendering->reloadShaders();
+			if (m_game->m_deformationRendering != nullptr){
+				m_game->m_deformationRendering->setDeformationStartEnd(BENDED_DEFORMATION_START, BENDED_DEFORMATION_END);
+				m_game->m_deformationRendering->reloadShaders();
+			}
 		}
 		double RespawnDuration() const { return RESPAWN_DURATION; }
 		void setRespawnDuration(const double & val){RESPAWN_DURATION = val;}
@@ -91,8 +98,10 @@ namespace troen
 		void setCameraEyePositionZ(const double & val) { CAMERA_EYE_POSITION_Z = val; }
 		double DampingForce() const { return DAMPING_FORCE; }
 		void setDampingForce(const double & val) { DAMPING_FORCE = val; }
-		
-
+		double CameraNaviEyePositionZ() const { return CAMERA_NAVI_EYE_POSITION_Z; }
+		void setCameraNaviEyePositionZ(const double & val) { CAMERA_NAVI_EYE_POSITION_Z = val; }
+		double CameraNaviPositionZ() const { return CAMERA_NAVI_CENTER_POSITION_Z; }
+		void setCameraNaviPositionZ(const double & val) { CAMERA_NAVI_CENTER_POSITION_Z = val; }
 
 	private:
 
