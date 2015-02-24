@@ -45,6 +45,8 @@ namespace input
 		static std::vector <int> freePorts;
 		static void clearPorts();
 
+		virtual InputDevice getType() { return InputDevice::FFBWHEEL; }
+
 	private:
 		int m_controllerId, m_isConnected;
 		XINPUT_STATE m_state;

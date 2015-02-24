@@ -129,6 +129,7 @@ namespace troen
 		class FFBWheel;
 		class BikeInputState;
 		class PollingDevice;
+		enum class InputDevice : unsigned int;
 	}
 
 	namespace sound

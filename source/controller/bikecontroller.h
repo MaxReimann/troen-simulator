@@ -19,7 +19,7 @@ namespace troen
 	public:
 		BikeController(
 			Player * player,
-			const input::BikeInputState::InputDevice& inputDevice,
+			const input::InputDevice& inputDevice,
 			const btTransform initialPosition,
 			ResourcePool *resourcePool);
 		~BikeController();
@@ -99,7 +99,7 @@ namespace troen
 		//
 		// input
 		//
-		void initializeInput(const input::BikeInputState::InputDevice inputDevice);
+		void initializeInput(const input::InputDevice inputDevice);
 		void setInputState(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeWASD(osg::ref_ptr<input::BikeInputState> bikeInputState);
 		void initializeArrows(osg::ref_ptr<input::BikeInputState> bikeInputState);

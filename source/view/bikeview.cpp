@@ -63,35 +63,11 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 	m_lookatGeode->setName("lookatGeode");
 	m_lookatPoint->addChild(m_lookatGeode);
 
-	//osg::ref_ptr<osg::ShapeDrawable> lbox = new osg::ShapeDrawable;
-	//lbox->setShape(new osg::Box(osg::Vec3(0, 0, 0), 0.1, 0.1, 0.1));
-	//m_lookatGeode->addDrawable(lbox);
-
 	m_pat->addChild(m_lookatPoint);
 
 	m_pat->addChild(matrixTransform);
 	m_pat->setName("bikeGroup");
 
-
-	// create box for radar
-	//osg::Vec4 color4 = osg::Vec4(m_playerColor, 1.0);
-	//osg::ref_ptr<osg::ShapeDrawable> mark_shape = new osg::ShapeDrawable;
-	//mark_shape->setShape(new osg::Cone(osg::Vec3(), 120, 300));
-	//mark_shape->setColor(color4);
-	//osg::ref_ptr<osg::Geode> mark_node = new osg::Geode;
-	//mark_node->addDrawable(mark_shape.get());
-
-	//osg::Matrixd radarMatrix;
-	//osg::Quat radarMarkRotationQuat(osg::DegreesToRadians(90.0f), osg::X_AXIS);
-	//radarMatrix.makeRotate(radarMarkRotationQuat);
-
-	//osg::MatrixTransform* radarMatrixTransform = new osg::MatrixTransform(radarMatrix);
-	//radarMatrixTransform->addChild(mark_node);
-	//radarMatrixTransform->setNodeMask(CAMERA_MASK_RADAR);
-
-	//m_pat->addChild(radarMatrixTransform);
-
-	
 	m_pat->addChild(PlayerMarker(color).getNode());
 	m_node->addChild(m_pat);
 

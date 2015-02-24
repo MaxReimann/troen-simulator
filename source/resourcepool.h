@@ -4,6 +4,7 @@
 
 namespace troen
 {
+
 	/*! The ResourcePool is used to manage the acquisition of resources (such as textures or models).*/
 	class ResourcePool
 	{
@@ -53,7 +54,6 @@ namespace troen
 
 		osg::Image* getImage(const TextureResource texture);
 		osg::Node* getNode(const ModelResource model);
-
 	private:
 		static const int m_textureCount = 21;
 		osg::Image *m_images[m_textureCount];

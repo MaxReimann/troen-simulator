@@ -32,6 +32,7 @@ namespace input
 		static wchar_t* getFreeDeviceSN();
 		static void reset();
 		static bool enumeratedHidDevices;
+		virtual InputDevice getType() { return InputDevice::GAMEPADPS4; }
 
 	private:
 		int getBitAt(int k, unsigned char * buf);

@@ -33,10 +33,16 @@ void FFBWheel::clearPorts()
 
 FFBWheel::~FFBWheel() {
 	if (m_controllerId >= 0) {
+	//this led to corrupt files on a win7, not sure why, disable for now
+	//will lead to error on exit
+#ifdef _WIN32_WINNT_WIN8 
+		std::cout << "shutting down xinput emulation .. this might lead to errors.." << std::endl;
 		setVibration(false);
 		Custom_XInputEnable(false);
+#endif
 	}
 }
+
 
 
 

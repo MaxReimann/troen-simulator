@@ -22,6 +22,7 @@
 #include "../input/gamepadps4.h"
 #include "../input/pollingdevice.h"
 #include "../input/ffbwheel.h"
+#include "../input/bikeinputstate.h"
 
 #include "../resourcepool.h"
 #include "../sound/audiomanager.h"
@@ -35,7 +36,7 @@ using namespace troen;
 
 BikeController::BikeController(
 	Player* player,
-	const input::BikeInputState::InputDevice& inputDevice,
+	const input::InputDevice& inputDevice,
 	const btTransform initialPosition,
 	ResourcePool* resourcePool) :
 	AbstractController(),
@@ -120,33 +121,36 @@ void BikeController::killThread()
 	{
 		m_pollingThread->stop();
 		m_pollingThread->wait();
+
+		if (m_pollingThread->getType() != input::InputDevice::FFBWHEEL)
+			delete m_pollingThread;
+		
 		m_pollingThread = nullptr;
-		delete m_pollingThread;
 	}
 }
 
-void BikeController::initializeInput(input::BikeInputState::InputDevice inputDevice)
+void BikeController::initializeInput(input::InputDevice inputDevice)
 {
 	osg::ref_ptr<input::BikeInputState> bikeInputState = new input::BikeInputState();
 	setInputState(bikeInputState);
 
 	switch (inputDevice)
 	{
-	case input::BikeInputState::KEYBOARD_wasd:
+	case input::InputDevice::KEYBOARD_wasd:
 		initializeWASD(bikeInputState);
 		break;
-	case input::BikeInputState::KEYBOARD_arrows:
+	case input::InputDevice::KEYBOARD_arrows:
 		initializeArrows(bikeInputState);
 		break;
 #ifdef WIN32
-	case input::BikeInputState::GAMEPAD:
+	case input::InputDevice::GAMEPAD:
 		initializeGamepad(bikeInputState);
 		break;
-	case input::BikeInputState::FFBWHEEL:
+	case input::InputDevice::FFBWHEEL:
 		initializeFFBWheel(bikeInputState);
 		break;
 #endif
-	case input::BikeInputState::GAMEPADPS4:
+	case input::InputDevice::GAMEPADPS4:
 		initializeGamepadPS4(bikeInputState);
 		break;
 	default:
@@ -204,17 +208,26 @@ void BikeController::initializeGamepad(osg::ref_ptr<input::BikeInputState> bikeI
 
 void BikeController::initializeFFBWheel(osg::ref_ptr<input::BikeInputState> bikeInputState)
 {
-	input::FFBWheel* gamepad = new input::FFBWheel(bikeInputState);
-
-	if (gamepad->checkConnection())
+	std::shared_ptr<input::PollingDevice> gamepad;
+	if (player()->getTroenGame()->savedController.use_count() == 0)
 	{
-		std::cout << "[TroenGame::initializeInput] FFBWheel connected on port " << gamepad->getPort() << std::endl;
+		gamepad = std::make_shared<input::FFBWheel>(bikeInputState);
+		player()->getTroenGame()->savedController = gamepad;
+	}
+	else
+		gamepad = player()->getTroenGame()->savedController;
+
+	if (std::static_pointer_cast<input::FFBWheel>(gamepad)->checkConnection())
+	{
+		std::cout << "[TroenGame::initializeInput] FFBWheel connected on port " << 
+			std::static_pointer_cast<input::FFBWheel>(gamepad)->getPort() << std::endl;
 	}
 	else
 	{
 		std::cout << "[TroenGame::initializeInput] No FFBWheel connected!" << std::endl;
 	}
-	m_pollingThread = gamepad;
+
+	m_pollingThread = gamepad.get();
 	m_pollingThread->start();
 }
 

@@ -125,6 +125,7 @@ namespace troen
 		void toggleHUDVisibility();
 
 
+		std::shared_ptr<input::PollingDevice>				savedController;
 	public slots:
 		void prepareAndStartGame(const GameConfig& config);
 
@@ -173,6 +174,7 @@ namespace troen
 		std::shared_ptr<ConfigScript>				m_configScript;
 
 		ResourcePool m_resourcePool;
+		
 
 		// BendedViews
 		SplineDeformationRendering* m_deformationRendering;

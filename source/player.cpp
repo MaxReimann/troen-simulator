@@ -76,7 +76,7 @@ m_hasGameView(config->ownView[id])
 
 	m_bikeController = std::make_shared<BikeController>(
 		this,
-		(input::BikeInputState::InputDevice) config->playerInputTypes[m_id],
+		(input::InputDevice) config->playerInputTypes[m_id],
 		initialTransform,
 		game->resourcePool());
 

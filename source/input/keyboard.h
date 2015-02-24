@@ -19,6 +19,8 @@ namespace input
 		virtual void accept(osgGA::GUIEventHandlerVisitor& visitor)   { visitor.visit(*this); };
 		void run() override;
 
+		InputDevice getType() { return InputDevice::KEYBOARD_arrows; }
+
 	protected:
 		osg::ref_ptr<BikeInputState> m_bikeInputState;
 		std::vector<osgGA::GUIEventAdapter::KeySymbol> m_keys;
