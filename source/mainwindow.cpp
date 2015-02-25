@@ -404,6 +404,7 @@ void MainWindow::loadSettings()
 	m_studySetupComboBox->setCurrentIndex(settings.value("studySetup").toInt());
 	m_exportCSV->setChecked(settings.value("exportCSV").toBool());
 	m_texturedModel->setChecked(settings.value("texturedModel").toBool());
+	m_fullscreenCheckBox->setChecked(settings.value("fullscreen").toBool());
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{
@@ -444,6 +445,7 @@ void MainWindow::saveSettings()
 	settings.setValue("difficulty", QString::number(m_studyMode->currentIndex()));
 	settings.setValue("exportCSV", QString::number(m_exportCSV->isChecked()));
 	settings.setValue("texturedModel", QString::number(m_texturedModel->isChecked()));
+	settings.setValue("fullscreen", QString::number(m_fullscreenCheckBox->isChecked()));
 
 	for (int i = 0; i < MAX_BIKES; i++)
 	{

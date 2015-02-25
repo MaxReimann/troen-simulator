@@ -27,8 +27,8 @@ m_trackNode(nullptr),
 m_speedText(new osgText::Text()),
 m_countdownText(new osgText::Text()),
 m_randomNumberText(new osgText::Text()),
-m_width(DEFAULT_WINDOW_WIDTH),
-m_height(DEFAULT_WINDOW_HEIGHT),
+m_width(DEFAULT_MAINWINDOW_WIDTH),
+m_height(DEFAULT_MAINWINDOW_HEIGHT),
 m_playerColor(osg::Vec4(players[i]->color(),1))
 {
 	m_node->addChild(createHUD(players));
@@ -45,7 +45,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 	// model view matrices and the subgraph to draw in the HUD
 	m_camera = new osg::Camera;
 	m_camera->setViewport(
-		new osg::Viewport(0, 0, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
+		new osg::Viewport(0, 0, DEFAULT_MAINWINDOW_WIDTH, DEFAULT_MAINWINDOW_HEIGHT));
 	m_camera->setProjectionMatrix(
 		osg::Matrix::ortho2D(0, HUD_PROJECTION_SIZE, 0, HUD_PROJECTION_SIZE));
 	m_camera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -86,7 +86,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 		osg::Vec3(m_width / 2, offset, 0),
 		m_fontColor,
 		osgText::Text::AlignmentType::CENTER_BOTTOM,
-		DEFAULT_WINDOW_HEIGHT / 4);
+		DEFAULT_MAINWINDOW_HEIGHT / 4);
 	setSpeedText(0);
 	m_savedGeode->addDrawable(m_speedText);
 
@@ -95,7 +95,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 		osg::Vec3(HUD_PROJECTION_SIZE / 2, HUD_PROJECTION_SIZE / 2, 0.f),
 		m_fontColor,
 		osgText::Text::AlignmentType::CENTER_CENTER,
-		DEFAULT_WINDOW_HEIGHT / 3);
+		DEFAULT_MAINWINDOW_HEIGHT / 3);
 	setCountdownText(-1);
 	m_savedGeode->addDrawable(m_countdownText);
 
@@ -106,7 +106,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 		osg::Vec3(offset, offset, 0),
 		m_fontColor,
 		osgText::Text::AlignmentType::CENTER_CENTER,
-		DEFAULT_WINDOW_HEIGHT / 4);
+		DEFAULT_MAINWINDOW_HEIGHT / 4);
 
 	m_savedGeode->addDrawable(m_randomNumberText);
 
@@ -146,7 +146,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 			osg::Vec3(HUD_PROJECTION_SIZE / 2.f, HUD_PROJECTION_SIZE - offset * (5 + i*2.f), 0.f),
 			osg::Vec4(1, 1, 1, 1),
 			osgText::Text::AlignmentType::CENTER_TOP,
-			DEFAULT_WINDOW_HEIGHT / 20);
+			DEFAULT_MAINWINDOW_HEIGHT / 10);
 		m_ingameMessageTexts[i]->setText("");
 		m_savedGeode->addDrawable(m_ingameMessageTexts[i]);
 	}
@@ -162,10 +162,17 @@ void HUDView::initializeText(
 	const int size)
 {
 	text->setFont(m_font);
-	text->setPosition(position);
 	text->setColor(color);
 	text->setAlignment(alignment);
 	text->setCharacterSizeMode(osgText::TextBase::CharacterSizeMode::SCREEN_COORDS);
+	text->setPosition(position);
+	setSize(text, size);
+}
+
+void HUDView::setSize(
+	osg::ref_ptr<osgText::Text> text,
+	const int size)
+{
 	text->setCharacterSize(size);
 	text->setFontResolution(size, size);
 }
@@ -189,22 +196,16 @@ void HUDView::resize(const int width,const int height)
 
 void HUDView::resizeHudComponents(const int width, const int height)
 {
-	m_speedText->setCharacterSize(height / 12);
-	m_speedText->setFontResolution(height / 12, height / 12);
+	int projW = width / 20;
+	int projH = height / 20;
+	//transformText(m_speedText, osg::Vec3(width / 2, projH / 2, 0), height / 12);
+	setSize(m_countdownText, height / 3);
+	setSize(m_randomNumberText, height / 5);
 
-	m_countdownText->setCharacterSize(height / 3);
-	m_countdownText->setFontResolution(height / 3, height / 3);
-
-	m_randomNumberText->setCharacterSize(height / 10);
-	m_randomNumberText->setFontResolution(height / 5, height / 5);
-
-	//m_timeText->setCharacterSize(height / 8);
-	//m_timeText->setFontResolution(height / 8, height / 8);
 	
 	for (size_t i = 0; i < 4; i++)
 	{
-		m_ingameMessageTexts[i]->setCharacterSize(height / 20);
-		m_ingameMessageTexts[i]->setFontResolution(height / 20, height / 20);
+		setSize(m_ingameMessageTexts[i], height / 15);
 	}
 }
 

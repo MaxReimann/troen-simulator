@@ -32,6 +32,11 @@ namespace troen
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////#Script Modifiable #////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
+	extern int DEFAULT_MAINWINDOW_WIDTH;
+	extern int DEFAULT_MAINWINDOW_HEIGHT;
+	extern double WINDOW_RATIO_FULLSCREEN;
+
+	extern int USE_CULLING;
 
 
 	extern double FOVY_INITIAL;
@@ -88,8 +93,6 @@ namespace troen
 	// GENERAL
 
 	// GAME
-	extern const int DEFAULT_WINDOW_WIDTH;
-	extern const int DEFAULT_WINDOW_HEIGHT;
 	extern const float DEFAULT_SOUND_VOLUME;
 
 	extern const int NUM_MULTISAMPLES;

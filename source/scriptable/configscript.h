@@ -102,6 +102,16 @@ namespace troen
 		void setCameraNaviEyePositionZ(const double & val) { CAMERA_NAVI_EYE_POSITION_Z = val; }
 		double CameraNaviPositionZ() const { return CAMERA_NAVI_CENTER_POSITION_Z; }
 		void setCameraNaviPositionZ(const double & val) { CAMERA_NAVI_CENTER_POSITION_Z = val; }
+		int defaultMainWindowWidth() const { return DEFAULT_MAINWINDOW_WIDTH; }
+		void setdefaultMainWindowWidth(const int & val) { DEFAULT_MAINWINDOW_WIDTH = val; }
+		int defaultMainWindowHeight() const { return DEFAULT_MAINWINDOW_HEIGHT; }
+		void setdefaultMainWindowHeight(const int & val) { DEFAULT_MAINWINDOW_HEIGHT = val; }
+		double windowRatioFullscreen() const { return WINDOW_RATIO_FULLSCREEN; }
+		void setwindowRatioFullscreen(const double & val) { WINDOW_RATIO_FULLSCREEN = val; }
+		int useCulling() const { return USE_CULLING; }
+		void setuseCulling(const int & val) { USE_CULLING = val; }
+
+
 
 	private:
 

@@ -551,7 +551,7 @@ void CityModel::setupDebugView()
 #ifdef WIN32
 	m_view->apply(new osgViewer::SingleWindow(800, 800, viewer_width, viewer_height));
 #else
-	m_view->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+	m_view->setUpViewInWindow(100, 100, DEFAULT_MAINWINDOW_WIDTH, DEFAULT_MAINWINDOW_HEIGHT);
 #endif
 
 	m_debugViewer = new SampleOSGViewer();

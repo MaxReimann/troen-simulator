@@ -3,6 +3,7 @@
 
 #include <osgViewer/View>
 #include <osgViewer/config/SingleWindow>
+#include <osgViewer/config/SingleScreen>
 #include <osg/ValueObject>
 
 // troen
@@ -58,29 +59,22 @@ public:
 	}
 };
 
-NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeController, osg::ref_ptr<GameEventHandler> eventHandler)
+NavigationWindow::NavigationWindow(std::shared_ptr<BikeController> bikeController, osg::ref_ptr<GameEventHandler> eventHandler,
+	SampleOSGViewer *viewer, bool fullscreen) :
+m_viewer(viewer)
 {
 	m_rootNode = new osg::Group();
 	m_view = new osgViewer::View();
+	m_viewer->addView(m_view);
+
 	m_view->getCamera()->setCullMask(CAMERA_MASK_MAIN);
 	m_view->setSceneData(m_rootNode);
 	m_view->addEventHandler(eventHandler.get());
 	m_view->setUserValue("window_type", (int) NAVIGATION_WINDOW);
 	
-
-#ifdef WIN32
-	m_view->apply(new osgViewer::SingleWindow(800, 200, DEFAULT_WINDOW_WIDTH / 2, DEFAULT_WINDOW_HEIGHT / 2));
-#else
-	m_view->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-#endif
+	if (!fullscreen)
+		m_view->apply(new osgViewer::SingleWindow(DEFAULT_MAINWINDOW_WIDTH + 230, 200, DEFAULT_MAINWINDOW_WIDTH / 2, DEFAULT_MAINWINDOW_HEIGHT / 2));
 	
-	m_viewer = new SampleOSGViewer();
-	m_viewer->addView(m_view);
-
-	osg::ref_ptr<RealizeOperation> navOperation = new RealizeOperation;
-	m_viewer->setRealizeOperation(navOperation);
-	m_viewer->realize();
-
 	m_view->getCamera()->setCullCallback(new CameraCopyCallback(bikeController, m_view));
 }
 

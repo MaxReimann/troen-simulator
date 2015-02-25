@@ -83,6 +83,7 @@ namespace troen
 		//osg::ref_ptr<osg::Camera> createRadar(const int index);
 
 		void resizeHudComponents(const int width, const int height);
+		void setSize(osg::ref_ptr<osgText::Text> text, const int size);
 		osg::ref_ptr<osg::Geometry> createRandNumBackground(osg::BoundingBox bb);
 		osg::ref_ptr<osg::Camera>	m_camera;
 		//osg::ref_ptr<osg::Camera>	m_radarCamera;

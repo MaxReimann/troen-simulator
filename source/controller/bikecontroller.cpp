@@ -123,9 +123,11 @@ void BikeController::killThread()
 		m_pollingThread->wait();
 
 		if (m_pollingThread->getType() != input::InputDevice::FFBWHEEL)
+		{
+			m_pollingThread = nullptr;
 			delete m_pollingThread;
+		}
 		
-		m_pollingThread = nullptr;
 	}
 }
 

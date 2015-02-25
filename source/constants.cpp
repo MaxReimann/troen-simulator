@@ -14,6 +14,13 @@ namespace troen
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////#Script Modifiable #////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
+	int DEFAULT_MAINWINDOW_WIDTH(1024);
+	int DEFAULT_MAINWINDOW_HEIGHT(768);
+
+	int USE_CULLING(0);
+	//ratio main to navi width
+	double WINDOW_RATIO_FULLSCREEN(3.0/4.0); 
+
 	// LOGIC
 	double RESPAWN_DURATION(4000);
 	double GAME_START_COUNTDOWN_DURATION(3000);
@@ -72,8 +79,6 @@ namespace troen
 	const int NUM_MULTISAMPLES(8);
 
 	// GAME
-	const int DEFAULT_WINDOW_WIDTH(1024);
-	const int DEFAULT_WINDOW_HEIGHT(768);
 	const float DEFAULT_SOUND_VOLUME(1.f);
 
 

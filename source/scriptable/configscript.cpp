@@ -47,7 +47,10 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 	addProperty<double>("DAMPING_FORCE", *this, &ConfigScript::DampingForce, &ConfigScript::setDampingForce);
 	addProperty<double>("CAMERA_NAVI_EYE_POSITION_Z", *this, &ConfigScript::CameraNaviEyePositionZ, &ConfigScript::setCameraNaviEyePositionZ);
 	addProperty<double>("CAMERA_NAVI_CENTER_POSITION_Z", *this, &ConfigScript::CameraNaviPositionZ, &ConfigScript::setCameraNaviPositionZ);
-
+	addProperty<int>("DEFAULT_MAINWINDOW_WIDTH", *this, &ConfigScript::defaultMainWindowWidth, &ConfigScript::setdefaultMainWindowWidth);
+	addProperty<int>("DEFAULT_MAINWINDOW_HEIGHT", *this, &ConfigScript::defaultMainWindowHeight, &ConfigScript::setdefaultMainWindowHeight);
+	addProperty<double>("WINDOW_RATIO_FULLSCREEN", *this, &ConfigScript::windowRatioFullscreen, &ConfigScript::setwindowRatioFullscreen);
+	addProperty<int>("USE_CULLING", *this, &ConfigScript::useCulling, &ConfigScript::setuseCulling);
 
 
 	

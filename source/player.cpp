@@ -90,80 +90,90 @@ m_hasGameView(config->ownView[id])
 
 	////////////////////////////////////////////////////////////////////////////////
 	//
+	// Viewer
+	//
+	////////////////////////////////////////////////////////////////////////////////
+
+	m_viewer = new SampleOSGViewer();
+
+	osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
+	if (!wsi)
+	{
+		osg::notify(osg::NOTICE) << "Error, no WindowSystemInterface available, cannot create windows." << std::endl;
+	}
+	unsigned int width, height;
+	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
 	// View
 	//
 	////////////////////////////////////////////////////////////////////////////////
 	m_cameras = std::make_shared<std::vector<osg::Camera*>>();
 	m_cameras->resize(2);
-	if (config->ownView[m_id])
+	m_playerNode = new osg::Group();
+	m_bikeController->addUniformsToNode(m_playerNode);
+
+	m_gameView = new osgViewer::View();
+	m_viewer->addView(m_gameView);
+
+	m_gameView->getCamera()->setCullMask(CAMERA_MASK_MAIN);
+
+	if (!USE_CULLING)
+		m_gameView->getCamera()->setCullingMode(osg::CullStack::NO_CULLING); //culling results in strong framerate loss at sudden peaks..
+
+	m_gameView->setSceneData(m_playerNode);
+	m_cameras->at(MAIN_WINDOW) = m_gameView->getCamera();
+
+	osg::ref_ptr<NodeFollowCameraManipulator> manipulator
+		= new NodeFollowCameraManipulator();
+
+	m_bikeController->attachTrackingCamera(manipulator);
+	m_bikeController->attachGameView(m_gameView);
+
+	m_gameView->setCameraManipulator(manipulator.get());
+	m_gameView->addEventHandler(game->gameEventHandler());
+	m_gameView->addEventHandler(game->statsHandler());
+	m_gameView->setUserValue("window_type", (int) MAIN_WINDOW);
+
+	//second window with navigation infos (map/bended views)
+	m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler(), m_viewer, config->fullscreen);
+	m_cameras->at(NAVIGATION_WINDOW) = m_navigationWindow->mapView()->getCamera();
+
+	//must be called after all 3d cameras have been setup
+	setCameraSpecificUniforms();
+
+	if (config->fullscreen)
 	{
-		m_playerNode = new osg::Group();
-		m_bikeController->addUniformsToNode(m_playerNode);
 
-		m_gameView = new osgViewer::View();
-		m_gameView->getCamera()->setCullMask(CAMERA_MASK_MAIN);
+		osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
+		traits->windowDecoration = true;
+		traits->doubleBuffer = true;
+		traits->sharedContext = 0;
+		traits->x = 20; // In screen space, so it's the top-left corner 
+		traits->y = 20;
+		traits->width = width;
+		traits->height = height;
+		osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
-		//osg::CullStack::NO_CULLING
-		if (config->isTextured)
-			m_gameView->getCamera()->setCullingMode(osg::CullStack::NO_CULLING); //culling results in strong framerate loss at sudden peaks..
+		m_gameView->getCamera()->setViewport(new osg::Viewport(0, 0, width * WINDOW_RATIO_FULLSCREEN, height));
+		m_gameView->getCamera()->setGraphicsContext(gc.get());
+		//m_gameView->apply(osgViewer::)
 
-		m_gameView->setSceneData(m_playerNode);
-		m_cameras->at(MAIN_WINDOW) = m_gameView->getCamera();
-
-		osg::ref_ptr<NodeFollowCameraManipulator> manipulator
-			= new NodeFollowCameraManipulator();
-
-		m_bikeController->attachTrackingCamera(manipulator);
-		m_bikeController->attachGameView(m_gameView);
-
-		m_gameView->setCameraManipulator(manipulator.get());
-		m_gameView->addEventHandler(game->gameEventHandler());
-		m_gameView->addEventHandler(game->statsHandler());
-		m_gameView->setUserValue("window_type", (int) MAIN_WINDOW);
-
-		//second window with navigation infos (map/bended views)
-		m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler());
-		m_cameras->at(NAVIGATION_WINDOW) = m_navigationWindow->mapView()->getCamera();
-
-		//must be called after all 3d cameras have been setup
-		setCameraSpecificUniforms();
-		
-
-#ifdef WIN32
-		if (config->fullscreen)
-			m_gameView->apply(new osgViewer::SingleScreen(0));
-		else
-			m_gameView->apply(new osgViewer::SingleWindow(400, 200, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
-#else
-		if (config->fullscreen)
-			m_gameView->setUpViewOnSingleScreen(0);
-		else
-			m_gameView->setUpViewInWindow(100, 100, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-#endif
+		m_navigationWindow->mapView()->getCamera()->setGraphicsContext(gc.get());
+		m_navigationWindow->mapView()->getCamera()->setViewport(new osg::Viewport(width * WINDOW_RATIO_FULLSCREEN, height / 2.0 - height / 6.0, width * (1.0 - WINDOW_RATIO_FULLSCREEN), height / 3.0));
 	}
+	else
+		m_gameView->apply(new osgViewer::SingleWindow(200, 200, DEFAULT_MAINWINDOW_WIDTH, DEFAULT_MAINWINDOW_HEIGHT));
 
-	////////////////////////////////////////////////////////////////////////////////
-	//
-	// Viewer
-	//
-	////////////////////////////////////////////////////////////////////////////////
+	// turn of vSync (since we implement
+	// an adaptive gameLoop that syncs itself)
+	osg::ref_ptr<RealizeOperation> operation = new RealizeOperation;
+	m_viewer->setRealizeOperation(operation);
+	m_viewer->realize();
 
-	if (config->ownView[m_id])
-	{
-		m_viewer = new SampleOSGViewer();
-		m_viewer->addView(m_gameView);
-
-#ifdef WIN32
-		// turn of vSync (since we implement
-		// an adaptive gameLoop that syncs itself)
-		osg::ref_ptr<RealizeOperation> operation = new RealizeOperation;
-		m_viewer->setRealizeOperation(operation);
-		m_viewer->realize();
-
-#endif
-	}
-
-
+	
 
 }
 

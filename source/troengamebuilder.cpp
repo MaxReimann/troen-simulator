@@ -232,6 +232,9 @@ bool TroenGameBuilder::composeSceneGraph()
 		t->enableBendedViews();
 	}
 
+	t->resize(localPlayer->gameView()->getCamera()->getViewport()->width(), 
+		localPlayer->gameView()->getCamera()->getViewport()->height());
+
 	// optimizer
 	//{
 	//	// disbled optimizer for now, takes a lot of time to execute
