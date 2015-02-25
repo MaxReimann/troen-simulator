@@ -277,6 +277,7 @@ void Player::setOnNextTrack()
 		m_currentRoute++;
 		m_routeController->createTrack(m_routes[m_currentRoute]);
 		m_troenGame->levelController()->addBoundaries(m_routes.at(m_currentRoute).filePath);
+		m_troenGame->levelController()->addSpeedZones(m_routes.at(m_currentRoute).filePath);
 
 		btTransform position = m_routeController->getFirstWayPoint();
 		position.setOrigin(position.getOrigin() + btVector3(0, 0, 10));
