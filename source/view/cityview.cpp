@@ -62,7 +62,7 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 
 	osg::StateSet *floorStateSet = floors->getOrCreateStateSet();
 	if (LOD == 0)
-		setTexture(floorStateSet, "data/textures/berlin_ground_l1.tga", 0);
+		setTexture(floorStateSet, "data/textures/berlin_ground_l1.tga", 0); //berlin_ground_l1.tga"
 	else
 		setTexture(floorStateSet, "data/textures/grey.tga", 0);
 

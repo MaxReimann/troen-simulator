@@ -85,11 +85,15 @@ void Gamepad::run()
 
 	while (m_pollingEnabled)
 	{
+
 		if (!m_isConnected)
 			checkConnection();
 	
 		if (m_isConnected)
 		{
+			waitIfPaused();
+
+
 			ZeroMemory(&m_state, sizeof(XINPUT_STATE));
 			if (XInputGetState(m_controllerId, &m_state) != ERROR_SUCCESS)
 			{

@@ -152,9 +152,9 @@ m_hasGameView(config->ownView[id])
 		traits->doubleBuffer = true;
 		traits->sharedContext = 0;
 		traits->x = 20; // In screen space, so it's the top-left corner 
-		traits->y = 20;
-		traits->width = width;
-		traits->height = height;
+		traits->y = 50;
+		traits->width = width-20;
+		traits->height = height-50;
 		osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
 		m_gameView->getCamera()->setViewport(new osg::Viewport(0, 0, width * WINDOW_RATIO_FULLSCREEN, height));

@@ -333,3 +333,11 @@ std::shared_ptr<CityModel> TroenGame::cityModel()
 {
 	return m_levelController->getAsCityModel();
 }
+
+//called when exiting qt setup window
+TroenGame::~TroenGame()
+{
+	savedController->stop();
+	savedController->wait();
+	savedController.reset();
+}

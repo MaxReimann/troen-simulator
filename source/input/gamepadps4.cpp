@@ -177,6 +177,7 @@ void GamepadPS4::run()
 
 	while (m_pollingEnabled)
 	{
+		waitIfPaused();
 		unsigned char buf[96];
 		// check whether controller is available, if not search for controller
 		// if it is still not available do nothing

@@ -106,6 +106,8 @@ void FFBWheel::run()
 
 		if (m_isConnected)
 		{
+			waitIfPaused();
+
 			ZeroMemory(&m_state, sizeof(XINPUT_STATE));
 			if (Custom_XInputGetState(m_controllerId, &m_state) != ERROR_SUCCESS)
 			{

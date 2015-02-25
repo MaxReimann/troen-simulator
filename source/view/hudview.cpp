@@ -106,7 +106,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 		osg::Vec3(offset, offset, 0),
 		m_fontColor,
 		osgText::Text::AlignmentType::CENTER_CENTER,
-		DEFAULT_MAINWINDOW_HEIGHT / 4);
+		DEFAULT_MAINWINDOW_HEIGHT / 8);
 
 	m_savedGeode->addDrawable(m_randomNumberText);
 
@@ -184,8 +184,8 @@ void HUDView::resize(const int width,const int height)
 	m_camera->setViewport(hudViewport);
 	resizeHudComponents(width, height);
 
-	m_width = width;
-	m_height = height;
+	/*m_width = width;
+	m_height = height;*/
 
 	int normSize = sqrt(width*width + height*height) / 2;
 	int offsetX = normSize / 20;
@@ -200,7 +200,7 @@ void HUDView::resizeHudComponents(const int width, const int height)
 	int projH = height / 20;
 	//transformText(m_speedText, osg::Vec3(width / 2, projH / 2, 0), height / 12);
 	setSize(m_countdownText, height / 3);
-	setSize(m_randomNumberText, height / 5);
+	setSize(m_randomNumberText, height / 8);
 
 	
 	for (size_t i = 0; i < 4; i++)

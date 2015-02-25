@@ -15,6 +15,7 @@
 
 #include "../util/basicshapes.h"
 #include "osgDB/ReadFile"
+#include "osg/BlendFunc"
 
 using namespace troen;
 
@@ -143,6 +144,10 @@ void RouteView::initializeShader()
 	nodeState->setMode(GL_BLEND, osg::StateAttribute::ON);
 	nodeState->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	nodeState->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::FENCE], osg::StateAttribute::ON);
+	nodeState->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+
+	osg::BlendFunc* bf = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+	nodeState->setAttributeAndModes(bf);
 
 	shaders::m_allShaderPrograms[shaders::FENCE]->addBindAttribLocation("a_relWidth", 5);
 }

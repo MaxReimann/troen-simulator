@@ -62,6 +62,7 @@ namespace troen
 
 	public:
 		TroenGame(QThread* thread = nullptr);
+		~TroenGame();
 		//
 		// getters
 		//

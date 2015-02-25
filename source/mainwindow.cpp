@@ -260,6 +260,7 @@ MainWindow::MainWindow(QWidget * parent)
 MainWindow::~MainWindow()
 {
 	m_gameThread->terminate();
+	//delete m_troenGame;
 }
 
 void MainWindow::chooseColor(int i)
