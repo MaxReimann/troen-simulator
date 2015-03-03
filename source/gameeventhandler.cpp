@@ -69,19 +69,34 @@ bool GameEventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		break;
 	case osgGA::GUIEventAdapter::KEY_1:
 		if (m_troenGame->useBendedViews())
+		{
 			m_troenGame->getBendedViews()->setPreset(0);
+			m_troenGame->players()[0]->setBendingUniform(NAVIGATION_WINDOW, false);
+
+		}
 		break;
 	case osgGA::GUIEventAdapter::KEY_2:
 		if (m_troenGame->useBendedViews())
+		{
 			m_troenGame->getBendedViews()->setPreset(1);
+			m_troenGame->players()[0]->setBendingUniform(NAVIGATION_WINDOW, true);
+
+		}
 		break;
 	case osgGA::GUIEventAdapter::KEY_3:
 		if (m_troenGame->useBendedViews())
+		{
 			m_troenGame->getBendedViews()->setPreset(2);
+			m_troenGame->players()[0]->setBendingUniform(NAVIGATION_WINDOW, true);
+		}
 		break;
 	case osgGA::GUIEventAdapter::KEY_4:
 		if (m_troenGame->useBendedViews())
+		{
 			m_troenGame->getBendedViews()->setPreset(3);
+			m_troenGame->players()[0]->setBendingUniform(NAVIGATION_WINDOW, true);
+		}
+
 		break;
 	case osgGA::GUIEventAdapter::KEY_Tab:
 		m_troenGame->toggleHUDVisibility();

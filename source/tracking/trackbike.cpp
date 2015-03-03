@@ -112,7 +112,7 @@ void TrackBike::exportTaskStats(long time)
 
 	m_statfile = new QFile(fileDir + QString(QDir::separator()) + "task_stats.csv");
 	QTextStream statStream(m_statfile);
-	if (m_statfile->open(QFile::WriteOnly | QFile::Truncate))
+	if (m_statfile->open(QFile::WriteOnly | QFile::Append))
 	{
 		statStream << "time" << "\t" << "wallCrashes" << "\t" << "wrongTurns" << "\n";
 		statStream << time << "\t" << m_wallCrashes << "\t" << m_wrongTurns << "\n";
