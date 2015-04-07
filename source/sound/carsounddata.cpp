@@ -29,9 +29,9 @@ CarSoundData::CarSoundData()
     engine.frequency = 1.0f;
     engine.lowpass = 1.0f;
     smooth_accel = 0.0f;
-    pre_axle = 0.0f;
-    axle.amplitude = 0.0f;
-    axle.frequency = 0.0f;
+    //pre_axle = 0.0f;
+    //axle.amplitude = 0.0f;
+    //axle.frequency = 0.0f;
     engine_backfire.amplitude=0.0f;
     prev_gear = 0;
     gear_changing = false;
@@ -101,10 +101,10 @@ void CarSoundData::calculateEngineSound (CarEngine* car)
     //}
     //assert(car->index == eng_pri.id);
 
-    float gear_ratio = car->Gears[car->getCurGear()];
-    axle.amplitude = 0.2f*(tanh(100.0f*(fabs(pre_axle - mpitch))));
-    axle.frequency = (pre_axle + mpitch)*0.05f*fabs(gear_ratio);
-    pre_axle = (pre_axle + mpitch)*0.5f;
+    //float gear_ratio = car->Gears[car->getCurGear()];
+    //axle.amplitude = 0.2f*(tanh(100.0f*(fabs(pre_axle - mpitch))));
+    //axle.frequency = (pre_axle + mpitch)*0.05f*fabs(gear_ratio);
+    //pre_axle = (pre_axle + mpitch)*0.5f;
 
     smooth_accel = (smooth_accel*0.5 + 0.5*(car->getThrottle()*.99+0.01));
 

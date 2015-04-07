@@ -52,6 +52,7 @@ namespace troen
 
 	// AUDIO
 	extern int ENGINE_FREQUENCY_LOW;
+	extern int ENGINE_FREQUENCY_HIGH;
 	extern double AUDIO_PITCH_FACTOR;
 
 

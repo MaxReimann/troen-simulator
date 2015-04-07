@@ -55,9 +55,9 @@ namespace troen {
 		float attenuation; ///< global distance attenuation
 		float base_frequency; ///< engine base frequency for ~ 6000 rpm
 		float smooth_accel; ///< smoothed acceleration input
-		float pre_axle; ///< axle related
+		//float pre_axle; ///< axle related
 		QSoundChar engine;
-		QSoundChar axle;
+		//QSoundChar axle;
 		QSoundChar engine_backfire;
 		int prev_gear;
 

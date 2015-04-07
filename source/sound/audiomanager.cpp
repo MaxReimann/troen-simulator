@@ -100,7 +100,7 @@ void AudioManager::PlayEngineSound()
 	system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &engineChannel);
 	auto result = engineChannel->addDSP(m_dplowpass, 0);
 	FmodErrorCheck(result);
-	result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, 0);
+	result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW);
 	FmodErrorCheck(result);
 
 
@@ -110,12 +110,12 @@ void AudioManager::PlayEngineSound()
 	engineChannel->setVolume(0.9f);
 	engineChannel->setPaused(false);
 
-	sound = sounds[CATEGORY_ENGINE].find("data/sound/axle.wav");
-	if (sound == sounds[CATEGORY_ENGINE].end()) return;
-	system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &axleChannel);
-	axleChannel->setChannelGroup(groups[CATEGORY_ENGINE]);
-	axleChannel->setVolume(0.1f);
-	axleChannel->setPaused(false);
+	//sound = sounds[CATEGORY_ENGINE].find("data/sound/axle.wav");
+	//if (sound == sounds[CATEGORY_ENGINE].end()) return;
+	//system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &axleChannel);
+	//axleChannel->setChannelGroup(groups[CATEGORY_ENGINE]);
+	//axleChannel->setVolume(0.1f);
+	//axleChannel->setPaused(false);
 }
 
 void AudioManager::Load(Category type, const std::string& path) {
@@ -182,18 +182,17 @@ void AudioManager::StopSongs() {
 void AudioManager::setMotorSpeed(troen::CarEngine * engine) {
 	m_engineSoundData->update(engine);
 
+	float freq = ENGINE_FREQUENCY_LOW + m_engineSoundData->engine.frequency * 6000;
+	freq = clamp(freq, ENGINE_FREQUENCY_HIGH, freq);
+	engineChannel->setFrequency(freq);// currentFrequency + (desiredFrequency - currentFrequency) / 100);
 
-	engineChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->engine.frequency*6000);// currentFrequency + (desiredFrequency - currentFrequency) / 100);
-
-	axleChannel->setFrequency(ENGINE_FREQUENCY_LOW + m_engineSoundData->axle.frequency * 6000);
-	axleChannel->setVolume(m_engineSoundData->axle.amplitude);
 	//axleChannel->setLo
 
 	// For the moment, simulate LP filter by tweaking the volume
 	engineChannel->setVolume(m_engineSoundData->engine.amplitude);
 
-	auto result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW  + m_engineSoundData->engine.lowpass);
-	FmodErrorCheck(result);
+	//auto result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW);// +m_engineSoundData->engine.lowpass);
+	//FmodErrorCheck(result);
 
 
 
@@ -204,70 +203,6 @@ float AudioManager::getTimeSinceLastBeat()
 	return 1.0;
 }
 
-void AudioManager::detectBeat(float tickCount)
-{
-	// getSpectrum() performs the frequency analysis, see explanation below
-	int sampleSize = 64;
-
-	float *specLeft, *specRight;
-
-	specLeft = new float[sampleSize];
-	specRight = new float[sampleSize];
-
-	// Get spectrum for left and right stereo channels
-	currentSong->getSpectrum(specLeft, sampleSize, 0, FMOD_DSP_FFT_WINDOW_RECT);
-	currentSong->getSpectrum(specRight, sampleSize, 1, FMOD_DSP_FFT_WINDOW_RECT);
-	
-
-	// get average volume distribution
-	float *spec;
-
-	spec = new float[sampleSize];
-
-	for (int i = 0; i < sampleSize; i++)
-		spec[i] = (specLeft[i] + specRight[i]) / 2;
-
-	// Find max volume
-	//auto maxIterator = std::max_element(&spec[0], &spec[sampleSize]);
-	//float maxVol = *maxIterator;
-
-	// Normalize
-	// doesn't give good values? maybe sampleSize should be increased?
-	// beatThresholdVolume could need tuning if soundtrack will be changed.
-	// if (maxVol != 0)
-	//	std::transform(&spec[0], &spec[sampleSize], &spec[0], [maxVol](float dB) -> float { return dB / maxVol; });
-	
-	// configuration
-	float beatThresholdVolume = 0.6f;    // The threshold over which to recognize a beat
-	int beatThresholdBar = 0;            // The bar in the volume distribution to examine
-	float beatPostIgnore = 0.250f;		 // Number of ms to ignore track for after a beat is recognized
-
-	static float beatLastTick = 0;                // Time when last beat occurred
-
-	// detect beat
-	bool beatDetected = false;
-
-	// Test for threshold volume being exceeded (if not currently ignoring track)
-	if (spec[beatThresholdBar] >= beatThresholdVolume && beatLastTick == 0)
-	{
-		beatLastTick = tickCount;
-		beatDetected = true;
-	}
-
-	// If the ignore time has expired, allow testing for a beat again
-	if (tickCount - beatLastTick >= beatPostIgnore)
-		beatLastTick = 0;
-
-	
-	if (beatDetected)
-		m_timeSinceLastBeat = 0.f;
-	else
-		m_timeSinceLastBeat += tickCount;
-
-	delete[] spec;
-	delete[] specLeft;
-	delete[] specRight;
-}
 
 void AudioManager::auxiliaryCarSounds()
 {
@@ -283,7 +218,6 @@ void AudioManager::Update(float elapsed)
 
 	auxiliaryCarSounds();
 
-	detectBeat(elapsed);
 
 	const float fadeTime = 1.0f; // in seconds
 
