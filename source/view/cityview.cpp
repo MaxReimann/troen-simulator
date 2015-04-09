@@ -190,7 +190,19 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 
 
 	LODBuildings->addChild(readObstacles);
-	addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
+
+	if (LODlevel == 0)
+		addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
+	else
+	{
+		addShaderAndUniforms(readObstacles, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
+		readObstacles->getStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+		readObstacles->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN | osg::StateAttribute::OVERRIDE);
+
+		// Enable depth test so that an opaque polygon will occlude a transparent one behind it.
+		readObstacles->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+	}
 
 	return LODBuildings;
 }

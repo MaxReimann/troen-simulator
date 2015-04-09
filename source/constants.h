@@ -158,6 +158,7 @@ namespace troen
 
 	extern const unsigned int CAMERA_MASK_MAIN;
 	extern const unsigned int CAMERA_MASK_RADAR;
+	extern const unsigned int CAMERA_MASK_ROUTE;
 	extern const unsigned int CAMERA_MASK_PLAYER[6];
 	extern const unsigned int CAMERA_MASK_NONE;
 

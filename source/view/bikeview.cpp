@@ -242,6 +242,7 @@ osg::ref_ptr<osg::MatrixTransform> BikeView::createNavigationArrow()
 
 	addShaderAndUniforms(state, shaders::DEFAULT, 0.5);
 	setTexture(state, "data/textures/naviarrow.tga", 0, true);
+	m_navigationArrowTransform->setNodeMask(CAMERA_MASK_ROUTE | CAMERA_MASK_MAIN);
 
 
 	return m_navigationArrowTransform;

@@ -138,7 +138,8 @@ m_hasGameView(config->ownView[id])
 	m_gameView->setUserValue("window_type", (int) MAIN_WINDOW);
 
 	//second window with navigation infos (map/bended views)
-	m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler(), m_viewer, config->fullscreen);
+	auto viewport = new osg::Viewport(width * WINDOW_RATIO_FULLSCREEN, height / 2.0 - height / 6.0, width * (1.0 - WINDOW_RATIO_FULLSCREEN), height / 3.0);
+	m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler(), m_viewer, viewport, config->fullscreen);
 	m_cameras->at(NAVIGATION_WINDOW) = m_navigationWindow->mapView()->getCamera();
 
 	//must be called after all 3d cameras have been setup
@@ -162,7 +163,7 @@ m_hasGameView(config->ownView[id])
 		//m_gameView->apply(osgViewer::)
 
 		m_navigationWindow->mapView()->getCamera()->setGraphicsContext(gc.get());
-		m_navigationWindow->mapView()->getCamera()->setViewport(new osg::Viewport(width * WINDOW_RATIO_FULLSCREEN, height / 2.0 - height / 6.0, width * (1.0 - WINDOW_RATIO_FULLSCREEN), height / 3.0));
+		m_navigationWindow->debugView()->getCamera()->setGraphicsContext(gc.get());
 	}
 	else
 		m_gameView->apply(new osgViewer::SingleWindow(200, 200, DEFAULT_MAINWINDOW_WIDTH, DEFAULT_MAINWINDOW_HEIGHT));

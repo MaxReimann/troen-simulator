@@ -28,7 +28,7 @@ namespace troen
 		enum Shadernames  {
 							DEFAULT,
 							BIKE,
-							GRID,
+							LOD1BUILDINGS,
 							GRID_NOREFLECTION,
 							FLOOR_CITY,
 							FENCE,

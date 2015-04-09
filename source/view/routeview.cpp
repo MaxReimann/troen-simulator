@@ -63,6 +63,7 @@ void RouteView::initializeRoute()
 	m_geode->addDrawable(m_geometry);
 
 	m_node->addChild(m_geode);
+	m_geode->setNodeMask(CAMERA_MASK_ROUTE | CAMERA_MASK_MAIN);
 	m_node->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 	m_node->setName("fenceGroup");
 

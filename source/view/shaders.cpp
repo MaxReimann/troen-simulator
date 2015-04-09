@@ -16,7 +16,7 @@ void shaders::reloadShaders()
 
 	reloadShader(shaders::m_allShaderPrograms[DEFAULT], "shaders/default.frag", deformShader, "shaders/default.vert");
 	reloadShader(shaders::m_allShaderPrograms[BIKE], "shaders/bike.frag", deformShader, "shaders/bike.vert");
-	reloadShader(shaders::m_allShaderPrograms[GRID], "shaders/grid.frag", deformShader, "shaders/grid.vert");
+	reloadShader(shaders::m_allShaderPrograms[LOD1BUILDINGS], "shaders/lod1buildings.frag", deformShader, "shaders/lod1buildings.vert");
 	reloadShader(shaders::m_allShaderPrograms[FLOOR_CITY], "shaders/floor_city.frag", deformShader, "shaders/grid.vert");
 	reloadShader(shaders::m_allShaderPrograms[GRID_NOREFLECTION], "shaders/grid_noreflection.frag", deformShader, "shaders/grid.vert");
 	reloadShader(shaders::m_allShaderPrograms[PLAYERMARKER], "shaders/playermarker.frag", deformShader,"shaders/default.vert");
