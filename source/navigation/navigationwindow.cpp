@@ -14,7 +14,7 @@
 #include "../gameeventhandler.h"
 #include "../view/shaders.h"
 
-#define USE_DEBUG_VIEW FALSE //set to true to see fbo texture of preprocessor camera  
+#define USE_DEBUG_VIEW TRUE //set to true to see fbo texture of preprocessor camera  
 
 
 using namespace troen;
@@ -91,6 +91,7 @@ m_viewer(viewer)
 	stateset->setTextureAttributeAndModes(3, m_fboTexture, osg::StateAttribute::ON);
 	stateset->addUniform(new osg::Uniform("screenSize", osg::Vec2(viewport->width(), viewport->height())));
 	stateset->addUniform(new osg::Uniform("viewOrigin", osg::Vec2(viewport->x(), viewport->y())));
+	stateset->addUniform(new osg::Uniform("distanceDependent", false));
 
 
 #if USE_DEBUG_VIEW 
@@ -117,6 +118,7 @@ m_viewer(viewer)
 	stateset->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::GBUFFER], osg::StateAttribute::ON);
 	stateset->addUniform(new osg::Uniform("colorTex", 1));
 	stateset->setTextureAttributeAndModes(1, m_fboTexture.get(), osg::StateAttribute::ON);
+
 
 	m_debugView->setSceneData(new osg::Group());
 	m_debugView->getSceneData()->asGroup()->addChild(postRenderCamera.get());
@@ -157,8 +159,9 @@ osg::ref_ptr<osg::Camera> NavigationWindow::createPreRenderCamera(int sizeX, int
 	m_fboTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 
 	m_preRenderCam->attach((osg::Camera::BufferComponent) osg::Camera::COLOR_BUFFER0, m_fboTexture);
-
-	m_preRenderCam->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
-
+	auto stateset = m_preRenderCam->getOrCreateStateSet();
+	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
+	stateset->addUniform(new osg::Uniform("distanceDependent", true));
+	
 	return m_preRenderCam;
 }

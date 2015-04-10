@@ -2,7 +2,10 @@
 
 uniform sampler2D colorTex;
 uniform float objectID;
+in float distToCamera;
 in vec2 uv;
+
+
 
 void main(void)
 {

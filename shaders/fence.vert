@@ -2,10 +2,13 @@
 
 in float a_relWidth;
 out float v_relWidth;
+out float distToCamera;
+
 uniform bool bendingActivated;
 uniform bool isReflecting;
 uniform vec3 playerPosition;
 uniform mat4 osg_ViewMatrixInverse;
+
 
 
 void mainDeform(vec4);
@@ -26,6 +29,10 @@ void main()
 {
 	// this is the relative height of the fence between 0 and 1
 	v_relWidth = a_relWidth;
+
+
+	vec4 cs_position = gl_ModelViewMatrix * gl_Vertex;
+    distToCamera = -cs_position.z;
 
 	
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
