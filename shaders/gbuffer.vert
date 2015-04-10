@@ -1,13 +1,13 @@
 #version 130
 
-uniform float objectID;
-uniform vec2 nearFar;
+
+out vec2 uv;
 
 void main(void)
 {
-	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+	uv =  gl_MultiTexCoord0.xy;
 
-	gl_Position = ftransform();
+	gl_Position = gl_ModelViewProjectionMatrix  * gl_Vertex;
 
 	return;
 }

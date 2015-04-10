@@ -60,6 +60,7 @@ osg::ref_ptr<osg::Camera> HUDView::createHUD(const std::vector<std::shared_ptr<P
 
 	m_savedGeode = new osg::Geode();
 	m_mainNode->addChild(m_savedGeode);
+	//m_savedGeode->addDrawable(osg::createTexturedQuadGeometry(osg::Vec3(-1, -1, 0), osg::Vec3(DEFAULT_MAINWINDOW_WIDTH, 0, 0), osg::Vec3(0, DEFAULT_MAINWINDOW_WIDTH, 0)));
 
 	m_font = osgText::readFontFile("data/fonts/arial.ttf");
 	//use to make 

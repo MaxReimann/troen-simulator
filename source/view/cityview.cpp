@@ -23,6 +23,7 @@
 // troen
 #include "shaders.h"
 #include "../constants.h"
+#include "osg/BlendFunc"
 
 //#define TEXTURED_MODEL
 
@@ -180,29 +181,27 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
 		if (readObstacles == nullptr)
 			printf("reading model failed.. \n");
+
+		addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
 	}
 	else if (LODlevel == 1)
 	{
 		LODBuildings->setName("L1CityGroup");
-		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clrearly anymore ..
+		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clearly anymore ..
 		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive"));
-	}
 
+		addShaderAndUniforms(readObstacles, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
+		auto stateset = readObstacles->getOrCreateStateSet();
+		stateset->setMode(GL_BLEND, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+
+		//set transparent and number higher then normal transparency to render after other transparent geometry
+		//this is especially for rendering after the route is rendered
+		stateset->setRenderBinDetails(100, "DepthSortedBin"); 
+		stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+	}
 
 	LODBuildings->addChild(readObstacles);
-
-	if (LODlevel == 0)
-		addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
-	else
-	{
-		addShaderAndUniforms(readObstacles, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
-		readObstacles->getStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-		readObstacles->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN | osg::StateAttribute::OVERRIDE);
-
-		// Enable depth test so that an opaque polygon will occlude a transparent one behind it.
-		readObstacles->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-
-	}
+	LODBuildings->setNodeMask(CAMERA_MASK_MAIN);
 
 	return LODBuildings;
 }
@@ -211,9 +210,6 @@ std::shared_ptr<CityModel> CityView::getCityModel()
 {
 	return std::dynamic_pointer_cast<CityModel>(m_model);
 }
-
-
-
 
 void CityView::loadSpeedSigns()
 {

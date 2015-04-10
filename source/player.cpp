@@ -162,8 +162,7 @@ m_hasGameView(config->ownView[id])
 		m_gameView->getCamera()->setGraphicsContext(gc.get());
 		//m_gameView->apply(osgViewer::)
 
-		m_navigationWindow->mapView()->getCamera()->setGraphicsContext(gc.get());
-		m_navigationWindow->debugView()->getCamera()->setGraphicsContext(gc.get());
+		m_navigationWindow->setGraphicsContext(gc.get());
 	}
 	else
 		m_gameView->apply(new osgViewer::SingleWindow(200, 200, DEFAULT_MAINWINDOW_WIDTH, DEFAULT_MAINWINDOW_HEIGHT));

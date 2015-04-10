@@ -5,13 +5,19 @@ uniform float trueColor;
 uniform float alpha;
 uniform bool bendingActivated;
 uniform sampler2D routeMask;
+uniform vec2 screenSize;
+uniform vec2 viewOrigin;
 
 in vec2 uv;
 in float scaled_height;
 
 void main() {
 
-
-	gl_FragColor =  vec4(texture(routeMask, uv).xyz,1.0) ;// vec4(texture(diffuseTexture, uv).xyz, alpha);
-
+	// fragment location in navigation Window normalized to 0-1
+	vec2 normalizedWindowPosition = (gl_FragCoord.xy - viewOrigin) / screenSize;
+	//set alpha depending on the presence of the route in this fragment
+	//routeMask is rendered fbo of same shot, containing only route+naviIcon
+	float masked_alpha = (1 - texture(routeMask, normalizedWindowPosition).a);
+	
+	gl_FragColor =  vec4(texture(diffuseTexture, uv).xyz, masked_alpha);
 }
