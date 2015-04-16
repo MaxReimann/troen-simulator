@@ -128,6 +128,35 @@ public:
 
 };
 
+class FilterSettingVisitor : public osg::NodeVisitor
+{
+public:
+	FilterSettingVisitor()
+		: osg::NodeVisitor( // Traverse all children.
+		osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+	{
+	}
+
+	// This method gets called for every node in the scene
+	//   graph. 
+	virtual void apply(osg::Node& node) { traverse(node);}
+
+	virtual void apply(osg::Geode& geode)
+	{
+
+		for (auto dr : geode.getDrawableList())
+			for (auto attribs : dr->getOrCreateStateSet()->getTextureAttributeList())
+				for (auto texattrib : attribs)
+					if (texattrib.second.first != NULL)
+					{
+						osg::Texture *tex = texattrib.second.first->asTexture();
+						tex->setMaxAnisotropy(16.0);
+					}
+	}
+
+};
+
+
 
 osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlevel)
 {
@@ -145,11 +174,12 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 		{
 
 			std::string cityParts[] = { "L11.ive", "L12.ive", "L12_up.ive", "L13.ive", "L13_up.ive",
-				"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive" };
+				"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive", "roads.ive" };
 
 			float heightAdjusts[] = { /*L11*/37, 40, 37, 37, 37,
 				/*L21*/37, 37, 37, 37,
-				/*L31*/10, 37, 37, 37 };
+				/*L31*/10, 37, 37, 37,
+			   /*roads*/ -0.1};
 
 			int i = 0;
 			for (auto part : cityParts)
@@ -163,6 +193,13 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 				partTransform->addChild(geode);
 				readObstacles->addChild(partTransform);
 				i++;
+
+				if (part.compare("roads.ive")==0)
+				{
+					osg::ref_ptr<FilterSettingVisitor> filterVisitor = new FilterSettingVisitor();
+					geode->accept(*filterVisitor.get());
+					std::cout << "set texture to anisotropic filtering" << std::endl;
+				}
 			}
 
 			readObstacles->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
@@ -171,7 +208,7 @@ osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlev
 			readObstacles->setDataVariance(osg::Object::STATIC);
 
 			//set all subNodes to static Data Variance
-			OptimizeVisitor *staticMaker = new OptimizeVisitor();
+			osg::ref_ptr<OptimizeVisitor> staticMaker = new OptimizeVisitor();
 			readObstacles->accept(*staticMaker);
 		}
 		else

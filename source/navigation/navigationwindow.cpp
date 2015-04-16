@@ -14,7 +14,7 @@
 #include "../gameeventhandler.h"
 #include "../view/shaders.h"
 
-#define USE_DEBUG_VIEW TRUE //set to true to see fbo texture of preprocessor camera  
+#define USE_DEBUG_VIEW FALSE //set to true to see fbo texture of preprocessor camera  
 
 
 using namespace troen;
