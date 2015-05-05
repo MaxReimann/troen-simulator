@@ -62,20 +62,28 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 	floors->setName("floorsNode");
 
 	osg::StateSet *floorStateSet = floors->getOrCreateStateSet();
-	if (LOD == 0)
+	if (LOD == 0)		
+	{
+		floorsGroup->addChild(floors);
 		setTexture(floorStateSet, "data/textures/berlin_ground_l1.tga", 0); //berlin_ground_l1.tga"
+	}
 	else
+	{
 		setTexture(floorStateSet, "data/textures/grey.tga", 0);
+		osg::ref_ptr<osg::MatrixTransform> z_adjust = new osg::MatrixTransform(osg::Matrix::translate(osg::Vec3(0.0, 0.0, -0.5)));
+		floorsGroup->addChild(z_adjust);
+		z_adjust->addChild(floors);
+
+
+		//y adjust to push back ground floor to prevent z flickering
+		osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", 0.9f);
+		floorStateSet->addUniform(bendingYAdjust);
+	}
 
 	//will be overwritten if reflection is used
 	addShaderAndUniforms(static_cast<osg::ref_ptr<osg::Node>>(floors), shaders::FLOOR_CITY, levelSize, GLOW, 1.0);
 
 	floors->setNodeMask(CAMERA_MASK_MAIN);
-	floorsGroup->addChild(floors);
-
-	osg::ref_ptr<osg::Group> radarFloors = constructRadarElementsForBoxes(getLevelModel()->getFloors());
-	radarFloors->setNodeMask(CAMERA_MASK_RADAR);
-	floorsGroup->addChild(radarFloors);
 
 	return floorsGroup;
 }
@@ -156,88 +164,105 @@ public:
 
 };
 
+void CityView::constructL0City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 levelSize)
+{
 
+	if (m_texturedModel)
+	{
+
+		std::string cityParts[] = { "L11.ive", "L12.ive", "L12_up.ive", "L13.ive", "L13_up.ive",
+			"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive", "roads.ive" };
+
+		float heightAdjusts[] = { /*L11*/37, 40, 37, 37, 37,
+			/*L21*/37, 37, 37, 37,
+			/*L31*/10, 37, 37, 37,
+			/*roads*/ -0.1 };
+
+		int i = 0;
+		for (auto part : cityParts)
+		{
+			osg::ref_ptr<osg::MatrixTransform> partTransform = new osg::MatrixTransform();
+			osg::Matrix trans = osg::Matrix::translate(osg::Vec3(0, 0, -heightAdjusts[i])); //transform in blender
+			partTransform->setMatrix(trans);
+
+			std::cout << "[CityView] reading " << part << std::endl;
+			osg::Group *geode = static_cast<osg::Group*>(osgDB::readNodeFile(std::string("data/models/berlin/ive/") + part));
+			partTransform->addChild(geode);
+			obstacleNode->addChild(partTransform);
+			i++;
+
+			if (part.compare("roads.ive") == 0)
+			{
+				osg::ref_ptr<FilterSettingVisitor> filterVisitor = new FilterSettingVisitor();
+				geode->accept(*filterVisitor.get());
+				std::cout << "set texture to anisotropic filtering" << std::endl;
+			}
+		}
+
+		obstacleNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+		//readObstacles->setCullingActive(false);
+		obstacleNode->getOrCreateStateSet()->setDataVariance(osg::Object::STATIC);
+		obstacleNode->setDataVariance(osg::Object::STATIC);
+
+		//set all subNodes to static Data Variance
+		osg::ref_ptr<OptimizeVisitor> staticMaker = new OptimizeVisitor();
+		obstacleNode->accept(*staticMaker);
+	}
+	else
+	{
+		obstacleNode->addChild(static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive"))); // #"data/models/berlin/textured/3850_5817.obj"
+	}
+	//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
+	if (obstacleNode == nullptr)
+		printf("reading model failed.. \n");
+
+	addShaderAndUniforms(obstacleNode, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
+}
+
+
+void CityView::constructL1City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 levelSize)
+{
+	
+	// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clearly anymore ..
+	auto loadedModel = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive"));
+	obstacleNode->addChild(loadedModel);
+
+	addShaderAndUniforms(obstacleNode, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
+	auto stateset = obstacleNode->getOrCreateStateSet();
+	stateset->setMode(GL_BLEND, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+
+	//set transparent and number higher then normal transparency to render after other transparent geometry
+	//this is especially for rendering after the route is rendered
+	stateset->setRenderBinDetails(100, "DepthSortedBin");
+	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+
+	//y adjust to push back ground floor to prevent z flickering
+	osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", 1.0f);
+	stateset->addUniform(bendingYAdjust);
+
+}
 
 osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlevel)
 {
 
 	osg::ref_ptr<osg::Group> LODBuildings = new osg::Group();
-	osg::ref_ptr<osg::Group> readObstacles = new osg::Group();
 
 	if (LODlevel == 0)
 	{
-
 		LODBuildings->setName("L0CityGroup");//"data/models/berlin/generalized/01_00/L0scaled.ive""D:/Blender/troensimulator/Berlin3ds/Berlin3ds/all_merge_texattempt.ive"
-		std::cout << "[CityView] reading level model.." << std::endl;
+		std::cout << "[CityView] reading LOD0 level model.." << std::endl;
 
-		if (m_texturedModel)
-		{
-
-			std::string cityParts[] = { "L11.ive", "L12.ive", "L12_up.ive", "L13.ive", "L13_up.ive",
-				"L21.ive", "L21_up.ive", "L22.ive", "L23.ive", "L31.ive", "L31_up.ive", "L32.ive", "L33.ive", "roads.ive" };
-
-			float heightAdjusts[] = { /*L11*/37, 40, 37, 37, 37,
-				/*L21*/37, 37, 37, 37,
-				/*L31*/10, 37, 37, 37,
-			   /*roads*/ -0.1};
-
-			int i = 0;
-			for (auto part : cityParts)
-			{
-				osg::ref_ptr<osg::MatrixTransform> partTransform = new osg::MatrixTransform();
-				osg::Matrix trans = osg::Matrix::translate(osg::Vec3(0, 0, -heightAdjusts[i])); //transform in blender
-				partTransform->setMatrix(trans);
-
-				std::cout << "[CityView] reading " << part << std::endl;
-				osg::Group *geode = static_cast<osg::Group*>(osgDB::readNodeFile(std::string("data/models/berlin/ive/") + part));
-				partTransform->addChild(geode);
-				readObstacles->addChild(partTransform);
-				i++;
-
-				if (part.compare("roads.ive")==0)
-				{
-					osg::ref_ptr<FilterSettingVisitor> filterVisitor = new FilterSettingVisitor();
-					geode->accept(*filterVisitor.get());
-					std::cout << "set texture to anisotropic filtering" << std::endl;
-				}
-			}
-
-			readObstacles->getOrCreateStateSet()->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
-			//readObstacles->setCullingActive(false);
-			readObstacles->getOrCreateStateSet()->setDataVariance(osg::Object::STATIC);
-			readObstacles->setDataVariance(osg::Object::STATIC);
-
-			//set all subNodes to static Data Variance
-			osg::ref_ptr<OptimizeVisitor> staticMaker = new OptimizeVisitor();
-			readObstacles->accept(*staticMaker);
-		}
-		else
-		{
-			readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive")); // #"data/models/berlin/textured/3850_5817.obj"
-		}
-		//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
-		if (readObstacles == nullptr)
-			printf("reading model failed.. \n");
-
-		addShaderAndUniforms(readObstacles, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
+		constructL0City(LODBuildings, levelSize);
 	}
 	else if (LODlevel == 1)
 	{
 		LODBuildings->setName("L1CityGroup");
-		// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clearly anymore ..
-		readObstacles = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive"));
+		std::cout << "[CityView] reading LOD1 level model.." << std::endl;
 
-		addShaderAndUniforms(readObstacles, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
-		auto stateset = readObstacles->getOrCreateStateSet();
-		stateset->setMode(GL_BLEND, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-
-		//set transparent and number higher then normal transparency to render after other transparent geometry
-		//this is especially for rendering after the route is rendered
-		stateset->setRenderBinDetails(100, "DepthSortedBin"); 
-		stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+		constructL1City(LODBuildings, levelSize);
 	}
 
-	LODBuildings->addChild(readObstacles);
+
 	LODBuildings->setNodeMask(CAMERA_MASK_MAIN);
 
 	return LODBuildings;

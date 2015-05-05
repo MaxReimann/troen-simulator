@@ -24,9 +24,10 @@ namespace troen
 	protected:
 		osg::ref_ptr<osg::Group> constructFloors(osg::Vec2 levelSize, int LOD);
 		osg::ref_ptr<osg::Group> constructCity(osg::Vec2 levelSize, int LODlevel);
+		void constructL0City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 levelSize);
+		void constructL1City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 levelSize);
 		std::shared_ptr<CityModel> getCityModel();
 		void loadSpeedSigns();
-
 		osg::ref_ptr<osg::Node> m_zone30;
 		osg::ref_ptr<osg::Node> m_zone50;
 		osg::ref_ptr<osg::Group> m_signsGroup;

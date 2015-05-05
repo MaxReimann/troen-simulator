@@ -12,7 +12,7 @@ void main() {
 
 
 	vec4 diffuseColor =  vec4(texture(diffuseTexture, uv).xyz, alpha);
-	vec4 adjustedColor = vec4(diffuseColor.x, diffuseColor.x / 2.0, diffuseColor.x, 1.0);
+	vec4 adjustedColor =  vec4(diffuseColor.x, diffuseColor.x / 2.0, diffuseColor.x, 1.0);
 
 	// decide whether to use the original or adjusted color, based on the trueColor uniform
 	gl_FragColor = mix(adjustedColor, diffuseColor, 1.0);
