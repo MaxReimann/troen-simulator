@@ -76,7 +76,7 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 
 
 		//y adjust to push back ground floor to prevent z flickering
-		osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", 0.9f);
+		osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", true);
 		floorStateSet->addUniform(bendingYAdjust);
 	}
 
@@ -237,7 +237,7 @@ void CityView::constructL1City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 
 	stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 
 	//y adjust to push back ground floor to prevent z flickering
-	osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", 1.0f);
+	osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", false);
 	stateset->addUniform(bendingYAdjust);
 
 }

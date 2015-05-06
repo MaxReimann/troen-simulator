@@ -3,14 +3,14 @@ configScript.BENDED_DEFORMATION_END = 600;
 configScript.BENDED_DEFORMATION_START = 0.01;
 configScript.BENDED_STYLING_PRESET =1;
 configScript.SPEED_TOREAL_RATIO=2.0;
-configScript.FOVY_INITIAL = 30;
+configScript.FOVY_INITIAL = 60;
 configScript.FOVY_ADDITION_MAX = 20;
 configScript.ENGINE_FREQUENCY_LOW =5000;
 configScript.AUDIO_PITCH_FACTOR=0.5;
 configScript.DAMPING_FORCE = 1500.0;
 configScript.CAMERA_NAVI_EYE_POSITION_Z = 20.0;
 configScript.CAMERA_NAVI_CENTER_POSITION_Z = 20.0; 
-configScript.USE_CULLING = 1; //(boolean)
+configScript.USE_CULLING = 0; //(boolean)
 //configScript.CAMERA_EYE_POSITION_Z = 0.0;
 
 // SETTINGS
