@@ -38,30 +38,59 @@ BikeView::BikeView(osg::Vec3 color, ResourcePool *resourcePool) : AbstractView()
 
 
 	osg::Matrixd initialTransform;
-	initialTransform *= initialTransform.scale(btToOSGVec3(BIKE_DIMENSIONS));
-	initialTransform *= initialTransform.translate(osg::Vec3(0, 0, BIKE_DIMENSIONS.getZ()));
+	//initialTransform *= initialTransform.scale(btToOSGVec3(BIKE_DIMENSIONS));
+	//initialTransform *= initialTransform.translate(osg::Vec3(0, 0, 1.0));
+	//initialTransform *= initialTransform.rotate(180.0, )
 	
-	osg::Box* unitCube = new osg::Box(osg::Vec3(0, 0, 0), 1.0f);
+	osg::Box* unitCube = new osg::Box(osg::Vec3(0, 0, 0), 0.2f);
 	osg::ShapeDrawable* unitCubeDrawable = new osg::ShapeDrawable(unitCube);
 	// Declare a instance of the geode class: 
-	osg::Geode* chassisGeode = new osg::Geode();
-	chassisGeode->addDrawable(unitCubeDrawable);
+	//osg::Geode* chassisGeode = new osg::Geode();
+	//chassisGeode->addDrawable(unitCubeDrawable);
+
+	osg::Group *carNode = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/car/lambo.ive"));
+    //carNode->getOrCreateStateSet()->setAttributeAndModes(shaders::m_allShaderPrograms[shaders::BIKE], osg::StateAttribute::ON);
 	
 	
 
 	osg::MatrixTransform* matrixTransform = new osg::MatrixTransform(initialTransform);
-	matrixTransform->addChild(chassisGeode);
+	matrixTransform->addChild(carNode);
 	m_wheelGroup = new osg::Group();
 	m_pat->addChild(m_wheelGroup);
 
 	wheels = std::vector<osg::ref_ptr<osg::PositionAttitudeTransform>>();
 	
 	osg::Matrixd lookAtTransform;
-	lookAtTransform *= lookAtTransform.translate(osg::Vec3(0, BIKE_DIMENSIONS.y() / 2, BIKE_DIMENSIONS.z() + 2));
+	lookAtTransform *= lookAtTransform.translate(osg::Vec3(CAMERA_LOOKAT_POSITION_X, CAMERA_LOOKAT_POSITION_Y, CAMERA_LOOKAT_POSITION_Z));
 	m_lookatPoint = new osg::MatrixTransform(lookAtTransform);
 	m_lookatGeode = new osg::Geode();
+	//m_lookatGeode->addDrawable(unitCubeDrawable);
 	m_lookatGeode->setName("lookatGeode");
 	m_lookatPoint->addChild(m_lookatGeode);
+
+    osg::ref_ptr<osg::Light> light = new osg::Light();
+    // each light must have a unique number
+    light->setLightNum(5);
+    // we set the light's position via a PositionAttitudeTransform object
+    light->setPosition(osg::Vec4(0.0, 0.0, 0.0, 1.0));
+    light->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+    light->setSpecular(osg::Vec4(1.0, 1.0, 1.0, 1.0));
+    light->setAmbient(osg::Vec4(0.0, 0.0, 0.0, 1.0));
+
+
+    osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource();
+    lightSource->setLight(light);
+    lightSource->setLocalStateSetModes(osg::StateAttribute::ON);
+    lightSource->setStateSetModes(*(m_pat->getOrCreateStateSet()), osg::StateAttribute::ON);
+
+    osg::Matrixd lightTransform;
+    lightTransform *= lightTransform.translate(osg::Vec3(0, 1.5, 3.0));
+    osg::ref_ptr<osg::MatrixTransform> lightMatTransform = new osg::MatrixTransform(lightTransform);
+    lightMatTransform->addChild(lightSource);
+
+
+    m_pat->addChild(lightMatTransform);
+
 
 	m_pat->addChild(m_lookatPoint);
 

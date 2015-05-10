@@ -126,13 +126,12 @@ m_hasGameView(config->ownView[id])
 	m_gameView->setSceneData(m_playerNode);
 	m_cameras->at(MAIN_WINDOW) = m_gameView->getCamera();
 
-	osg::ref_ptr<NodeFollowCameraManipulator> manipulator
-		= new NodeFollowCameraManipulator();
+	m_cameraManipulator = new NodeFollowCameraManipulator();
 
-	m_bikeController->attachTrackingCamera(manipulator);
+	m_bikeController->attachTrackingCamera(m_cameraManipulator);
 	m_bikeController->attachGameView(m_gameView);
 
-	m_gameView->setCameraManipulator(manipulator.get());
+	m_gameView->setCameraManipulator(m_cameraManipulator.get());
 	m_gameView->addEventHandler(game->gameEventHandler());
 	m_gameView->addEventHandler(game->statsHandler());
 	m_gameView->setUserValue("window_type", (int) MAIN_WINDOW);

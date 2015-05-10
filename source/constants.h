@@ -78,6 +78,11 @@ namespace troen
 	extern double CAMERA_POSITION_OFFSET_Y;
 	extern double CAMERA_POSITION_OFFSET_Z;
 
+	extern double CAMERA_LOOKAT_POSITION_X;
+	extern double CAMERA_LOOKAT_POSITION_Y;
+	extern double CAMERA_LOOKAT_POSITION_Z;
+
+
 	extern double CAMERA_EYE_POSITION_X;
 	extern double CAMERA_EYE_POSITION_Y;
 	extern double CAMERA_EYE_POSITION_Z;

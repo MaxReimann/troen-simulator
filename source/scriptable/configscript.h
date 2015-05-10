@@ -8,7 +8,6 @@
 #include "scriptzeug\ScriptContext.h"
 #include "../constants.h"
 
-
 #include "BendedViews/src/SplineDeformationRendering.h"
 
 using namespace reflectionzeug;
@@ -85,17 +84,24 @@ namespace troen
 		double SteeringClamp() const { return BIKE_STEERINGCLAMP; }
 		void setSteeringClamp(const double & val) { BIKE_STEERINGCLAMP = val; }
 		double CameraPositionOffsetX() const { return CAMERA_POSITION_OFFSET_X; }
-		void setCameraPositionOffsetX(const double & val) { CAMERA_POSITION_OFFSET_X = val; }
+		void setCameraPositionOffsetX(const double & val) { CAMERA_POSITION_OFFSET_X = val; updateCamera(); }
 		double CameraPositionOffsetY() const { return CAMERA_POSITION_OFFSET_Y; }
-		void setCameraPositionOffsetY(const double & val) { CAMERA_POSITION_OFFSET_Y = val; }
+		void setCameraPositionOffsetY(const double & val) { CAMERA_POSITION_OFFSET_Y = val; updateCamera(); }
 		double CameraPositionOffsetZ() const { return CAMERA_POSITION_OFFSET_Z; }
-		void setCameraPositionOffsetZ(const double & val) { CAMERA_POSITION_OFFSET_Z = val; }
+		void setCameraPositionOffsetZ(const double & val) { CAMERA_POSITION_OFFSET_Z = val; updateCamera(); }
 		double CameraEyePositionX() const { return CAMERA_EYE_POSITION_X; }
-		void setCameraEyePositionX(const double & val) { CAMERA_EYE_POSITION_X = val; }
+		void setCameraEyePositionX(const double & val) { CAMERA_EYE_POSITION_X = val; updateCamera(); }
 		double CameraEyePositionY() const { return CAMERA_EYE_POSITION_Y; }
-		void setCameraEyePositionY(const double & val) { CAMERA_EYE_POSITION_Y = val; }
+		void setCameraEyePositionY(const double & val) { CAMERA_EYE_POSITION_Y = val; updateCamera(); }
 		double CameraEyePositionZ() const { return CAMERA_EYE_POSITION_Z; }
-		void setCameraEyePositionZ(const double & val) { CAMERA_EYE_POSITION_Z = val; }
+		void setCameraEyePositionZ(const double & val) { CAMERA_EYE_POSITION_Z = val; updateCamera(); }
+		double CameraLookatPositionX() const { return CAMERA_LOOKAT_POSITION_X; }
+		void setCameraLookatPositionX(const double & val) { CAMERA_LOOKAT_POSITION_X = val; updateCamera(); }
+		double CameraLookatPositionY() const { return CAMERA_LOOKAT_POSITION_Y; }
+		void setCameraLookatPositionY(const double & val) { CAMERA_LOOKAT_POSITION_Y = val; updateCamera(); }
+		double CameraLookatPositionZ() const { return CAMERA_LOOKAT_POSITION_Z; }
+		void setCameraLookatPositionZ(const double & val) { CAMERA_LOOKAT_POSITION_Z = val; updateCamera(); }
+
 		double DampingForce() const { return DAMPING_FORCE; }
 		void setDampingForce(const double & val) { DAMPING_FORCE = val; }
 		double CameraNaviEyePositionZ() const { return CAMERA_NAVI_EYE_POSITION_Z; }
@@ -111,8 +117,9 @@ namespace troen
 		int useCulling() const { return USE_CULLING; }
 		void setuseCulling(const int & val) { USE_CULLING = val; }
 
+		;
 
-
+		void updateCamera();
 	private:
 
 

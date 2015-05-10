@@ -8,6 +8,12 @@
 #include "../constants.h"
 #include "../troengame.h"
 #include "scriptwatcher.h"
+#include "../player.h"
+#include "../view/nodefollowcameramanipulator.h"
+#include "../view/bikeview.h"
+#include "../controller/bikecontroller.h"
+
+
 
 
 #include "../BendedViews/src/SplineDeformationRendering.h"
@@ -44,6 +50,9 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 	addProperty<double>("CAMERA_EYE_POSITION_X", *this, &ConfigScript::CameraEyePositionX, &ConfigScript::setCameraEyePositionX);
 	addProperty<double>("CAMERA_EYE_POSITION_Y", *this, &ConfigScript::CameraEyePositionY, &ConfigScript::setCameraEyePositionY);
 	addProperty<double>("CAMERA_EYE_POSITION_Z", *this, &ConfigScript::CameraEyePositionZ, &ConfigScript::setCameraEyePositionZ);
+	addProperty<double>("CAMERA_LOOKAT_POSITION_X", *this, &ConfigScript::CameraLookatPositionX, &ConfigScript::setCameraLookatPositionX);
+	addProperty<double>("CAMERA_LOOKAT_POSITION_Y", *this, &ConfigScript::CameraLookatPositionY, &ConfigScript::setCameraLookatPositionY);
+	addProperty<double>("CAMERA_LOOKAT_POSITION_Z", *this, &ConfigScript::CameraLookatPositionZ, &ConfigScript::setCameraLookatPositionZ);
 	addProperty<double>("DAMPING_FORCE", *this, &ConfigScript::DampingForce, &ConfigScript::setDampingForce);
 	addProperty<double>("CAMERA_NAVI_EYE_POSITION_Z", *this, &ConfigScript::CameraNaviEyePositionZ, &ConfigScript::setCameraNaviEyePositionZ);
 	addProperty<double>("CAMERA_NAVI_CENTER_POSITION_Z", *this, &ConfigScript::CameraNaviPositionZ, &ConfigScript::setCameraNaviPositionZ);
@@ -76,6 +85,25 @@ void ConfigScript::evaluate(std::string content)
 	awaiting_update = true;
 	pendingContent = content;
 		//"try { if (typeof configure !== 'undefined') { configure(); } else { configScript.log('cant set values in script; check for errors!'); } } catch(ex) { ex } "
+}
+
+void ConfigScript::updateCamera()
+{
+
+	CAMERA_POSITION_OFFSET = osg::Vec3(CAMERA_POSITION_OFFSET_X, CAMERA_POSITION_OFFSET_Y, CAMERA_POSITION_OFFSET_Z);
+	CAMERA_EYE_POSITION = osg::Vec3(CAMERA_EYE_POSITION_X, CAMERA_EYE_POSITION_Y, CAMERA_EYE_POSITION_Z);
+		// set camera position
+		m_game->players()[0]->cameraManipulator()->setHomePosition(
+			osg::Vec3(CAMERA_EYE_POSITION_X, CAMERA_EYE_POSITION_Y, CAMERA_EYE_POSITION_Z), // homeEye
+			osg::Vec3f(), // homeCenter
+			osg::Z_AXIS, // up
+			false
+			);
+		auto transform = m_game->players()[0]->bikeController()->getView()->getLookatTransform();
+		osg::Matrixd lookAtTransform;
+		lookAtTransform *= lookAtTransform.translate(osg::Vec3(CAMERA_LOOKAT_POSITION_X, CAMERA_LOOKAT_POSITION_Y, CAMERA_LOOKAT_POSITION_Z));
+		transform->setMatrix(lookAtTransform);
+
 }
 
 	

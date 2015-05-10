@@ -38,6 +38,7 @@ namespace troen
 		void addWheel(float radius, osg::Vec3 pointOne, osg::Vec3 pointTwo);
 		void setWheelRotation(int index, btTransform t);
 		osg::ref_ptr<osg::Geode> getLookatGeode() { return m_lookatGeode; }
+		osg::ref_ptr<osg::MatrixTransform> getLookatTransform() { return m_lookatPoint; };
 		osg::ref_ptr<osg::MatrixTransform>  createNavigationArrow();
 		void removeWheels();
 	private:

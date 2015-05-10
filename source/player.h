@@ -15,6 +15,7 @@
 #include "controller/hudcontroller.h"
 #include "navigation/navigationwindow.h"
 #include "navigation/routeparser.h"
+#include "view/nodefollowcameramanipulator.h"
 
 namespace troen
 {
@@ -61,6 +62,7 @@ namespace troen
 		osg::ref_ptr<osg::Group> playerNode()				{ return m_playerNode; };
 		std::shared_ptr<NavigationWindow> navigationWindow(){ return m_navigationWindow; };
 		osg::ref_ptr<SampleOSGViewer> navigationViewer();
+		osg::ref_ptr<NodeFollowCameraManipulator> cameraManipulator() { return m_cameraManipulator; };
 
 		//
 		// setters
@@ -113,6 +115,7 @@ namespace troen
 		osg::ref_ptr<osg::Group>		m_playerNode;
 		std::shared_ptr<NavigationWindow> m_navigationWindow;
 		std::vector<Route>				m_routes;
+		osg::ref_ptr<NodeFollowCameraManipulator> m_cameraManipulator;
 
 		std::shared_ptr<std::vector<osg::Camera*>> m_cameras;
 		

@@ -127,13 +127,10 @@ public:
 						osg::Texture *tex = texattrib.second.first->asTexture();
 						tex->setUnRefImageDataAfterApply(true);
 					}
-
 				}
 			}
 		}
-
 	}
-
 };
 
 class FilterSettingVisitor : public osg::NodeVisitor
@@ -210,7 +207,7 @@ void CityView::constructL0City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 
 	}
 	else
 	{
-		obstacleNode->addChild(static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_00/L0scaled.ive"))); // #"data/models/berlin/textured/3850_5817.obj"
+		obstacleNode->addChild(static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/ive/L0Untextured.ive"))); // #"data/models/berlin/textured/3850_5817.obj"
 	}
 	//setTexture(readObstacles->getOrCreateStateSet(), "data/models/berlin/textured/packed_3850_58170.tga", 0, true);
 	if (obstacleNode == nullptr)
@@ -224,7 +221,7 @@ void CityView::constructL1City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 
 {
 	
 	// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clearly anymore ..
-	auto loadedModel = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/generalized/01_01/L1level_scaled.ive"));
+	auto loadedModel = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/ive/navimap.ive"));
 	obstacleNode->addChild(loadedModel);
 
 	addShaderAndUniforms(obstacleNode, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
