@@ -22,17 +22,28 @@ void CountdownTimer::update()
 		
 		if (elapsed >= taskIter->duration_millis)
 		{
-			taskIter->fPtr(taskIter->args);
+            if (taskIter->executor == nullptr)
+			    taskIter->fPtr(taskIter->args);
+            else
+                taskIter->executor->taskFunction();
+
 			taskIter = m_tasks.erase(taskIter);
 		}
 		else
 			++taskIter;
 	}
 
+
+
 }
 
 //add a single shot timer, which will execute the supplied function with the arguments in a struct as void pointer (pthreads style)
 void CountdownTimer::addTimer(int millis, void (*fPtr)(void *), void *args/*=nullptr*/)
 {
-	m_tasks.push_back(task{ clock::now(), (double)millis, fPtr, args });
+	m_tasks.push_back(task{ clock::now(), (double)millis, fPtr, args, nullptr});
+}
+
+void CountdownTimer::addTimer(int millis, TaskExecutor *taskE)
+{
+    m_tasks.push_back(task{ clock::now(), (double)millis, nullptr, nullptr, taskE });
 }

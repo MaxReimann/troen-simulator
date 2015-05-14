@@ -115,7 +115,7 @@ namespace troen
 		class ChronoTimer;
 		class GLDebugDrawer;
 		class CountdownTimer;
-		
+        class TaskExecutor;
 	}
 
 	class AbstractScript;

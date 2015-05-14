@@ -110,7 +110,7 @@ void TroenGame::startGameLoop()
 	// - render;
 	m_audioManager->PlayEngineSound();
 	m_audioManager->SetMasterVolume(0.0);
-
+    m_players[0]->cameraManipulator()->home(0.0);
 
 	// terminates when first viewer is closed
 	while (!m_players[0]->viewer()->done()&&g_gameRunning)

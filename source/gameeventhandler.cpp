@@ -46,7 +46,9 @@ bool GameEventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		m_gameLogic.lock()->removeAllFences();
 		break;
 	case osgGA::GUIEventAdapter::KEY_F:
-		m_gameLogic.lock()->toggleFencePartsLimit();
+
+        //osg::ref_ptr<const osgGA::GUIEventAdapter> emptyAdapter = new osgGA::GUIEventAdapter();
+        m_troenGame->players()[0]->cameraManipulator()->home(ea, aa);
 		break;
 	case osgGA::GUIEventAdapter::KEY_L:
 		m_troenGame->reloadLevel();

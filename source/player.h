@@ -17,6 +17,7 @@
 #include "navigation/routeparser.h"
 #include "view/nodefollowcameramanipulator.h"
 
+
 namespace troen
 {
 
@@ -87,7 +88,8 @@ namespace troen
 		void setCameraSpecificUniforms();
 		void setOnNextTrack();
 		bool hasNextTrack();
-	private:
+        void setCameraToHome();
+    private:
 		TroenGame*						m_troenGame;
 		//
 		// player attributes
@@ -125,5 +127,6 @@ namespace troen
 		uniformVec		m_playerPositionUs;
 		int m_currentRoute;
 		int m_currentSpeedLimit;
+        util::CountdownTimer *m_viewAdjustTimer;
 	};
 }

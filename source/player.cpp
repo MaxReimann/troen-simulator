@@ -27,6 +27,8 @@
 #include "model/levelmodel.h"
 
 #include "navigation/routeparser.h"
+#include "osgGA/GUIEventAdapter"
+#include "util/countdowntimer.h"
 
 
 using namespace troen;
@@ -135,7 +137,7 @@ m_hasGameView(config->ownView[id])
 	m_gameView->addEventHandler(game->gameEventHandler());
 	m_gameView->addEventHandler(game->statsHandler());
 	m_gameView->setUserValue("window_type", (int) MAIN_WINDOW);
-
+    
 	//second window with navigation infos (map/bended views)
 	auto viewport = new osg::Viewport(width * WINDOW_RATIO_FULLSCREEN, height / 2.0 - height / 6.0, width * (1.0 - WINDOW_RATIO_FULLSCREEN), height / 3.0);
 	m_navigationWindow = std::make_shared<NavigationWindow>(m_bikeController, game->gameEventHandler(), m_viewer, viewport, config->fullscreen);
@@ -172,10 +174,32 @@ m_hasGameView(config->ownView[id])
 	m_viewer->setRealizeOperation(operation);
 	m_viewer->realize();
 
-	
+    // proxy class to set camera to home in a timer
+    class ResetCamExecutor : public util::TaskExecutor
+    {
+    public:
+        Player *m_player;
+        ResetCamExecutor(Player* player) :m_player(player){}
+
+        virtual void taskFunction()
+        {
+            m_player->setCameraToHome();
+        }
+    };
+    ResetCamExecutor *resetCE = new ResetCamExecutor(this);
+
+    //call method after 1s, if set directly the settings will be overwritten at game start
+    m_viewAdjustTimer = new util::CountdownTimer();
+    m_viewAdjustTimer->addTimer(1000, resetCE);
 
 }
 
+void Player::setCameraToHome()
+{
+    std::cout << "setting camera to home" << std::endl;
+    osg::ref_ptr<const osgGA::GUIEventAdapter> emptyAdapter = new osgGA::GUIEventAdapter();
+    m_cameraManipulator->home(*emptyAdapter.get(), *m_gameView.get());
+}
 
 void Player::createHUDController(const std::vector<std::shared_ptr<Player>>& players)
 {
@@ -187,6 +211,7 @@ void Player::createHUDController(const std::vector<std::shared_ptr<Player>>& pla
 
 void Player::update(int g_gameTime)
 {
+    m_viewAdjustTimer->update();
 	bikeController()->updateModel(g_gameTime);
 }
 
@@ -283,5 +308,6 @@ void Player::setOnNextTrack()
 
 
 		m_bikeController->respawnAt(position);
+        setCameraToHome();
 
 }
