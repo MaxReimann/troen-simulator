@@ -24,6 +24,7 @@
 #include "shaders.h"
 #include "../constants.h"
 #include "osg/BlendFunc"
+#include "../player.h"
 
 //#define TEXTURED_MODEL
 
@@ -73,7 +74,6 @@ osg::ref_ptr<osg::Group> CityView::constructFloors(osg::Vec2 levelSize, int LOD)
 		osg::ref_ptr<osg::MatrixTransform> z_adjust = new osg::MatrixTransform(osg::Matrix::translate(osg::Vec3(0.0, 0.0, -0.5)));
 		floorsGroup->addChild(z_adjust);
 		z_adjust->addChild(floors);
-
 
 		//y adjust to push back ground floor to prevent z flickering
 		osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", true);
@@ -216,12 +216,35 @@ void CityView::constructL0City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 
 	addShaderAndUniforms(obstacleNode, shaders::DEFAULT, levelSize, DEFAULT, 0.5, 1.0);
 }
 
+class SelectiveObjectShaders : public osg::NodeVisitor
+{
+public:
+    SelectiveObjectShaders()
+        : osg::NodeVisitor( // Traverse all children.
+        osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+    {
+    }
+
+
+    virtual void apply(osg::Node& node)
+    {
+        if (node.getName() == "railwaynavi.001")
+        {
+            auto stateset = node.getOrCreateStateSet();
+            osg::ref_ptr<osg::Uniform> distanceBasedAlpha = new osg::Uniform("distanceBasedAlpha", true);
+            stateset->addUniform(distanceBasedAlpha);
+        }
+
+        traverse(node);
+    }
+};
+
 
 void CityView::constructL1City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 levelSize)
 {
 	
 	// l1model: "data/models/berlin/generalized/01_01/L1level.ive" <-- if we use this, routes are not seen clearly anymore ..
-	auto loadedModel = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/ive/navimap.ive"));
+    osg::ref_ptr<osg::Group> loadedModel = static_cast<osg::Group*>(osgDB::readNodeFile("data/models/berlin/ive/navimap.ive"));
 	obstacleNode->addChild(loadedModel);
 
 	addShaderAndUniforms(obstacleNode, shaders::LOD1BUILDINGS, levelSize, DEFAULT, 0.5, 1.0);
@@ -237,6 +260,11 @@ void CityView::constructL1City(osg::ref_ptr<osg::Group> obstacleNode, osg::Vec2 
 	osg::ref_ptr<osg::Uniform> bendingYAdjust = new osg::Uniform("bendingYAdjust", false);
 	stateset->addUniform(bendingYAdjust);
 
+    osg::ref_ptr<osg::Uniform> distanceBasedAlpha = new osg::Uniform("distanceBasedAlpha", false);
+    stateset->addUniform(distanceBasedAlpha);
+
+    osg::ref_ptr<SelectiveObjectShaders> setNaviRoadTransparent = new SelectiveObjectShaders();
+    loadedModel->accept(*setNaviRoadTransparent.get());
 }
 
 osg::ref_ptr<osg::Group> CityView::constructCity(osg::Vec2 levelSize, int LODlevel)
