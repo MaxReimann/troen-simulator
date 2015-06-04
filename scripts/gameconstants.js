@@ -3,14 +3,26 @@ configScript.BENDED_DEFORMATION_END = 600;
 configScript.BENDED_DEFORMATION_START = 0.01;
 configScript.BENDED_STYLING_PRESET =1;
 configScript.SPEED_TOREAL_RATIO=2.0;
-configScript.FOVY_INITIAL = 60;
-configScript.FOVY_ADDITION_MAX = 20;
+configScript.FOVY_INITIAL = 85;
+configScript.FOVY_ADDITION_MAX = 5;
 configScript.ENGINE_FREQUENCY_LOW =5000;
+configScript.ENGINE_FREQUENCY_HIGH =50000;
 configScript.AUDIO_PITCH_FACTOR=0.5;
 configScript.DAMPING_FORCE = 1500.0;
 configScript.CAMERA_NAVI_EYE_POSITION_Z = 20.0;
 configScript.CAMERA_NAVI_CENTER_POSITION_Z = 20.0; 
 configScript.USE_CULLING = 0; //(boolean)
+
+//configScript.CAMERA_EYE_POSITION_Z = 0.6;
+configScript.CAMERA_LOOKAT_POSITION_X = -0.1;
+configScript.CAMERA_LOOKAT_POSITION_Y = 4.4;
+configScript.CAMERA_LOOKAT_POSITION_Z = 3.2;
+configScript.CAMERA_EYE_POSITION_Y = -4.1;
+configScript.CAMERA_EYE_POSITION_X = 0.0;
+configScript.CAMERA_EYE_POSITION_Z = 0.5;
+configScript.CAMERA_POSITION_OFFSET_X = 0.0;
+configScript.CAMERA_POSITION_OFFSET_Y = 0.0;
+//configScript.CAMERA_POSITION_OFFSET_Z = 1.0;
 //configScript.CAMERA_EYE_POSITION_Z = 0.0;
 
 // SETTINGS
@@ -38,6 +50,9 @@ configScript.USE_CULLING = 0; //(boolean)
 //<double> CAMERA_EYE_POSITION_X
 //<double> CAMERA_EYE_POSITION_Y
 //<double> CAMERA_EYE_POSITION_Z
+//<double>CAMERA_LOOKAT_POSITION_X
+//<double>CAMERA_LOOKAT_POSITION_Y
+//<double>CAMERA_LOOKAT_POSITION_Z
 //<double> DAMPING_FORCE
 //<double> CAMERA_NAVI_EYE_POSITION_Z
 //double> CAMERA_NAVI_CENTER_POSITION_Z

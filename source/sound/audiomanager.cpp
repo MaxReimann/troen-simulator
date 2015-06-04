@@ -100,7 +100,7 @@ void AudioManager::PlayEngineSound()
 	system->playSound(FMOD_CHANNEL_FREE, sound->second, true, &engineChannel);
 	auto result = engineChannel->addDSP(m_dplowpass, 0);
 	FmodErrorCheck(result);
-	result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW);
+	result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, 0);
 	FmodErrorCheck(result);
 
 
@@ -191,8 +191,8 @@ void AudioManager::setMotorSpeed(troen::CarEngine * engine) {
 	// For the moment, simulate LP filter by tweaking the volume
 	engineChannel->setVolume(m_engineSoundData->engine.amplitude);
 
-	//auto result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW);// +m_engineSoundData->engine.lowpass);
-	//FmodErrorCheck(result);
+	auto result = m_dplowpass->setParameter(FMOD_DSP_LOWPASS_CUTOFF, ENGINE_FREQUENCY_LOW  +m_engineSoundData->engine.lowpass);
+	FmodErrorCheck(result);
 
 
 

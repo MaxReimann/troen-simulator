@@ -75,6 +75,8 @@ namespace troen
 		void setFovyInitialNavi(const double & val){ FOVY_INITIAL_NAVI = val; }
 		double EngineFrequencyLow() const { return ENGINE_FREQUENCY_LOW; }
 		void setEngineFrequencyLow(const double & val){ENGINE_FREQUENCY_LOW = val;}
+		double EngineFrequencyHigh() const { return ENGINE_FREQUENCY_HIGH; }
+		void setEngineFrequencyHigh(const double & val){ ENGINE_FREQUENCY_HIGH = val; }
 		double AudioPitchFactor() const { return AUDIO_PITCH_FACTOR; }
 		void setAduioPitchFactor(const double & val){AUDIO_PITCH_FACTOR = val;}
 		double SpeedToRealRatio() const { return SPEED_TOREAL_RATIO; }

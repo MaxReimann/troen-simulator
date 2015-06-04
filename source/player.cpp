@@ -157,6 +157,7 @@ m_hasGameView(config->ownView[id])
 		traits->y = 50;
 		traits->width = width-20;
 		traits->height = height-50;
+		traits->samples = 2; //multi samples
 		osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
 
 		m_gameView->getCamera()->setViewport(new osg::Viewport(0, 0, width * WINDOW_RATIO_FULLSCREEN, height));

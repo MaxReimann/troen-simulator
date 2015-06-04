@@ -41,6 +41,7 @@ ConfigScript::ConfigScript(TroenGame *game) : AbstractScript("configScript"), m_
 	addProperty<double>("FOVY_INITIAL_NAVI", *this, &ConfigScript::FovyInitialNavi, &ConfigScript::setFovyInitialNavi);
 	addProperty<double>("FOVY_ADDITION_MAX", *this, &ConfigScript::FovyAdditionMax, &ConfigScript::setFovyAdditionMax);
 	addProperty<double>("ENGINE_FREQUENCY_LOW", *this, &ConfigScript::EngineFrequencyLow, &ConfigScript::setEngineFrequencyLow);
+	addProperty<double>("ENGINE_FREQUENCY_HIGH", *this, &ConfigScript::EngineFrequencyHigh, &ConfigScript::setEngineFrequencyHigh);
 	addProperty<double>("AUDIO_PITCH_FACTOR", *this, &ConfigScript::AudioPitchFactor, &ConfigScript::setAduioPitchFactor);
 	addProperty<double>("BIKE_STEERING_INCREMENT", *this, &ConfigScript::BikeSteeringIncrement, &ConfigScript::setBikeSteeringIncrement);
 	addProperty<double>("BIKE_STEERINGCLAMP", *this, &ConfigScript::SteeringClamp, &ConfigScript::setSteeringClamp);
