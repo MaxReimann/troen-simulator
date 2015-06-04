@@ -5,6 +5,7 @@ configScript.BENDED_STYLING_PRESET =1;
 configScript.SPEED_TOREAL_RATIO=2.0;
 configScript.FOVY_INITIAL = 85;
 configScript.FOVY_ADDITION_MAX = 5;
+configScript.FOVY_INITIAL_NAVI = 60;
 configScript.ENGINE_FREQUENCY_LOW =5000;
 configScript.ENGINE_FREQUENCY_HIGH =50000;
 configScript.AUDIO_PITCH_FACTOR=0.5;
